@@ -1,0 +1,22 @@
+{
+  "name": "pai-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PAI-Tech/PAI-BOT-JS.git"
+  },
+  "author": "Ron Fridman",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/PAI-Tech/PAI-BOT-JS/issues"
+  },
+  "homepage": "https://github.com/PAI-Tech/PAI-BOT-JS#readme",
+  "dependencies": {
+    "shelljs": "^0.8.2"
+  }
+}
