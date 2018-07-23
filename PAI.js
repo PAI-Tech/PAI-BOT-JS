@@ -9,55 +9,62 @@ const {
 
 
 const PAIBotManager = require('./src/pai-bot/src/pai-bot-manager');
-
+const readline = require('readline');
 
 let paiCode = PAICode;
 
-
-/**
- *
- * Load startup script
- *
- **/
-// paiCode.start();
-
-
 let manager = new PAIBotManager();
-manager.createNewBot('Alpha');
+
+manager.loadBots().then(async (activeBots) => {
+    
+    if(!activeBots || activeBots.length == 0)
+    {
+        let botNickname = await askBotName();
+        if(botNickname)
+            return manager.createNewBot(botNickname);
+        else
+            throw new Error('No active bots!');
+    }
+}).then(() => {
+    paiCode.start();
+}).catch(e => {
+    paiCode.stop();
+    console.log(e);
+});
 
 
-if (0)
+
+async function askBotName()
 {
-    
-    let context = new PAICodeCommandContext('host','hardCoded');
-    
-    paiCode.executeString(`
+    let shouldCreateBot = await askQuestion('Cannot find PAIBot on your machine. do you want to create one ? ','yes');
+    if(shouldCreateBot == 'yes')
+    {
+        let botName = await askQuestion('OK. Choose a nickname for your bot.');
+        return botName;
+    }
+    return null;
+}
 
-pai-code info
 
-`,context)
-        .then((cmdArray)=>{
-            return paiCode.executeString(`
-
-        pai-code show version
-        pai-code show face
-
-    `);
-        
-        }).then((cmdArray) => {
-        console.log('finished');
-    })
-        .catch(error => {
-            logger.error(error);
+function askQuestion(question, defaultValue)
+{
+    return new Promise((resolve,reject) => {
+        const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout
         });
     
-    //
-    //
-    // paiCode.executeString("pai-os run ls").then(results => {
-    //     console.log(results[0].response.data);
-    // });
+        let questionAndDefault = question + ((defaultValue) ? " (" + defaultValue + ") " : "");
+        rl.question(questionAndDefault, (answer) => {
+            rl.close();
+            return resolve(answer);
+        });
     
-    
+        if (defaultValue)
+            rl.write(defaultValue);
+    });
 }
+
+
 
 

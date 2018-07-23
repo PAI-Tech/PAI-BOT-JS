@@ -3,7 +3,7 @@ const PAIBotStatus = require('./models/pai-bot-status');
 const fs = require('fs');
 const shell = require('shelljs');
 const PAIBotOSUtils = require('./utils/pai-bot-os-utils');
-const {PAICode} = require('pai-code');
+const { PAICode } = require('pai-code');
 
 /**
  * Create all bot files in PAI-OS
@@ -24,12 +24,18 @@ function createBotFiles(bot)
         shell.mkdir('-p', folder);
         shell.mkdir('-p', settingsFolder);
         shell.mkdir('-p', queueFolder);
-        
-        fs.writeFile(`${settingsFolder}settings.json`, json, 'utf8', function(err,data){
-            if(err)
-                return reject(err);
-            return resolve(data);
+    
+        fs.writeFile(PAIBotOSUtils.getBotStartupFile(bot), 'pai-code show version', 'utf8', function(err,data){
+    
+    
+            fs.writeFile(`${settingsFolder}settings.json`, json, 'utf8', function(err,data){
+                if(err)
+                    return reject(err);
+                return resolve(data);
+            });
+            
         });
+        
         
     })
 }
@@ -37,10 +43,10 @@ function createBotFiles(bot)
 /**
  * Read Bot settings file
  *
- * @param {String} botId
+ * @param {PAIBot} bot
  * @return {Promise<any>}
  */
-function readBotFile(botId)
+function readBotFile(bot)
 {
     return new Promise((resolve,reject) => {
         
@@ -55,6 +61,11 @@ function readBotFile(botId)
 }
 
 
+/**
+ * Save active bots file
+ * @param {String} activeBots
+ * @return {Promise<any>}
+ */
 function saveActiveBotsFile(activeBots){
     
     return new Promise((resolve,reject) => {
@@ -70,9 +81,6 @@ function saveActiveBotsFile(activeBots){
 }
 
 
-
-
-
 /**
  * Read Active bots file and return it as string
  * @return {Promise<any>}
@@ -85,6 +93,31 @@ function readActiveBotsFile()
             if (err) {
                 return reject(err);
             }
+            return resolve(data);
+        });
+    });
+}
+
+
+
+
+/**
+ * Read Bot's startup file
+ *
+ * @param {PAIBot} bot
+ * @return {Promise<any>}
+ */
+function readStartupFile(bot)
+{
+    return new Promise( (resolve, reject) => {
+        let filePath = PAIBotOSUtils.getBotStartupFile(bot);
+        fs.readFile(filePath, function read(err, data) {
+            if (err) {
+                return reject(err);
+            }
+            if(data)
+                data = data.toString('utf8');
+            
             return resolve(data);
         });
     });
@@ -126,7 +159,10 @@ class PAIBotManager {
         });
     }
     
-    
+    /**
+     * Load all bots from file
+     * @return {Promise< PAIBot[] >}
+     */
     async loadBots()
     {
         let fileData = await readActiveBotsFile();
@@ -136,19 +172,31 @@ class PAIBotManager {
             let bot = await this.loadBot(botIds[i]);
             
             // TODO: run bot startup files
-            
             this.activeBots.push(bot);
+    
+            let botStartupCode = await readStartupFile(bot);
+            if(botStartupCode) {
+                let startupResponse = await PAICode.executeString(botStartupCode);
+            }
         }
+        
+        return this.activeBots;
     }
     
+    /**
+     *
+     * @param {String} botId
+     * @return {Promise<PAIBot>}
+     */
     async loadBot(botId)
     {
-        let botData = await readBotFile(botId);
+        let bot = new PAIBot();
+        bot.id = botId;
+        
+        let botData = await readBotFile(bot);
         
         let obj = JSON.parse(botData);
         
-        let bot = new PAIBot();
-        bot.id = obj.id;
         bot.status = obj.status;
         bot.createdAt = obj.createdAt;
         bot.nickname = obj.nickname;

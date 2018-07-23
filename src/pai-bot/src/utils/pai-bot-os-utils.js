@@ -49,10 +49,11 @@ function getBotSettingsFolder(bot)
  * @param {PAIBot} bot
  * @return {string}
  */
-function getBotStartupFolder(bot)
+function getBotStartupFile(bot)
 {
-    return getBotFolder(bot) + 'startup/';
+    return getBotFolder(bot) + 'startup.pai';
 }
+
 
 
 /**
@@ -71,6 +72,6 @@ module.exports = {
     getActiveBotsFilePath,
     getBotFolder,
     getBotSettingsFolder,
-    getBotStartupFolder,
+    getBotStartupFile,
     getBotQueueFolder
 };
