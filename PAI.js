@@ -11,7 +11,7 @@ const {
 const PAIBotManager = require('./src/pai-bot/src/pai-bot-manager');
 const readline = require('readline');
 
-let paiCode = PAICode;
+
 
 let manager = new PAIBotManager();
 
@@ -26,12 +26,11 @@ manager.loadBots().then(async (activeBots) => {
             throw new Error('No active bots!');
     }
 }).then(() => {
-    paiCode.start();
+    PAICode.start();
 }).catch(e => {
-    paiCode.stop();
-    console.log(e);
+    PAICode.stop();
+    PAICode.log(e);
 });
-
 
 
 async function askBotName()
