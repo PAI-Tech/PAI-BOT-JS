@@ -1,4 +1,4 @@
-const { PAICodeCommand, PAICodeModule } = require('pai-code');
+const { PAICodeCommand, PAICodeModule } = require('@pai-tech/pai-code');
 
 class PCM_PAI_STORAGE extends PAICodeModule
 {	

@@ -5,7 +5,7 @@ const {
     PAICodeCommand,
     PAICodeCommandContext,
     PAICodeModule
-} = require('pai-code');
+} = require('@pai-tech/pai-code');
 
 
 const PAIBotManager = require('./src/pai-bot/src/pai-bot-manager');
@@ -15,9 +15,9 @@ const readline = require('readline');
 
 let manager = new PAIBotManager();
 
-manager.loadBots().then(async (activeBots) => {
+manager.loadBots().then(async (activeBot) => {
     
-    if(!activeBots || activeBots.length == 0)
+    if(!activeBot)
     {
         let botNickname = await askBotName();
         if(botNickname)

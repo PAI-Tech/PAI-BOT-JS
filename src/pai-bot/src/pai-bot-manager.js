@@ -3,7 +3,7 @@ const PAIBotStatus = require('./models/pai-bot-status');
 const fs = require('fs');
 const shell = require('shelljs');
 const PAIBotOSUtils = require('./utils/pai-bot-os-utils');
-const { PAICode } = require('pai-code');
+const { PAICode,PAIUtils } = require('@pai-tech/pai-code');
 
 /**
  * Create all bot files in PAI-OS
@@ -26,8 +26,7 @@ function createBotFiles(bot)
         shell.mkdir('-p', queueFolder);
     
         fs.writeFile(PAIBotOSUtils.getBotStartupFile(bot), 'pai-code show version', 'utf8', function(err,data){
-    
-    
+            
             fs.writeFile(`${settingsFolder}settings.json`, json, 'utf8', function(err,data){
                 if(err)
                     return reject(err);
@@ -36,8 +35,7 @@ function createBotFiles(bot)
             
         });
         
-        
-    })
+    });
 }
 
 /**
@@ -130,8 +128,8 @@ function readStartupFile(bot)
 class PAIBotManager {
     
     constructor () {
-        this.activeBots = [];
-        console.log('bot constractor');
+        this.activeBot = null;
+        process.pai.bot = null;
     }
     
     
@@ -141,17 +139,17 @@ class PAIBotManager {
             let bot = new PAIBot();
             
             bot.nickname = botNickname;
-            bot.id = 'a1324567';
+            bot.id = PAIUtils.pai_guid();
             bot.createdAt = (new Date()).getTime();
             bot.status = PAIBotStatus.NEW;
             
             // TODO: create bot in API
     
             await createBotFiles(bot);
+    
+            this.setBot(bot);
             
-            this.activeBots.push(bot);
-            
-            let botIds = this.activeBots.map(bot => bot.id)
+            let botIds = [bot.id];//this.activeBots.map(bot => bot.id)
             
             await saveActiveBotsFile(JSON.stringify(botIds));
             
@@ -172,15 +170,17 @@ class PAIBotManager {
             let bot = await this.loadBot(botIds[i]);
             
             // TODO: run bot startup files
-            this.activeBots.push(bot);
+            this.setBot(bot);
     
             let botStartupCode = await readStartupFile(bot);
             if(botStartupCode) {
                 let startupResponse = await PAICode.executeString(botStartupCode);
             }
+            
+            break; // support only single bot for now
         }
         
-        return this.activeBots;
+        return this.activeBot;
     }
     
     /**
@@ -206,9 +206,15 @@ class PAIBotManager {
     
     // create bot in files
     
+    /**
+     *
+     * @param {PAIBot} bot
+     */
+    setBot(bot){
+        this.activeBot = bot;
+        process.pai.bot = bot;
+    }
 }
-
-
 
 
 module.exports = PAIBotManager;
