@@ -1,6 +1,6 @@
 const { PAICodeCommand, PAICodeModule } = require('@pai-tech/pai-code');
 
-class PCM_PAI_STORAGE extends PAICodeModule
+class PCM_PAI_BOT extends PAICodeModule
 {	
     constructor()
     {
@@ -43,4 +43,4 @@ functions:
     
 }
 
-module.exports = PCM_PAI_STORAGE;
+module.exports = PCM_PAI_BOT;

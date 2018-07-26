@@ -100,6 +100,23 @@ function readActiveBotsFile()
 
 
 /**
+ *
+ * @return {Promise<Boolean>}
+ */
+function isFileExists(filePath)
+{
+    return new Promise( (resolve, reject) => {
+        let filePath = PAIBotOSUtils.getActiveBotsFilePath();
+        fs.exists(filePath, function read(exists) {
+            return resolve(exists);
+        });
+    });
+}
+
+
+
+
+/**
  * Read Bot's startup file
  *
  * @param {PAIBot} bot
@@ -163,21 +180,25 @@ class PAIBotManager {
      */
     async loadBots()
     {
-        let fileData = await readActiveBotsFile();
-        let botIds = JSON.parse(fileData);
-    
-        for (let i = 0; i < botIds.length; i++) {
-            let bot = await this.loadBot(botIds[i]);
-            
-            // TODO: run bot startup files
-            this.setBot(bot);
-    
-            let botStartupCode = await readStartupFile(bot);
-            if(botStartupCode) {
-                let startupResponse = await PAICode.executeString(botStartupCode);
+        let file = await isFileExists(PAIBotOSUtils.getActiveBotsFilePath());
+        if(file)
+        {
+            let fileData = await readActiveBotsFile();
+            let botIds = JSON.parse(fileData);
+        
+            for (let i = 0; i < botIds.length; i++) {
+                let bot = await this.loadBot(botIds[i]);
+                
+                // TODO: run bot startup files
+                this.setBot(bot);
+        
+                let botStartupCode = await readStartupFile(bot);
+                if(botStartupCode) {
+                    let startupResponse = await PAICode.executeString(botStartupCode);
+                }
+                
+                break; // support only single bot for now
             }
-            
-            break; // support only single bot for now
         }
         
         return this.activeBot;
