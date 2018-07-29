@@ -7,58 +7,60 @@ const {
     PAICodeCommandContext,
     PAICodeModule
 } = require('@pai-tech/pai-code');
-
-
 const { PAINETModule } = require('@pai-tech/pai-net');
-
 const { Config } = require('@pai-tech/pai-net-sdk');
-
-const { PAIFileConnector } = require('@pai-tech/pai-conntectors');
-
+const { PAIFileConnector, PAIHTTPConnector } = require('@pai-tech/pai-conntectors');
 const PAIBotManager = require('./src/pai-bot/src/pai-bot-manager');
-
 const readline = require('readline');
 
 
 let manager = new PAIBotManager();
-let fileConnector = null;
+let fileConnector;
+let httpConnector;
+let pcmPAI_NET;
 
-let pcmPAI_NET = null;
 
-manager.loadBots().then(async (activeBot) => {
+
+async function start()
+{
+    try{
+        initPAINET();
+        pcmPAI_NET = new PAINETModule();
+        
+        
+        await PAICode.loadModule('pai-net',pcmPAI_NET);
+        
+        
+        let activeBot = await manager.loadBots();
+        
+        if(!activeBot)
+        {
+            let botNickname = await askBotName();
+            if(botNickname)
+                await manager.createNewBot(botNickname);
+            else
+                throw new Error('No active bots!');
+        }
     
-    if(!activeBot)
-    {
-        let botNickname = await askBotName();
-        if(botNickname)
-            return manager.createNewBot(botNickname);
-        else
-            throw new Error('No active bots!');
+        fileConnector = new PAIFileConnector();
+        fileConnector.start();
+        
+        // httpConnector = new PAIHTTPConnector( { port:3000 } );
+        // httpConntector.start();
+    
+        PAICode.start();
+    } catch (e) {
+        PAICode.stop();
+        console.log(e);
     }
-}).then(async () => {
-    initPAINET();
-    // load more modules
-    pcmPAI_NET = new PAINETModule();
-    await PAICode.loadModule('pai-net',pcmPAI_NET);
     
-    PAICode.start();
-    
-    // register new connector
-    fileConnector = new PAIFileConnector();
-    fileConnector.start();
-    
-    
-}).catch(e => {
-    PAICode.stop();
-    console.log(e);
-});
+    return true;
+}
 
 
 
 function initPAINET()
 {
-    
-    
     const BASE_URL = "http://stage.pai-tech.org:3000";
     
     Config.init({
@@ -100,4 +102,4 @@ function askQuestion(question, defaultValue)
 
 
 
-
+start();
