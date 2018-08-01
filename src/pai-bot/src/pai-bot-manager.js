@@ -150,6 +150,11 @@ class PAIBotManager {
     }
     
     
+    /**
+     *
+     * @param {String} botNickname
+     * @return {Promise<PAIBot>}
+     */
     createNewBot(botNickname) {
         return new Promise( async (resolve,reject) => {
             
@@ -170,13 +175,13 @@ class PAIBotManager {
             
             await saveActiveBotsFile(JSON.stringify(botIds));
             
-            return resolve(true);
+            return resolve(bot);
         });
     }
     
     /**
      * Load all bots from file
-     * @return {Promise< PAIBot[] >}
+     * @return {Promise< PAIBot >}
      */
     async loadBots()
     {
@@ -189,7 +194,6 @@ class PAIBotManager {
             for (let i = 0; i < botIds.length; i++) {
                 let bot = await this.loadBot(botIds[i]);
                 
-                // TODO: run bot startup files
                 this.setBot(bot);
         
                 let botStartupCode = await readStartupFile(bot);
