@@ -55,29 +55,9 @@ async function main()
         
         // httpConnector = new PAIHTTPConnector( { port:3000 } );
         // httpConntector.start();
-        
-        
-        setInterval(async () => {
-            let result = await PAICode.executeString('pai-net get-messages');
-            result = result[0];
-            
-            if(result.response.success)
-            {
-                let responses = result.response.data;
-                let display = [];
-                for (let i = 0; i < responses.length; i++) {
-                    let commandsInMsg =  responses[i];
-                    for (let j = 0; j < commandsInMsg.length; j++) {
-                        display.push(commandsInMsg[j].response);
-                    }
-                }
     
-                if(display.length > 0)
-                    console.log(display);
-            }
-            
-        },1000);
-
+    
+        await getMessages();
     
         PAICode.start();
     } catch (e) {
@@ -88,6 +68,29 @@ async function main()
     return true;
 }
 
+async function getMessages()
+{
+    
+    let result = await PAICode.executeString('pai-net get-messages');
+    result = result[0];
+    
+    if(result.response.success)
+    {
+        let responses = result.response.data;
+        let display = [];
+        for (let i = 0; i < responses.length; i++) {
+            let commandsInMsg =  responses[i];
+            for (let j = 0; j < commandsInMsg.length; j++) {
+                display.push(commandsInMsg[j].response);
+            }
+        }
+        
+        if(display.length > 0)
+            console.log(display);
+    }
+    
+    setTimeout(getMessages, 1000);
+}
 
 
 function initPAINET()
