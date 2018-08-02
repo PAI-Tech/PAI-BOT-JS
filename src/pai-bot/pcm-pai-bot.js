@@ -1,4 +1,5 @@
 const { PAICodeCommand, PAICodeModule } = require('@pai-tech/pai-code');
+const npm = require('npm');
 
 class PCM_PAI_BOT extends PAICodeModule
 {	
@@ -23,7 +24,13 @@ functions:
     {
         super.load(this);
         this.load_method_with_command("show-name",'show_name');
+        this.load_method_with_command("learn",'learn');
         
+    }
+    
+    
+    setModuleName() {
+        return 'pai-bot';
     }
     
     /**
@@ -34,11 +41,34 @@ functions:
     {
         return new Promise( (resolve,reject) => {
             let name = 'temp name';
-            console.log(name);
             resolve(name);
         });
     }
     
+    /**
+     *
+     * @param {PAICodeCommand} cmd
+     */
+    learn(cmd) {
+        return new Promise((resolve, reject) => {
+            let rest = "";
+            
+            
+            npm.load(null, function (er) {
+                if (er) return handlError(er);
+                npm.commands.install(['supports-color'], function (er, data) {
+                    if (er) return commandFailed(er)
+                    // command succeeded, and data might have some info
+                });
+                npm.registry.log.on('log', function (message) {
+                    console.log(message);
+                })
+            });
+            
+            resolve(res);
+        });
+        
+    }
    
     
 }

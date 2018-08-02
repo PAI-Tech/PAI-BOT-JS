@@ -152,15 +152,14 @@ class PAIBotManager {
     
     /**
      *
-     * @param {String} botNickname
      * @return {Promise<PAIBot>}
      */
-    createNewBot(botNickname) {
+    createNewBot() {
         return new Promise( async (resolve,reject) => {
             
             let bot = new PAIBot();
             
-            bot.nickname = botNickname;
+            bot.nickname = 'sample bot';
             bot.id = PAIUtils.pai_guid();
             bot.createdAt = (new Date()).getTime();
             bot.status = PAIBotStatus.NEW;

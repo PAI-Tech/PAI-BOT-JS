@@ -19,8 +19,10 @@
   "dependencies": {
     "@pai-tech/pai-code": "^1.0.91",
     "@pai-tech/pai-conntectors": "^1.0.2",
-    "@pai-tech/pai-net": "^1.0.5",
+    "@pai-tech/pai-net": "^1.0.6",
     "@pai-tech/pai-os": "^1.0.1",
-    "shelljs": "^0.8.2"
+    "npm": "^6.3.0",
+    "shelljs": "^0.8.2",
+    "supports-color": "^5.4.0"
   }
 }
