@@ -98,55 +98,6 @@ function getMessages()
 }
 
 
-function initPAINET()
-{
-    const BASE_URL = "http://stage.pai-tech.org:3000";
-    
-    Config.init({
-        BASE_URL
-    });
-}
-
-
-async function askBotName()
-{
-    let shouldCreateBot = await askQuestion('Cannot find PAIBot on your machine. do you want to create one ? ','yes');
-    if(shouldCreateBot === 'yes')
-    {
-        let botName = await askQuestion('OK. Choose a nickname for your bot:',null);
-        return botName;
-    }
-    return null;
-}
-
-/**
- *
- * @param {String} question
- * @param {String} defaultValue
- * @return {Promise<any>}
- */
-function askQuestion(question, defaultValue)
-{
-    return new Promise((resolve,reject) => {
-        const rl = readline.createInterface({
-            input: process.stdin,
-            output: process.stdout
-        });
-        
-        let questionAndDefault = question + ((defaultValue) ? " (" + defaultValue + ") " : "") + `
-`;
-        rl.question(questionAndDefault, (answer) => {
-            rl.close();
-            answer = answer.trim();
-            if(!answer || answer.length == 0)
-                answer = defaultValue;
-            return resolve(answer);
-        });
-        
-    });
-}
-
-
 /**
  *
  * @return {Promise<boolean>}
@@ -160,7 +111,8 @@ async function loadModules(){
     ];
     
     for (let i = 0; i < modules.length; i++) {
-        let success = await PAICode.loadModule(modules[i].setModuleName(),modules[i]);
+        
+        let success =  await modules[i].registerModule();
         if(!success)
             return false;
     }
@@ -179,11 +131,7 @@ async function loadBot()
     
     if(!activeBot)
     {
-        let botNickname = await askBotName();
-        if(botNickname)
-            activeBot = await manager.createNewBot(botNickname);
-        else
-            throw new Error('No active bots!');
+        throw new Error('No active bots!');
     }
     
     return (activeBot && activeBot.id && activeBot.id.length > 0);
@@ -201,8 +149,6 @@ async function loadModulesConfig()
     let botSettingsFolder = `${paiOSFolder}Bot/${manager.activeBot.id}/settings/`;
     paiNET.config.storage = new PAIModuleConfigStorageFiles({filePath:`${botSettingsFolder}${paiNET.setModuleName()}.json`});
 }
-
-
 
 
 main().then((success) => {

@@ -25,7 +25,6 @@ functions:
         super.load(this);
         this.load_method_with_command("show-name",'show_name');
         this.load_method_with_command("learn",'learn');
-        
     }
     
     
