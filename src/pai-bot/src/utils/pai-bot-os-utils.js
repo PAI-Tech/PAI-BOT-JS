@@ -1,12 +1,11 @@
 const PAI_FOLDER = '/var/PAI/';
 const PAIBot = require('../models/pai-bot');
 
-
 /**
  *
  * @return {string}
  */
-function getBotContainerFolder()
+function getBotFolder()
 {
     return `${PAI_FOLDER}Bot/`;
 }
@@ -16,62 +15,46 @@ function getBotContainerFolder()
  *
  * @return {string}
  */
-function getActiveBotsFilePath()
+function getBotSettingsFolder()
 {
-    return getBotContainerFolder() + 'active-bots.json';
+    return getBotFolder() + 'settings/';
 }
 
 
 /**
  *
- * @param {PAIBot} bot
  * @return {string}
  */
-function getBotFolder(bot)
+function getBotSettingsFile()
 {
-    return getBotContainerFolder() + bot.id + '/';
+    return getBotSettingsFolder() + 'settings.json';
 }
-
 
 /**
  *
- * @param {PAIBot} bot
  * @return {string}
  */
-function getBotSettingsFolder(bot)
+function getBotStartupFile()
 {
-    return getBotFolder(bot) + 'settings/';
-}
-
-
-/**
- *
- * @param {PAIBot} bot
- * @return {string}
- */
-function getBotStartupFile(bot)
-{
-    return getBotFolder(bot) + 'startup.pai';
+    return getBotFolder() + 'startup.pai';
 }
 
 
 
 /**
  *
- * @param {PAIBot} bot
  * @return {string}
  */
-function getBotQueueFolder(bot)
+function getBotQueueFolder()
 {
-    return getBotFolder(bot) + 'queue/';
+    return getBotFolder() + 'queue/';
 }
 
 
 module.exports = {
-    getBotContainerFolder,
-    getActiveBotsFilePath,
     getBotFolder,
     getBotSettingsFolder,
+    getBotSettingsFile,
     getBotStartupFile,
     getBotQueueFolder
 };

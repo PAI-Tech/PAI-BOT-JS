@@ -17,17 +17,18 @@ const { PAI_OS } = require('@pai-tech/pai-os');
 const PAIModuleConfigStorageFiles = require('./src/pai-module-config-storage-files/pai-module-config-storage-files');
 const { PAIBotModule } = require('./index');
 
+const BotBaseModules = require('./src/pai-bot/src/modules/bot-base-modules');
+
 let manager = new PAIBotManager();
 let fileConnector;
 let httpConnector;
 
-let paiOS = new PAI_OS();
-let paiNET = new PAINETModule();
-let paiBOT = new PAIBotModule();
+let context = new PAICodeCommandContext('sender','gateway');
 
 async function main()
 {
     try {
+        await BotBaseModules.load();
     
         let modulesLoaded = await loadModules();
         
@@ -36,7 +37,7 @@ async function main()
             // modules failed to load
         }
         
-        await PAICode.executeString('pai-code show version');
+        await PAICode.executeString('pai-code show version',context);
         
         let botLoaded = await loadBot();
         if(!botLoaded)
@@ -44,8 +45,6 @@ async function main()
             // bot failed to load
         }
         
-        
-        await loadModulesConfig();
     
         // console.log(`${await paiNET.config.getConfigParam('nickname')}     ${await  paiNET.config.getConfigParam('id')}`);
     
@@ -70,7 +69,7 @@ async function main()
 
 function getMessages()
 {
-    PAICode.executeString('pai-net get-messages')
+    PAICode.executeString('pai-net get-messages',context)
     .then(results => {
         let result = results[0];
 
@@ -104,15 +103,9 @@ function getMessages()
  */
 async function loadModules(){
     
-    let modules = [
-        paiOS,
-        paiBOT,
-        paiNET
-    ];
-    
-    for (let i = 0; i < modules.length; i++) {
+    for (let i = 0; i < BotBaseModules.modules.length; i++) {
+        let success =  await BotBaseModules.modules[i].registerModule();
         
-        let success =  await modules[i].registerModule();
         if(!success)
             return false;
     }
@@ -136,20 +129,6 @@ async function loadBot()
     
     return (activeBot && activeBot.id && activeBot.id.length > 0);
 }
-
-/**
- * Load configuration for every module
- * @return {Promise<void>}
- */
-async function loadModulesConfig()
-{
-    let paiOSFolder = `/var/PAI/`;
-    await paiOS.config.setConfigParam('folderPath',paiOSFolder);
-    
-    let botSettingsFolder = `${paiOSFolder}Bot/${manager.activeBot.id}/settings/`;
-    paiNET.config.storage = new PAIModuleConfigStorageFiles({filePath:`${botSettingsFolder}${paiNET.setModuleName()}.json`});
-}
-
 
 main().then((success) => {
 
