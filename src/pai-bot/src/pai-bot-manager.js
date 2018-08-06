@@ -3,7 +3,7 @@ const PAIBotStatus = require('./models/pai-bot-status');
 const fs = require('fs');
 const shell = require('shelljs');
 const PAIBotOSUtils = require('./utils/pai-bot-os-utils');
-const { PAICode, PAIUtils } = require('@pai-tech/pai-code');
+const { PAICode, PAIUtils, PAICodeCommandContext } = require('@pai-tech/pai-code');
 
 /**
  * Create all bot files in PAI-OS
@@ -126,7 +126,8 @@ class PAIBotManager {
             let botStartupCode = await readFile(PAIBotOSUtils.getBotStartupFile());
             if(botStartupCode)
             {
-                let startupResponse = await PAICode.executeString(botStartupCode);
+                let context = new PAICodeCommandContext('sender','gateway');
+                let startupResponse = await PAICode.executeString(botStartupCode,context);
             }
             
             this.activeBot = bot;
