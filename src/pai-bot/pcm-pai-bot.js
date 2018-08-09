@@ -88,11 +88,14 @@ functions:
             
             let paiModule = cmd.params["2"].value;
             let params = {name:paiModule};
-            let paramsString = JSON.stringify(params);
-            
+            let paramsString = JSON.stringify(params).replace(/["]/g,"\\\"");
             let context = new PAICodeCommandContext(cmd.context.sender,cmd.context.gateway,cmd);
-            
-            let commandsArray = await PAICode.executeString(`pai-net get-knowledge-base filters:${paramsString}`,context);
+            let commandsArray = null;
+            try{
+                commandsArray = await PAICode.executeString(`pai-net get-knowledge-base filters:"${paramsString}"`,context);
+            }catch (e) {
+                console.error(e);
+            }
             
             if(!commandsArray || commandsArray.length == 0)
             {
