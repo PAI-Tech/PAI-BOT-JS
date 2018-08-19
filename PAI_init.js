@@ -74,6 +74,7 @@ async function main()
 async function loadModules(){
     
     for (let i = 0; i < BotBaseModules.modules.length; i++) {
+        
         let success =  await BotBaseModules.modules[i].registerModule();
         
         if(!success)

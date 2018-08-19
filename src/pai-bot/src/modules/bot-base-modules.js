@@ -4,7 +4,6 @@ const PAIModuleConfigStorageFiles = require('../../../pai-module-config-storage-
 const PAIBotModule = require('../../pcm-pai-bot');
 
 
-
 const paiBOT = new PAIBotModule();
 const paiOS = new PAI_OS();
 const paiNET = new PAINETModule();
@@ -29,6 +28,7 @@ async function loadModulesConfig()
         let paiOSFolder = await paiOS.config.getConfigParam('PAI_OS_PATH');
         
         let botSettingsFolder = `${paiOSFolder}/Bot/settings/`;
+        
         paiNET.config.storage = new PAIModuleConfigStorageFiles({
             filePath: botSettingsFolder + paiNET.setModuleName() + '.json'
         });

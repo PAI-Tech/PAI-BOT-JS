@@ -7,15 +7,9 @@ const {
     PAICodeModule,
     PAIModuleConfigParam
 } = require('@pai-tech/pai-code');
-const {PAINETModule} = require('@pai-tech/pai-net');
-const {Config} = require('@pai-tech/pai-net-sdk');
 const {PAIFileConnector, PAIHTTPConnector} = require('@pai-tech/pai-conntectors');
 const PAIBotManager = require('./src/pai-bot/src/pai-bot-manager');
-const readline = require('readline');
-const {PAI_OS} = require('@pai-tech/pai-os');
-const PAIModuleConfigStorageFiles = require('./src/pai-module-config-storage-files/pai-module-config-storage-files');
 const {PAIBotModule} = require('./index');
-
 const BotBaseModules = require('./src/pai-bot/src/modules/bot-base-modules');
 
 let manager = new PAIBotManager();
@@ -26,6 +20,7 @@ let context = new PAICodeCommandContext('sender', 'gateway');
 
 async function main() {
     try {
+        
         await BotBaseModules.load();
         
         let modulesLoaded = await loadModules();
@@ -123,6 +118,7 @@ async function loadBot() {
     
     return (activeBot && activeBot.id && activeBot.id.length > 0);
 }
+
 
 main().then((success) => {
 

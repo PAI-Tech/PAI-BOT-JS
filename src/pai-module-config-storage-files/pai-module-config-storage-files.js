@@ -78,6 +78,7 @@ class PAIModuleConfigStorageFiles extends PAIModuleConfigStorage {
         let params = await getAllParamsFromFile(this.config.filePath);
         params[paramName] = value;
         await saveToFile(this.config.filePath,JSON.stringify(params));
+        return true;
     }
     
     /**

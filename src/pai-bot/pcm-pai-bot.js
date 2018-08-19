@@ -1,6 +1,6 @@
-const { PAICode, PAICodeCommand, PAICodeModule,PAIModuleConfigParam,PAIModuleConfig,PAICodeCommandContext,PAILogger } = require('@pai-tech/pai-code');
+const { PAICode, PAICodeCommand, PAICodeModule,PAIModuleConfigParam,PAIModuleConfig,PAICodeCommandContext,PAILogger,PAIModuleCommandSchema,PAIModuleCommandParamSchema } = require('@pai-tech/pai-code');
 const npm = require('npm');
-
+const PAIModuleConfigStorageFiles = require('./../pai-module-config-storage-files/pai-module-config-storage-files')
 
 function npmInstall(packageName)
 {
@@ -51,11 +51,17 @@ functions:
      * load basic module commands from super
      * and load all the functions for this module
      */
-    load()
+    async load()
     {
-        super.load(this);
-        this.load_method_with_command("show-name",'show_name');
-        this.load_method_with_command("learn",'learn');
+        await super.load(this);
+        
+        this.loadCommandWithSchema(new PAIModuleCommandSchema({
+            op: "learn",
+            func:"learn",
+            params: {
+                "2": new PAIModuleCommandParamSchema("2","PAI Module name to learn",true)
+            }
+        }));
     }
     
     
@@ -126,6 +132,13 @@ functions:
             const moduleContainer = require(knowledgebase.repository);
             const moduleInterface = moduleContainer[knowledgebase.pai_interface];
             let moduleInstance = new moduleInterface();
+    
+            let paiOSFolder = await PAICode.modules['pai-os'].config.getConfigParam('PAI_OS_PATH');
+            let botSettingsFolder = `${paiOSFolder}/Bot/settings/`;
+            
+            moduleInstance.config.storage = new PAIModuleConfigStorageFiles({
+                filePath: botSettingsFolder + knowledgebase.name + '.json'
+            });
             
             PAICode.loadModule(moduleInstance.setModuleName(),moduleInstance);
     
