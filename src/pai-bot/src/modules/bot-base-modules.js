@@ -25,7 +25,12 @@ async function loadModulesConfig()
 {
     if(!modulesLoaded)
     {
+        await paiOS.getOSPath();
+        
         let paiOSFolder = await paiOS.config.getConfigParam('PAI_OS_PATH');
+        
+        if(!paiOSFolder)
+            throw new Error('$PAI is not defined in server');
         
         let botSettingsFolder = `${paiOSFolder}/Bot/settings/`;
         

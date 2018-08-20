@@ -19,9 +19,9 @@
   "dependencies": {
     "@pai-tech/pai-code": "^1.1.22",
     "@pai-tech/pai-conntectors": "^1.0.3",
-    "@pai-tech/pai-master-bot": "^1.0.5",
-    "@pai-tech/pai-net": "^1.1.12",
-    "@pai-tech/pai-os": "^1.0.4",
+    "@pai-tech/pai-master-bot": "^1.0.67",
+    "@pai-tech/pai-net": "^1.1.15",
+    "@pai-tech/pai-os": "^1.0.6",
     "@pai-tech/pai-vault": "^1.0.0",
     "npm": "^6.3.0",
     "shelljs": "^0.8.2",

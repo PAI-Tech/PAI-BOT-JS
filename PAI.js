@@ -29,16 +29,10 @@ async function main() {
             // modules failed to load
         }
         
-        await PAICode.executeString('pai-code show version', context);
-        
         let botLoaded = await loadBot();
         if (!botLoaded) {
             // bot failed to load
         }
-        
-        
-        // console.log(`${await paiNET.config.getConfigParam('nickname')}     ${await  paiNET.config.getConfigParam('id')}`);
-        
         
         fileConnector = new PAIFileConnector();
         fileConnector.start();
