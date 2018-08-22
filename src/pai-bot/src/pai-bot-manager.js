@@ -13,18 +13,18 @@ const { PAICode, PAIUtils, PAICodeCommandContext } = require('@pai-tech/pai-code
  */
 function createBotFiles(bot)
 {
-    return new Promise((resolve,reject) => {
+    return new Promise(async (resolve,reject) => {
         let json = JSON.stringify(bot);
         
-        let settingsFolder = PAIBotOSUtils.getBotSettingsFolder();
-        let queueFolder = PAIBotOSUtils.getBotQueueFolder();
+        let settingsFolder = await PAIBotOSUtils.getBotSettingsFolder();
+        let queueFolder = await PAIBotOSUtils.getBotQueueFolder();
         
         shell.mkdir('-p', settingsFolder);
         shell.mkdir('-p', queueFolder);
         
-        fs.writeFile(PAIBotOSUtils.getBotStartupFile(), 'pai-code show version', 'utf8', function(err,data){
+        fs.writeFile(await PAIBotOSUtils.getBotStartupFile(), 'pai-code show version', 'utf8', async function(err,data){
             
-            fs.writeFile(PAIBotOSUtils.getBotSettingsFile(), json, 'utf8', function(err,data){
+            fs.writeFile(await PAIBotOSUtils.getBotSettingsFile(), json, 'utf8', function(err,data){
                 if(err)
                     return reject(err);
                 return resolve(data);
@@ -114,16 +114,17 @@ class PAIBotManager {
      */
     async loadBots()
     {
-        let file = await isFileExists(PAIBotOSUtils.getBotSettingsFile());
+        let botSettingsFile = await PAIBotOSUtils.getBotSettingsFile();
+        let file = await isFileExists(botSettingsFile);
         if(file)
         {
-            let fileData = await readFile(PAIBotOSUtils.getBotSettingsFile());
+            let fileData = await readFile(botSettingsFile);
             let botObj = JSON.parse(fileData);
     
     
             let bot = Object.assign(new PAIBot(),botObj);
             
-            let botStartupCode = await readFile(PAIBotOSUtils.getBotStartupFile());
+            let botStartupCode = await readFile(await PAIBotOSUtils.getBotStartupFile());
             if(botStartupCode)
             {
                 let context = new PAICodeCommandContext('sender','gateway');

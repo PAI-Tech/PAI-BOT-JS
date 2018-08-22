@@ -1,5 +1,6 @@
 const { PAICode, PAICodeCommand, PAICodeModule,PAIModuleConfigParam,PAIModuleConfig,PAICodeCommandContext,PAILogger,PAIModuleCommandSchema,PAIModuleCommandParamSchema } = require('@pai-tech/pai-code');
 const npm = require('npm');
+const os = require('os');
 const PAIModuleConfigStorageFiles = require('./../pai-module-config-storage-files/pai-module-config-storage-files')
 
 function npmInstall(packageName)
@@ -133,8 +134,8 @@ functions:
             const moduleInterface = moduleContainer[knowledgebase.pai_interface];
             let moduleInstance = new moduleInterface();
     
-            let paiOSFolder = await PAICode.modules['pai-os'].config.getConfigParam('PAI_OS_PATH');
-            let botSettingsFolder = `${paiOSFolder}/Bot/settings/`;
+            let paiOSFolder = await PAICode.modules['pai-os'].getOSPath();
+            let botSettingsFolder = `${paiOSFolder}${path.sep}Bot${path.sep}settings${path.sep}`;
             
             moduleInstance.config.storage = new PAIModuleConfigStorageFiles({
                 filePath: botSettingsFolder + knowledgebase.name + '.json'

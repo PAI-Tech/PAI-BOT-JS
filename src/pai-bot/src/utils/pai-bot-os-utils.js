@@ -1,13 +1,22 @@
-const PAI_FOLDER = '/var/PAI/';
-const PAIBot = require('../models/pai-bot');
+let _PAI_FOLDER = null;
+const PAI_OS = require('@pai-tech/pai-os').PAI_OS;
+const path = require('path');
+
+async function getPAIFolder(){
+    if(!_PAI_FOLDER)
+    {
+        _PAI_FOLDER = await (new PAI_OS()).getOSPath();
+    }
+    return _PAI_FOLDER;
+}
 
 /**
  *
  * @return {string}
  */
-function getBotFolder()
+async function getBotFolder()
 {
-    return `${PAI_FOLDER}Bot/`;
+    return `${await getPAIFolder()}${path.sep}Bot${path.sep}`;
 }
 
 
@@ -15,9 +24,9 @@ function getBotFolder()
  *
  * @return {string}
  */
-function getBotSettingsFolder()
+async function getBotSettingsFolder()
 {
-    return getBotFolder() + 'settings/';
+    return (await getBotFolder()) + `settings${path.sep}`;
 }
 
 
@@ -25,18 +34,18 @@ function getBotSettingsFolder()
  *
  * @return {string}
  */
-function getBotSettingsFile()
+async function getBotSettingsFile()
 {
-    return getBotSettingsFolder() + 'settings.json';
+    return (await getBotSettingsFolder()) + 'settings.json';
 }
 
 /**
  *
  * @return {string}
  */
-function getBotStartupFile()
+async function getBotStartupFile()
 {
-    return getBotFolder() + 'startup.pai';
+    return (await getBotFolder()) + 'startup.pai';
 }
 
 
@@ -45,9 +54,9 @@ function getBotStartupFile()
  *
  * @return {string}
  */
-function getBotQueueFolder()
+async function getBotQueueFolder()
 {
-    return getBotFolder() + 'queue/';
+    return (await getBotFolder()) + 'queue' + path.sep;
 }
 
 
