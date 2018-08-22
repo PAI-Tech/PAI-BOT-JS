@@ -1,28 +1,6 @@
-const { PAICode, PAICodeCommand, PAICodeModule,PAIModuleConfigParam,PAIModuleConfig,PAICodeCommandContext,PAILogger,PAIModuleCommandSchema,PAIModuleCommandParamSchema } = require('@pai-tech/pai-code');
-const npm = require('npm');
-const os = require('os');
-const PAIModuleConfigStorageFiles = require('./../pai-module-config-storage-files/pai-module-config-storage-files')
+const { PAICodeModule,PAIModuleConfigParam,PAIModuleCommandSchema,PAIModuleCommandParamSchema } = require('@pai-tech/pai-code');
 
-function npmInstall(packageName)
-{
-    return new Promise((resolve,reject) => {
-        
-        npm.load(null, function (er) {
-            if (er)
-                return console.log(er);
-            
-            npm.commands.install([packageName], function (er, data) {
-                if (er) {
-                    console.log(er);
-                }
-                resolve(data);
-                // command succeeded, and data might have some info
-            });
-            
-        });
-        
-    });
-}
+const CONFIG_BOT_MODULES = "bot_modules";
 
 
 
@@ -42,7 +20,7 @@ functions:
         super(infoText);
         
         this.config.schema = [
-            new PAIModuleConfigParam('Modules list',"This list specify the modules that the Bot has learned","bot_modules","[]")
+            new PAIModuleConfigParam('Modules list',"This list specify the modules that the Bot has learned",CONFIG_BOT_MODULES,"[]")
         ];
         
         
@@ -63,6 +41,8 @@ functions:
                 "2": new PAIModuleCommandParamSchema("2","PAI Module name to learn",true)
             }
         }));
+        
+        await this.loadExistingModules();
     }
     
     
@@ -70,87 +50,11 @@ functions:
         return 'pai-bot';
     }
     
-    /**
-     *
-     * @param {PAICodeCommand} cmd
-     */
-    show_name(cmd)
-    {
-        return new Promise( (resolve,reject) => {
-            let name = 'temp name';
-            resolve(name);
-        });
-    }
-    
-    /**
-     *
-     * @param {PAICodeCommand} cmd
-     * @return {Promise< KnowledgeBase[] >}
-     */
-    learn(cmd) {
-        return new Promise(async (resolve, reject) => {
-            
-            if(!cmd.params["2"] || !cmd.params["2"].value)
-                reject(new Error("module not specified"));
-            
-            let paiModule = cmd.params["2"].value;
-            let params = {name:paiModule};
-            let paramsString = JSON.stringify(params).replace(/["]/g,"\\\"");
-            let context = new PAICodeCommandContext(cmd.context.sender,cmd.context.gateway,cmd);
-            let commandsArray = null;
-            try{
-                commandsArray = await PAICode.executeString(`pai-net get-knowledge-base filters:"${paramsString}"`,context);
-            }catch (e) {
-                console.error(e);
-            }
-            
-            if(!commandsArray || commandsArray.length == 0)
-            {
-                return reject(new Error('knowledge base not found for module:' + paiModule));
-            }
-            
-            let response = commandsArray[0].response;
-            
-            
-            if(!response.success)
-            {
-                return reject(response.error);
-            }
-            
-            
-            let listResponse = response.data.data;
-    
-            if(listResponse.count == 0)
-            {
-                return reject(new Error('knowledge base not found for module:' + paiModule));
-            }
-            
-            
-            let knowledgebase = listResponse.records[0];
-            
-            let npmData = await npmInstall(knowledgebase.repository);
-            
-            const moduleContainer = require(knowledgebase.repository);
-            const moduleInterface = moduleContainer[knowledgebase.pai_interface];
-            let moduleInstance = new moduleInterface();
-    
-            let paiOSFolder = await PAICode.modules['pai-os'].getOSPath();
-            let botSettingsFolder = `${paiOSFolder}${path.sep}Bot${path.sep}settings${path.sep}`;
-            
-            moduleInstance.config.storage = new PAIModuleConfigStorageFiles({
-                filePath: botSettingsFolder + knowledgebase.name + '.json'
-            });
-            
-            PAICode.loadModule(moduleInstance.setModuleName(),moduleInstance);
-    
-            PAILogger.info('New module has been loaded => ' + moduleInstance.setModuleName());
-            
-            resolve(listResponse);
-        });
-        
-    }
-   
-    
 }
+
+
+const learnExt = require('./src/module-ext/learn');
+
+learnExt(PCM_PAI_BOT);
 
 module.exports = PCM_PAI_BOT;
