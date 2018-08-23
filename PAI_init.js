@@ -2,18 +2,10 @@
 const {
     PAICode,
     PAILogger,
-    PAICodeEvent,
-    PAICodeCommand,
-    PAICodeCommandContext,
-    PAICodeModule,
-    PAIModuleConfigParam
+    PAICodeCommandContext
 } = require('@pai-tech/pai-code');
 
-const { PAINETModule } = require('@pai-tech/pai-net');
 const PAIBotManager = require('./src/pai-bot/src/pai-bot-manager');
-const { PAI_OS } = require('@pai-tech/pai-os');
-const PAIModuleConfigStorageFiles = require('./src/pai-module-config-storage-files/pai-module-config-storage-files');
-const { PAIBotModule } = require('./index');
 
 const BotBaseModules = require('./src/pai-bot/src/modules/bot-base-modules');
 
@@ -53,14 +45,16 @@ async function main()
         {
             // bot failed to load
         }
-        let context = new PAICodeCommandContext('sender','gateway');
-        let cmdArray = await PAICode.executeString(initScript,context);
-    
-        let a = "";
+        
+        if(initScript && initScript.length > 0)
+        {
+            let context = new PAICodeCommandContext('sender','gateway');
+            let cmdArray = await PAICode.executeString(initScript,context);
+        }
         
     } catch (e) {
         PAICode.stop();
-        console.log(e);
+        PAILogger.error(e);
     }
     
     return true;

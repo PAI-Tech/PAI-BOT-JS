@@ -124,8 +124,8 @@ async function getBotModules(config)
 /**
  *
  * @param {PAIModuleConfig} config
- * @param paramName
- * @param newModule
+ * @param {String} paramName
+ * @param {String} newModule
  * @return {Promise<boolean>} success
  */
 async function addBotModuleToConfig(config, newModule){
@@ -188,7 +188,6 @@ module.exports = (module) => {
 
         for (let i = 0; i < modules.length; i++) {
             /**
-             *
              * @type {KnowledgeBase}
              */
             let module = JSON.parse(modules[i]);
