@@ -37,7 +37,7 @@ async function loadModulesConfig()
         });
         
         paiBOT.config.storage = new PAIModuleConfigStorageFiles({
-            filePath: botSettingsFolder + 'config.json'
+            filePath: botSettingsFolder + paiBOT.setModuleName() + '.json'
         });
         
         modulesLoaded = true;
