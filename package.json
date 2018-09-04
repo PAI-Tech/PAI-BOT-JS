@@ -21,7 +21,7 @@
     "@pai-tech/pai-conntectors": "^1.0.3",
     "@pai-tech/pai-master-bot": "^1.0.70",
     "@pai-tech/pai-net": "^1.1.20",
-    "@pai-tech/pai-net-sdk": "^1.0.95",
+    "@pai-tech/pai-net-sdk": "^1.0.96",
     "@pai-tech/pai-os": "^1.0.64",
     "@pai-tech/pai-vault": "^1.0.21",
     "npm": "^6.4.1",
