@@ -37,8 +37,8 @@ async function main() {
         fileConnector = new PAIFileConnector();
         fileConnector.start();
         
-        // httpConnector = new PAIHTTPConnector( { port:3000 } );
-        // httpConntector.start();
+        httpConnector = new PAIHTTPConnector( { port:3001 } );
+        httpConnector.start();
         
         
         await getMessages();
