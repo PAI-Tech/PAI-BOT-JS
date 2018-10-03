@@ -1,6 +1,6 @@
 {
   "name": "@pai-tech/pai-bot",
-  "version": "1.0.1",
+  "version": "1.0.11",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -19,11 +19,11 @@
   "dependencies": {
     "@pai-tech/pai-code": "1.1.27",
     "@pai-tech/pai-conntectors": "^1.0.3",
-    "@pai-tech/pai-master-bot": "^1.0.70",
-    "@pai-tech/pai-net": "^1.1.20",
-    "@pai-tech/pai-net-sdk": "^1.0.96",
+    "@pai-tech/pai-master-bot": "^1.0.73",
+    "@pai-tech/pai-net": "^1.1.25",
+    "@pai-tech/pai-net-sdk": "^1.1.19",
     "@pai-tech/pai-os": "^1.0.64",
-    "@pai-tech/pai-vault": "^1.0.21",
+    "@pai-tech/pai-vault": "^1.0.22",
     "npm": "^6.4.1",
     "shelljs": "^0.8.2",
     "supports-color": "^5.4.0"

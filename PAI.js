@@ -7,10 +7,12 @@ const {
     PAICodeModule,
     PAIModuleConfigParam
 } = require('@pai-tech/pai-code');
+
 const {PAIFileConnector, PAIHTTPConnector} = require('@pai-tech/pai-conntectors');
 const PAIBotManager = require('./src/pai-bot/src/pai-bot-manager');
 const {PAIBotModule} = require('./index');
 const BotBaseModules = require('./src/pai-bot/src/modules/bot-base-modules');
+const PAIBotOSUtils = require('./src/pai-bot/src/utils/pai-bot-os-utils');
 
 let manager = new PAIBotManager();
 let fileConnector;
@@ -20,6 +22,7 @@ let context = new PAICodeCommandContext('sender', 'gateway');
 
 async function main() {
     try {
+        PAICode.start();
         
         await BotBaseModules.load();
         
@@ -34,16 +37,17 @@ async function main() {
             // bot failed to load
         }
         
-        fileConnector = new PAIFileConnector();
+        let QFolder = await PAIBotOSUtils.getBotQueueFolder();
+        
+        fileConnector = new PAIFileConnector( { path: `${QFolder}/in.pai` } );
         fileConnector.start();
         
-        httpConnector = new PAIHTTPConnector( { port:3001 } );
+        httpConnector = new PAIHTTPConnector( { port:3141 } );
         httpConnector.start();
         
+        // await getMessages();
         
-        await getMessages();
         
-        PAICode.start();
     } catch (e) {
         PAICode.stop();
         console.log(e);
@@ -51,36 +55,6 @@ async function main() {
     
     return true;
 }
-
-function getMessages() {
-    PAICode.executeString('pai-net get-messages', context)
-        .then(results => {
-            let result = results[0];
-            
-            if (result.response.success) {
-                let responses = result.response.data;
-                if (responses) {
-                    let display = [];
-                    for (let i = 0; i < responses.length; i++) {
-                        let commandsInMsg = responses[i];
-                        for (let j = 0; j < commandsInMsg.length; j++) {
-                            display.push(commandsInMsg[j].response);
-                        }
-                    }
-                    
-                    if (display.length > 0)
-                        console.log(display);
-                }
-            }
-            
-            setTimeout(getMessages, 1000);
-        })
-        .catch(err => {
-            console.error(err);
-            setTimeout(getMessages, 1000);
-        });
-}
-
 
 /**
  *
@@ -117,5 +91,5 @@ async function loadBot() {
 main().then((success) => {
 
 }).catch(e => {
-    console.log(e);
+    PAILogger.error(e);
 });
