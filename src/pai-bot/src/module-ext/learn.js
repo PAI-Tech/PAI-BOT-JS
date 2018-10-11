@@ -14,7 +14,7 @@ const CONFIG_BOT_MODULES = "bot_modules";
  */
 async function getPAIModuleFromKnowledgeBase(paiModule, parentCommand)
 {
-    let params = {name:paiModule};
+    let params = {canonicalName:paiModule, status: "PUBLISHED"};
     let paramsString = JSON.stringify(params).replace(/["]/g,"\\\"");
     let context = new PAICodeCommandContext(parentCommand.context.sender,parentCommand.context.gateway,parentCommand);
     let commandsArray = null;
@@ -26,7 +26,7 @@ async function getPAIModuleFromKnowledgeBase(paiModule, parentCommand)
     
     if(!commandsArray || commandsArray.length == 0)
     {
-        return reject(new Error('knowledge base not found for module:' + paiModule));
+        throw new Error('knowledge base not found for module:' + paiModule);
     }
     
     let response = commandsArray[0].response;
@@ -42,7 +42,7 @@ async function getPAIModuleFromKnowledgeBase(paiModule, parentCommand)
     
     if(listResponse.count == 0)
     {
-        return reject(new Error('knowledge base not found for module:' + paiModule));
+        throw new Error('knowledge base not found for module:' + paiModule);
     }
     
     
@@ -167,7 +167,9 @@ module.exports = (module) => {
             
             let paiModule = cmd.params["2"].value;
             
-            let knowledgeBase = await getPAIModuleFromKnowledgeBase(paiModule,cmd);
+            let knowledgeBase = await getPAIModuleFromKnowledgeBase(paiModule,cmd).catch(err => {
+                console.log(err);
+            });
             let npmData = await npmInstall(knowledgeBase.repository);
             
             await loadNpmModule(knowledgeBase);
