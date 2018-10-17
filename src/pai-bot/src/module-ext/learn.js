@@ -24,7 +24,7 @@ async function getPAIModuleFromKnowledgeBase(paiModule, parentCommand)
         console.error(e);
     }
     
-    if(!commandsArray || commandsArray.length == 0)
+    if(!commandsArray || commandsArray.length === 0)
     {
         throw new Error('knowledge base not found for module:' + paiModule);
     }
@@ -84,21 +84,23 @@ function npmInstall(packageName)
  */
 async function loadNpmModule(knowledgeBase)
 {
-    const moduleContainer = require(knowledgeBase.repository);
-    const moduleInterface = moduleContainer[knowledgeBase.pai_interface];
-    let moduleInstance = new moduleInterface();
-    
-    let paiOSFolder = await PAICode.modules['pai-os'].getOSPath();
-    let botSettingsFolder = `${paiOSFolder}${path.sep}Bot${path.sep}settings${path.sep}`;
-    
-    moduleInstance.config.storage = new PAIModuleConfigStorageFiles({
-        filePath: botSettingsFolder + knowledgeBase.name + '.json'
-    });
-    
-    PAICode.loadModule(moduleInstance.setModuleName(),moduleInstance);
-    
-    PAILogger.info('New module has been loaded => ' + moduleInstance.setModuleName());
-    
+    if(knowledgeBase.repository)
+    {
+        const moduleContainer = require(knowledgeBase.repository);
+        const moduleInterface = moduleContainer[knowledgeBase.pai_interface];
+        let moduleInstance = new moduleInterface();
+        
+        let paiOSFolder = await PAICode.modules['pai-os'].getOSPath();
+        let botSettingsFolder = `${paiOSFolder}${path.sep}Bot${path.sep}settings${path.sep}`;
+        
+        moduleInstance.config.storage = new PAIModuleConfigStorageFiles({
+            filePath: botSettingsFolder + knowledgeBase.name + '.json'
+        });
+        
+        PAICode.loadModule(moduleInstance.setModuleName(),moduleInstance);
+        
+        PAILogger.info('New module has been loaded => ' + moduleInstance.setModuleName());
+    }
 }
 
 
@@ -170,13 +172,15 @@ module.exports = (module) => {
             let knowledgeBase = await getPAIModuleFromKnowledgeBase(paiModule,cmd).catch(err => {
                 console.log(err);
             });
-            let npmData = await npmInstall(knowledgeBase.repository);
+            
+            if(knowledgeBase.repository)
+                let npmData = await npmInstall(knowledgeBase.repository);
             
             await loadNpmModule(knowledgeBase);
             
             await addBotModuleToConfig(this.config,JSON.stringify(knowledgeBase));
             
-            resolve(true);
+            resolve('I know ' + knowledgeBase.name + '!');
         });
         
     };
