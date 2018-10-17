@@ -84,7 +84,7 @@ function npmInstall(packageName)
  */
 async function loadNpmModule(knowledgeBase)
 {
-    if(knowledgeBase.repository)
+    if(knowledgeBase.repository && knowledgeBase.repository.length > 0)
     {
         const moduleContainer = require(knowledgeBase.repository);
         const moduleInterface = moduleContainer[knowledgeBase.pai_interface];
@@ -173,8 +173,8 @@ module.exports = (module) => {
                 console.log(err);
             });
             
-            if(knowledgeBase.repository)
-                let npmData = await npmInstall(knowledgeBase.repository);
+            if(knowledgeBase.repository && knowledgeBase.repository.length>0)
+                await npmInstall(knowledgeBase.repository);
             
             await loadNpmModule(knowledgeBase);
             
