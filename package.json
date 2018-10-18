@@ -1,6 +1,6 @@
 {
   "name": "@pai-tech/pai-bot",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -17,13 +17,13 @@
   },
   "homepage": "https://github.com/PAI-Tech/PAI-BOT-JS#readme",
   "dependencies": {
-    "@pai-tech/ethereum-wallet": "^1.0.5",
-    "@pai-tech/pai-code": "1.1.27",
+    "@pai-tech/ethereum-wallet": "^1.0.6",
+    "@pai-tech/pai-code": "1.1.28",
     "@pai-tech/pai-conntectors": "^1.0.6",
     "@pai-tech/pai-master-bot": "^1.0.75",
-    "@pai-tech/pai-net": "^1.1.25",
+    "@pai-tech/pai-net": "^1.1.28",
     "@pai-tech/pai-net-sdk": "^1.1.26",
-    "@pai-tech/pai-os": "^1.0.64",
+    "@pai-tech/pai-os": "^1.0.65",
     "@pai-tech/pai-vault": "^1.0.22",
     "npm": "^6.4.1",
     "shelljs": "^0.8.2",

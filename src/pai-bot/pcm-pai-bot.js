@@ -38,7 +38,7 @@ functions:
             op: "learn",
             func:"learn",
             params: {
-                "2": new PAIModuleCommandParamSchema("2","PAI Module name to learn",true)
+                "module": new PAIModuleCommandParamSchema("module","PAI Knowledge Base canonicalName to learn",true, "Module Canonical Name")
             }
         }));
         
