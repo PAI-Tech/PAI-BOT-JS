@@ -164,10 +164,10 @@ module.exports = (module) => {
     module.prototype.learn = function(cmd) {
         return new Promise(async (resolve, reject) => {
             
-            if(!cmd.params["2"] || !cmd.params["2"].value)
+            if(!cmd.params["module"] || !cmd.params["module"].value)
                 reject(new Error("module not specified"));
             
-            let paiModule = cmd.params["2"].value;
+            let paiModule = cmd.params["module"].value;
             
             let knowledgeBase = await getPAIModuleFromKnowledgeBase(paiModule,cmd).catch(err => {
                 console.log(err);
