@@ -110,6 +110,8 @@ async function loadBot()
 
 async function createNewBotInApi()
 {
+    let BASE_URL = await askQuestions("Please enter PAI-NET url:","http://dev.pai-net.org");
+    await PAICode.executeString(`pai-net config param_name:"base_url" param_value:"${BASE_URL}"`,context);
     
     let username = await askQuestions("Please enter PAI-NET username:");
     let password = await askQuestions("Please enter PAI-NET password:");
