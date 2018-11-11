@@ -97,8 +97,6 @@ class PAIBotManager {
             bot.id = PAIUtils.pai_guid();
             bot.createdAt = (new Date()).getTime();
             bot.status = PAIBotStatus.NEW;
-            
-            // TODO: create bot in API
     
             await createBotFiles(bot);
     
