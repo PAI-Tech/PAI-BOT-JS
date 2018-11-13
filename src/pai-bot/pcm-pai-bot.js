@@ -41,6 +41,17 @@ functions:
                 "module": new PAIModuleCommandParamSchema("module","PAI Knowledge Base canonicalName to learn",true, "Module Canonical Name")
             }
         }));
+    
+        this.loadCommandWithSchema(new PAIModuleCommandSchema({
+            op: "update-bot",
+            func:"update_bot"
+        }));
+    
+        this.loadCommandWithSchema(new PAIModuleCommandSchema({
+            op: "update-modules",
+            func:"update_modules"
+        }));
+    
         
         await this.loadExistingModules();
     }
@@ -54,7 +65,9 @@ functions:
 
 
 const learnExt = require('./src/module-ext/learn');
+const updatesExt = require('./src/module-ext/updates');
 
 learnExt(PCM_PAI_BOT);
+updatesExt(PCM_PAI_BOT);
 
 module.exports = PCM_PAI_BOT;
