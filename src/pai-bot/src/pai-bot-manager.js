@@ -80,7 +80,6 @@ class PAIBotManager {
     
     constructor () {
         this.activeBot = null;
-        process.pai.bot = null;
     }
     
     
@@ -144,7 +143,6 @@ class PAIBotManager {
      */
     setBot(bot){
         this.activeBot = bot;
-        process.pai.bot = bot;
     }
 }
 

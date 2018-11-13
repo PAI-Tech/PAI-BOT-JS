@@ -4,18 +4,21 @@ const PAIModuleConfigStorageFiles = require('../../../pai-module-config-storage-
 const PAIBotModule = require('../../pcm-pai-bot');
 const path = require('path');
 const PAISchedulerModule = require('@pai-tech/pai-scheduler').Module;
+const PAIMonitorModule = require('@pai-tech/pai-monitor').Module;
+
 
 const paiBOT = new PAIBotModule();
 const paiOS = new PAI_OS();
 const paiNET = new PAINETModule();
 const paiScheduler = new PAISchedulerModule();
-
+const paiMonitor = new PAIMonitorModule();
 
 const modules = [
     paiOS,
     paiNET,
     paiBOT,
-    paiScheduler
+    paiScheduler,
+    paiMonitor
 ];
 
 let modulesLoaded = false;
@@ -45,6 +48,10 @@ async function loadModulesConfig()
     
         paiScheduler.config.storage = new PAIModuleConfigStorageFiles({
             filePath: botSettingsFolder + paiScheduler.setModuleName() + '.json'
+        });
+        
+        paiMonitor.config.storage = new PAIModuleConfigStorageFiles({
+            filePath: botSettingsFolder + paiMonitor.setModuleName() + '.json'
         });
         
         modulesLoaded = true;
