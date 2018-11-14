@@ -99,10 +99,12 @@ async function loadBot()
     if(!activeBot)
     {
         activeBot = await manager.createNewBot();
-        let shouldCreateBot = (await askQuestions("No bots found, would you like to create one ?", "yes")) === "yes" ;
-        if(shouldCreateBot)
-            await createNewBotInApi();
-        
+        if(!(initScript && initScript.length > 0))
+        {
+            let shouldCreateBot = (await askQuestions("No bots found, would you like to create one ?", "yes")) === "yes" ;
+            if(shouldCreateBot)
+                await createNewBotInApi();
+        }
     }
     
     return (activeBot && activeBot.id && activeBot.id.length > 0);
