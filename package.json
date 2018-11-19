@@ -19,12 +19,12 @@
   "dependencies": {
     "@pai-tech/pai-code": "1.1.43",
     "@pai-tech/pai-conntectors": "^1.0.6",
-    "@pai-tech/pai-net": "^1.1.33",
-    "@pai-tech/pai-net-sdk": "^1.1.34",
-    "@pai-tech/pai-os": "^1.0.65",
+    "@pai-tech/pai-net": "^1.1.37",
+    "@pai-tech/pai-net-sdk": "^1.1.37",
+    "@pai-tech/pai-os": "^1.0.66",
     "@pai-tech/pai-scheduler": "^1.0.0",
     "npm": "^6.4.1",
-    "shelljs": "^0.8.2",
+    "shelljs": "^0.8.3",
     "supports-color": "^5.4.0"
   }
 }
