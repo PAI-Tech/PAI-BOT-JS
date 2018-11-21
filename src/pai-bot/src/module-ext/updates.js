@@ -21,7 +21,7 @@ module.exports = (module) => {
             let appDir = path.dirname(require.main.filename);
             
             // TODO: git pull
-            let response = await PAICode.executeString(`pai-os run command:"cd ${appDir} && git pull"`,cmd.context);
+            let response = await PAICode.executeString(`pai-os run command:"cd ${appDir} && git reset --hard && git pull"`,cmd.context);
             
             // TODO: npm install
             response = await PAICode.executeString(`pai-os run command:"cd ${appDir} && npm install"`,cmd.context);

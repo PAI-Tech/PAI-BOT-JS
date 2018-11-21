@@ -61,7 +61,9 @@ function npmInstall(packageName)
 {
     return new Promise((resolve,reject) => {
         
-        npm.load(null, function (er) {
+        npm.load({
+            save:false
+        }, function (er) {
             if (er)
                 return console.log(er);
             
@@ -205,6 +207,11 @@ module.exports = (module) => {
              * @type {KnowledgeBase}
              */
             let module = JSON.parse(modules[i]);
+    
+            if(module.repository && module.repository.length>0)
+                await npmInstall(module.repository);
+    
+    
             await loadNpmModule(module);
         }
     };
