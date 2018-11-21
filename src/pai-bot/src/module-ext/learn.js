@@ -2,6 +2,7 @@ const { PAICode, PAICodeCommand,PAICodeCommandContext,PAILogger, PAIModuleConfig
 const path = require('path');
 const npm = require('npm');
 const PAIModuleConfigStorageFiles = require('./../../../pai-module-config-storage-files/pai-module-config-storage-files')
+const PAIFilesStorageDataSource = require('./../../../pai-module-config-storage-files/pai-module-data-source-files');
 const { KnowledgeBase } = require('@pai-tech/pai-net-sdk');
 
 const CONFIG_BOT_MODULES = "bot_modules";
@@ -91,12 +92,19 @@ async function loadNpmModule(knowledgeBase)
         let moduleInstance = new moduleInterface();
         
         let paiOSFolder = await PAICode.modules['pai-os'].getOSPath();
-        let botSettingsFolder = `${paiOSFolder}${path.sep}Bot${path.sep}settings${path.sep}`;
+        let botFolder = `${paiOSFolder}${path.sep}Bot${path.sep}`;
+        let botSettingsFolder = `${botFolder}settings${path.sep}`;
+        let botDataFolder = `${botFolder}data${path.sep}`;
         
         moduleInstance.config.storage = new PAIModuleConfigStorageFiles({
-            filePath: botSettingsFolder + knowledgeBase.name + '.json'
+            filePath: botSettingsFolder + moduleInstance.setModuleName() + '.json'
         });
-        
+    
+        moduleInstance.data.dataSource = new PAIFilesStorageDataSource({
+            filePath: botDataFolder + moduleInstance.setModuleName()
+        });
+    
+    
         PAICode.loadModule(moduleInstance.setModuleName(),moduleInstance);
         
         PAILogger.info('New module has been loaded => ' + moduleInstance.setModuleName());

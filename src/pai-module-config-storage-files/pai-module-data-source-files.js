@@ -95,7 +95,10 @@ async function readFilesInDirectory(dirname) {
         let fileName = allFiles[i];
         let fileData = await getFromFile(dirname + path.sep + fileName);
         
-        filesData.push(fileData);
+        if(fileData)
+            filesData.push(JSON.parse(fileData));
+        
+        
     }
     
     return filesData;
