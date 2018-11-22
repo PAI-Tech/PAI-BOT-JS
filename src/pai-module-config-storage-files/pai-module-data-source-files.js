@@ -34,12 +34,30 @@ function applyOptionsOnEntityData(entityData = [], options = {}) {
 /**
  *
  * @param {String} filePath
- * @param {String} datashell
+ * @param {String} data
  */
 function saveToFile(filePath, data){
     return new Promise( (resolve,reject) => {
         
         fs.writeFile(filePath, data, 'utf8', function(err,data){
+            if(err)
+                return reject(err);
+            return resolve(data);
+        });
+        
+    });
+}
+
+
+
+/**
+ *
+ * @param {String} filePath
+ */
+function deleteFile(filePath){
+    return new Promise( (resolve,reject) => {
+        
+        fs.unlink(filePath, function(err,data){
             if(err)
                 return reject(err);
             return resolve(data);
@@ -65,35 +83,37 @@ function getFromFile(filePath){
 
 
 /**
- * @param {String} filePath
+ * @param {String} dirPath
  */
-function getAllFilesInDirectory(dirname){
+function getAllFilesInDirectory(dirPath){
     return new Promise((resolve,reject) => {
     
-        fs.readdir(dirname, function(err, data) {
+        fs.readdir(dirPath, function(err, data) {
             if(err)
                 return reject(err);
-            return resolve(data);
+            return resolve(data.filter(file => {
+                return file.indexOf(".json") >= 0;
+            }));
         });
     })
 }
 
 
 /**
- * @param {String} dirname
+ * @param {String} dirPath
  */
-async function readFilesInDirectory(dirname) {
+async function readFilesInDirectory(dirPath) {
     
     let filesData = [];
     
     
-    let allFiles = await getAllFilesInDirectory(dirname);
+    let allFiles = await getAllFilesInDirectory(dirPath);
     if(!allFiles)
         return;
         
     for (let i = 0; i < allFiles.length; i++) {
         let fileName = allFiles[i];
-        let fileData = await getFromFile(dirname + path.sep + fileName);
+        let fileData = await getFromFile(dirPath + path.sep + fileName);
         
         if(fileData)
             filesData.push(JSON.parse(fileData));
@@ -102,6 +122,14 @@ async function readFilesInDirectory(dirname) {
     }
     
     return filesData;
+}
+
+
+function convertToEntities(entity, data) {
+    
+    let ent = Object.create(entity);
+    ent = Object.assign(ent,data);
+    return ent;
 }
 
 
@@ -152,7 +180,16 @@ class PAIFilesStorageDataSource extends PAIDataSource {
      */
     find(entity, options) {
         return new Promise(async (resolve, reject) => {
-            let allRecordsInEntity = await readFilesInDirectory(this._getPathForEntity(entity));
+            let dirPath = this._getPathForEntity(entity);
+    
+    
+            let allFilesInDir = await readFilesInDirectory(dirPath).catch(err => {
+                throw err;
+            });
+            
+            let allRecordsInEntity = allFilesInDir.map(data => {
+               return convertToEntities(entity,data);
+            });
             
             let filteredEntityData = applyOptionsOnEntityData(allRecordsInEntity, options);
             
@@ -165,6 +202,50 @@ class PAIFilesStorageDataSource extends PAIDataSource {
             resolve(result);
         });
     }
+    
+    
+    
+    
+    update(entity) {
+        return new Promise(async (resolve, reject) => {
+            
+            if(!entity._id) {
+                return reject(new Error('Missing entity._id, required for update'));
+            }
+            
+            let currentTime = new Date().getTime();
+            entity.updatedAt = currentTime;
+    
+            let entityFolder = this._getPathForEntity(entity);
+            await saveToFile(
+                entityFolder + path.sep + entity._id + ".json",
+                JSON.stringify(entity)
+            );
+            
+    
+            resolve(entity);
+        });
+    }
+    
+    
+    
+    delete(entity) {
+        return new Promise(async (resolve, reject) => {
+            
+            if(!entity._id) {
+                return reject(new Error('Missing entity._id, required for delete'));
+            }
+    
+    
+            let entityFolder = this._getPathForEntity(entity);
+            await deleteFile(
+                entityFolder + path.sep + entity._id + ".json"
+            );
+            
+            resolve(entity);
+        });
+    }
+    
     
     _getPathForEntity(entity) {
     
