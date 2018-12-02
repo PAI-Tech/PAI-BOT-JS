@@ -112,7 +112,7 @@ async function loadBot()
 
 async function createNewBotInApi()
 {
-    let BASE_URL = await askQuestions("Please enter PAI-NET url:","http://dev.pai-net.org");
+    let BASE_URL = await askQuestions("Please enter PAI-NET url:","https://console.pai-net.org");
     await PAICode.executeString(`pai-net config param_name:"base_url" param_value:"${BASE_URL}"`,context);
     
     let username = await askQuestions("Please enter PAI-NET username:");
@@ -132,7 +132,7 @@ async function createNewBotInApi()
         {
             console.log('login success');
     
-            let nickname = await askQuestions("Please enter Bot's nickname");
+            let nickname = await askQuestions("Please enter Bot's nickname: ");
     
             cmdArray = await PAICode.executeString(`pai-net create-bot nickname:"${nickname}"`,context);
             if(cmdArray.length > 0) {
