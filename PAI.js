@@ -8,6 +8,7 @@ const {
     PAIModuleConfigParam
 } = require('@pai-tech/pai-code');
 
+const path = require('path');
 const {PAIFileConnector, PAIHTTPConnector} = require('@pai-tech/pai-conntectors');
 const PAIBotManager = require('./src/pai-bot/src/pai-bot-manager');
 const {PAIBotModule} = require('./index');
@@ -46,7 +47,10 @@ async function main() {
         httpConnector.start();
         
         // await getMessages();
-        
+    
+    
+        loadAdditionalFiles();
+    
         
     } catch (e) {
         PAICode.stop();
@@ -87,6 +91,27 @@ async function loadBot() {
     return (activeBot && activeBot.id && activeBot.id.length > 0);
 }
 
+function loadAdditionalFiles() {
+    try{
+        const appRootPath = require('app-root-path').path;
+        const packageJsonPath = appRootPath + path.sep + 'package.json';
+        const packageData = require(packageJsonPath);
+        
+        if(packageData && packageData.hasOwnProperty("PAI"))
+        {
+            if(packageData.PAI && packageData.PAI.hasOwnProperty("includeFiles"))
+            {
+                const additionalFiles = packageData.PAI.includeFiles;
+                for (let i = 0; i < additionalFiles.length; i++) {
+                    require(additionalFiles[i]);
+                }
+            }
+        }
+    } catch (e) {
+        PAILogger.error('error while loading includeFiles from package.json');
+        PAILogger.error(e);
+    }
+}
 
 main().then((success) => {
 

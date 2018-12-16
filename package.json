@@ -1,6 +1,6 @@
 {
   "name": "@pai-tech/pai-bot",
-  "version": "1.0.14",
+  "version": "1.0.17",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -23,7 +23,12 @@
     "@pai-tech/pai-net-sdk": "^1.1.39",
     "@pai-tech/pai-os": "^1.0.67",
     "@pai-tech/pai-scheduler": "^1.0.2",
+    "app-root-path": "^2.1.0",
     "npm": "^6.4.1",
     "shelljs": "^0.8.3"
+  },
+  "PAI": {
+    "includeFiles": [
+    ]
   }
 }
