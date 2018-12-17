@@ -1,10 +1,5 @@
-const { PAICode, PAICodeCommand,PAICodeCommandContext,PAILogger, PAIModuleConfig } = require('@pai-tech/pai-code');
+const { PAICode, PAICodeCommand, PAILogger } = require('@pai-tech/pai-code');
 const path = require('path');
-const PAIModuleConfigStorageFiles = require('./../../../pai-module-config-storage-files/pai-module-config-storage-files')
-const { KnowledgeBase } = require('@pai-tech/pai-net-sdk');
-
-
-
 
 module.exports = (module) => {
     
@@ -16,21 +11,37 @@ module.exports = (module) => {
     module.prototype.update_bot = function(cmd) {
         return new Promise(async (resolve, reject) => {
     
-            resolve('Updating...');
+            if(cmd.context.sender)
+                await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"Updating..."`,cmd.context).catch(err => {
+                    PAILogger.error(err);
+                });
+            
+            let rejected = false;
     
             let appDir = path.dirname(require.main.filename);
             
-            // TODO: git pull
-            let response = await PAICode.executeString(`pai-os run command:"cd ${appDir} && git reset --hard && git pull"`,cmd.context);
+            let response = await PAICode.executeString(`pai-os run command:"cd ${appDir} && git reset --hard && git pull"`,cmd.context).catch(err => {
+                PAILogger.error(err);
+                rejected = true;
+                reject(err);
+            });
             
-            // TODO: npm install
-            response = await PAICode.executeString(`pai-os run command:"cd ${appDir} && npm install"`,cmd.context);
+            if(rejected)
+                return;
             
+            response = await PAICode.executeString(`pai-os run command:"cd ${appDir} && npm install"`,cmd.context).catch(err => {
+                PAILogger.error(err);
+                rejected = true;
+                reject(err);
+            });
+    
+            if(rejected)
+                return;
+    
             // TODO: restart
             // response = await PAICode.executeString(`pai-os run command:"cd ${appDir} && npm install"`,cmd.context);
     
-            if(cmd.context.sender)
-                await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"Finished :)"`,cmd.context);
+            resolve('Finished - to apply changes please restart the Bot');
             
         });
         
@@ -44,15 +55,20 @@ module.exports = (module) => {
      */
     module.prototype.update_modules = function(cmd) {
         return new Promise(async (resolve, reject) => {
-            resolve('Updating...');
+            if(cmd.context.sender) {
+                await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"Updating..."`,cmd.context).catch(err => {
+                    PAILogger.error(err);
+                });
+            }
     
             let appDir = path.dirname(require.main.filename);
             
-            let response = await PAICode.executeString(`pai-os run command:"cd ${appDir} && npm update --no-save"`,cmd.context);
+            let response = await PAICode.executeString(`pai-os run command:"cd ${appDir} && npm update --no-save"`,cmd.context).catch(err => {
+                PAILogger.error(err);
+                reject(err);
+            });;
     
-            if(cmd.context.sender) {
-                await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"Finished :)"`,cmd.context);
-            }
+            resolve('Finished - to apply changes please restart the Bot');
         });
         
     };

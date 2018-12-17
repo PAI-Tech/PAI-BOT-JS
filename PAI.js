@@ -1,17 +1,11 @@
 const {
     PAICode,
     PAILogger,
-    PAICodeEvent,
-    PAICodeCommand,
-    PAICodeCommandContext,
-    PAICodeModule,
-    PAIModuleConfigParam
 } = require('@pai-tech/pai-code');
 
 const path = require('path');
 const {PAIFileConnector, PAIHTTPConnector} = require('@pai-tech/pai-conntectors');
 const PAIBotManager = require('./src/pai-bot/src/pai-bot-manager');
-const {PAIBotModule} = require('./index');
 const BotBaseModules = require('./src/pai-bot/src/modules/bot-base-modules');
 const PAIBotOSUtils = require('./src/pai-bot/src/utils/pai-bot-os-utils');
 
@@ -19,7 +13,6 @@ let manager = new PAIBotManager();
 let fileConnector;
 let httpConnector;
 
-let context = new PAICodeCommandContext('sender', 'gateway');
 
 async function main() {
     try {
@@ -46,11 +39,7 @@ async function main() {
         httpConnector = new PAIHTTPConnector( { port:3141 } );
         httpConnector.start();
         
-        // await getMessages();
-    
-    
         loadAdditionalFiles();
-    
         
     } catch (e) {
         PAICode.stop();
@@ -91,6 +80,10 @@ async function loadBot() {
     return (activeBot && activeBot.id && activeBot.id.length > 0);
 }
 
+/**
+ * This function load additional files after the bot is loaded.
+ * Additional files specify in package.json of your project under: PAI.includeFiles = [ "yourFile.js" ]
+ */
 function loadAdditionalFiles() {
     try{
         const appRootPath = require('app-root-path').path;
@@ -102,8 +95,11 @@ function loadAdditionalFiles() {
             if(packageData.PAI && packageData.PAI.hasOwnProperty("includeFiles"))
             {
                 const additionalFiles = packageData.PAI.includeFiles;
+    
+                PAILogger.info('Additional files to load: ' + JSON.stringify(additionalFiles));
+                
                 for (let i = 0; i < additionalFiles.length; i++) {
-                    require(additionalFiles[i]);
+                    require(appRootPath + '/' + additionalFiles[i]);
                 }
             }
         }

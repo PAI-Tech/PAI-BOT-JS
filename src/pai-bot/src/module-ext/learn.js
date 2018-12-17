@@ -174,21 +174,45 @@ module.exports = (module) => {
     module.prototype.learn = function(cmd) {
         return new Promise(async (resolve, reject) => {
             
+            let rejected = false;
+            
             if(!cmd.params["module"] || !cmd.params["module"].value)
                 reject(new Error("module not specified"));
+    
+            if(cmd.context.sender)
+                await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"Learning..."`,cmd.context);
             
             let paiModule = cmd.params["module"].value;
             
             let knowledgeBase = await getPAIModuleFromKnowledgeBase(paiModule,cmd).catch(err => {
-                console.log(err);
+                PAILogger.error(err);
+                reject('could not get knowledge base: ' + paiModule);
+                rejected = true;
             });
             
+            if(rejected)
+                return;
+            
             if(knowledgeBase.repository && knowledgeBase.repository.length>0)
-                await npmInstall(knowledgeBase.repository);
+                await npmInstall(knowledgeBase.repository).catch(err => {
+                    PAILogger.error(err);
+                    reject('could not install npm package: ' + knowledgeBase.repository);
+                    rejected = true;
+                });
+    
+            if(rejected)
+                return;
             
-            await loadNpmModule(knowledgeBase);
+            await loadNpmModule(knowledgeBase).catch(err => {
+                PAILogger.error(err);
+                reject('could not load npm package');
+                rejected = true;
+            });
+    
+            if(rejected)
+                return;
             
-            await addBotModuleToConfig(this.config,JSON.stringify(knowledgeBase));
+            await addBotModuleToConfig(this.config,JSON.stringify(knowledgeBase)); // TODO: change config to data
             
             resolve('I know ' + knowledgeBase.name + '!');
         });
