@@ -92,25 +92,28 @@ async function loadNpmModule(knowledgeBase)
         const moduleContainer = require(knowledgeBase.repository);
         const moduleInterface = moduleContainer[knowledgeBase.pai_interface];
         let moduleInstance = new moduleInterface();
-        
-        let paiOSFolder = await PAICode.modules['pai-os'].getOSPath();
-        let botFolder = `${paiOSFolder}${path.sep}Bot${path.sep}`;
-        let botSettingsFolder = `${botFolder}settings${path.sep}`;
-        let botDataFolder = `${botFolder}data${path.sep}`;
-        
-        moduleInstance.config.storage = new PAIModuleConfigStorageFiles({
-            filePath: botSettingsFolder + moduleInstance.setModuleName() + '.json'
-        });
     
-        moduleInstance.data.dataSource = new PAIFilesStorageDataSource({
-            filePath: botDataFolder + moduleInstance.setModuleName()
-        });
-    
+        await applyBotDataSource(moduleInstance);
     
         PAICode.loadModule(moduleInstance.setModuleName(),moduleInstance);
         
         PAILogger.info('New module has been loaded => ' + moduleInstance.setModuleName());
     }
+}
+
+async function applyBotDataSource(moduleInstance) {
+    let paiOSFolder = await PAICode.modules['pai-os'].getOSPath();
+    let botFolder = `${paiOSFolder}${path.sep}Bot${path.sep}`;
+    let botSettingsFolder = `${botFolder}settings${path.sep}`;
+    let botDataFolder = `${botFolder}data${path.sep}`;
+    
+    moduleInstance.config.storage = new PAIModuleConfigStorageFiles({
+        filePath: botSettingsFolder + moduleInstance.setModuleName() + '.json'
+    });
+    
+    moduleInstance.data.dataSource = new PAIFilesStorageDataSource({
+        filePath: botDataFolder + moduleInstance.setModuleName()
+    });
 }
 
 
@@ -240,6 +243,8 @@ module.exports = (module) => {
         }
     };
     
+    
+    module.prototype.applyBotDataSource = applyBotDataSource;
     
 };
 
