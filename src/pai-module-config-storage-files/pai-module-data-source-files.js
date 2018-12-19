@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const shell = require('shelljs');
-const {PAIEntity, PAIEntityList, PAIUtils, PAIDataSource, PAILogger} = require('@pai-tech/pai-code');
+const {PAIEntity, PAIEntityList, PAIUtils, PAIBaseDataSource, PAILogger} = require('@pai-tech/pai-code');
 
 /**
  *
@@ -136,7 +136,7 @@ function convertToEntities(entity, data) {
 
 
 
-class PAIFilesStorageDataSource extends PAIDataSource {
+class PAIFilesStorageDataSource extends PAIBaseDataSource {
     
     
     constructor(config) {
