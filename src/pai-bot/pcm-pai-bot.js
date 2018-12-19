@@ -33,6 +33,11 @@ functions:
     async load()
     {
         await super.load(this);
+    
+        this.loadCommandWithSchema(new PAIModuleCommandSchema({
+            op: "version",
+            func:"version"
+        }));
         
         this.loadCommandWithSchema(new PAIModuleCommandSchema({
             op: "learn",
@@ -61,6 +66,10 @@ functions:
         return 'pai-bot';
     }
     
+    
+    version(){
+        return require('./../../package').version;
+    }
 }
 
 
