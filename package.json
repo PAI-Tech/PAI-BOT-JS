@@ -1,6 +1,6 @@
 {
   "name": "@pai-tech/pai-bot",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -17,10 +17,10 @@
   },
   "homepage": "https://github.com/PAI-Tech/PAI-BOT-JS#readme",
   "dependencies": {
-    "@pai-tech/pai-code": "1.1.46",
+    "@pai-tech/pai-code": "^1.1.46",
     "@pai-tech/pai-conntectors": "^1.0.6",
-    "@pai-tech/pai-net": "^1.1.40",
-    "@pai-tech/pai-net-sdk": "^1.1.43",
+    "@pai-tech/pai-net": "^1.1.41",
+    "@pai-tech/pai-net-sdk": "^1.1.45",
     "@pai-tech/pai-os": "^1.0.67",
     "@pai-tech/pai-scheduler": "^1.0.2",
     "app-root-path": "^2.1.0",
