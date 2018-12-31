@@ -1,0 +1,41 @@
+{
+    "env": {
+        "browser": true,
+        "es6": true
+    },
+    "extends": "eslint:recommended",
+    "parserOptions": {
+        "ecmaVersion": 2017,
+        "sourceType": "module"
+    },
+    "rules": {
+        "indent": [
+            "error",
+            "tab"
+        ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "double"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ],
+        "max-classes-per-file": ["error", 1],
+        "no-eval": "error",
+        "no-return-assign": "error",
+        "no-param-reassign": ["error", { "props": true }],
+        "no-return-await": "error",
+        "prefer-promise-reject-errors": "error",
+        "camelcase": "error",
+        "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
+        "max-depth": ["error", 4],
+        "max-lines": ["error", {"max": 300, "skipComments": true}],
+        "max-lines-per-function": ["error", { "max": 30, "skipBlankLines": true, "skipComments": true }],
+        "multiline-comment-style": ["error", "starred-block"]
+    }
+}
