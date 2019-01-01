@@ -44,7 +44,8 @@ Open the terminal on your machine and type the following script:
 
  #Pm2 installation
  npm install -g pm2
-
+ #Set Pm2 to start when system restart
+ pm2 startup
 ```
 
 If all installation proccess finished with success, you should be able to run the following commands to check them:
@@ -56,7 +57,7 @@ node -v
 
 npm -v
 
-pm2 startup
+pm2 status
 ```
 
 If Prerequisite are all set, we can now download the Bot repository from Github.
