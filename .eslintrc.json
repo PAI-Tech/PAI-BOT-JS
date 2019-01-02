@@ -1,7 +1,8 @@
 {
     "env": {
         "browser": true,
-        "es6": true
+        "es6": true,
+        "node": true
     },
     "extends": "eslint:recommended",
     "parserOptions": {
@@ -9,14 +10,6 @@
         "sourceType": "module"
     },
     "rules": {
-        "indent": [
-            "error",
-            "tab"
-        ],
-        "linebreak-style": [
-            "error",
-            "unix"
-        ],
         "quotes": [
             "error",
             "double"
@@ -28,7 +21,7 @@
         "max-classes-per-file": ["error", 1],
         "no-eval": "error",
         "no-return-assign": "error",
-        "no-param-reassign": ["error", { "props": true }],
+        "no-param-reassign": ["warn", { "props": true }],
         "no-return-await": "error",
         "prefer-promise-reject-errors": "error",
         "camelcase": "error",

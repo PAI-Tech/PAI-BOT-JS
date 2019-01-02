@@ -1,7 +1,7 @@
-const fs = require('fs');
-const path = require('path');
-const shell = require('shelljs');
-const {PAIEntity, PAIEntityList, PAIUtils, PAIBaseDataSource, PAILogger} = require('@pai-tech/pai-code');
+const fs = require("fs");
+const path = require("path");
+const shell = require("shelljs");
+const {PAIEntity, PAIEntityList, PAIUtils, PAIBaseDataSource, PAILogger} = require("@pai-tech/pai-code");
 
 /**
  *
@@ -39,7 +39,7 @@ function applyOptionsOnEntityData(entityData = [], options = {}) {
 function saveToFile(filePath, data){
     return new Promise( (resolve,reject) => {
         
-        fs.writeFile(filePath, data, 'utf8', function(err,data){
+        fs.writeFile(filePath, data, "utf8", function(err,data){
             if(err)
                 return reject(err);
             return resolve(data);
@@ -72,13 +72,13 @@ function deleteFile(filePath){
 function getFromFile(filePath){
     return new Promise((resolve,reject) => {
         
-        fs.readFile(filePath, 'utf-8' , function(err,data){
+        fs.readFile(filePath, "utf-8" , function(err,data){
             if(err)
                 return reject(err);
             return resolve(data);
         });
         
-    })
+    });
 }
 
 
@@ -95,7 +95,7 @@ function getAllFilesInDirectory(dirPath){
                 return file.indexOf(".json") >= 0;
             }));
         });
-    })
+    });
 }
 
 
@@ -144,7 +144,7 @@ class PAIFilesStorageDataSource extends PAIBaseDataSource {
     
     
         let defaults = {
-            filePath: '/var/PAI/Bot/settings/module.json'
+            filePath: "/var/PAI/Bot/settings/module.json"
         };
     
         this.config = Object.assign(defaults,config || {});
@@ -152,7 +152,7 @@ class PAIFilesStorageDataSource extends PAIBaseDataSource {
         
         // create folder if not exists
         if(!fs.existsSync(this.config.filePath))
-            shell.mkdir('-p',this.config.filePath);
+            shell.mkdir("-p",this.config.filePath);
     }
     
     
@@ -210,7 +210,7 @@ class PAIFilesStorageDataSource extends PAIBaseDataSource {
         return new Promise(async (resolve, reject) => {
             
             if(!entity._id) {
-                return reject(new Error('Missing entity._id, required for update'));
+                return reject(new Error("Missing entity._id, required for update"));
             }
             
             let currentTime = new Date().getTime();
@@ -233,7 +233,7 @@ class PAIFilesStorageDataSource extends PAIBaseDataSource {
         return new Promise(async (resolve, reject) => {
             
             if(!entity._id) {
-                return reject(new Error('Missing entity._id, required for delete'));
+                return reject(new Error("Missing entity._id, required for delete"));
             }
     
     

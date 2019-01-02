@@ -1,8 +1,8 @@
 const { PAICode, PAICodeCommand,PAICodeCommandContext,PAILogger, PAIModuleConfig } = require('@pai-tech/pai-code');
 const path = require('path');
 const npm = require('npm');
-const PAIModuleConfigStorageFiles = require('./../../../pai-module-config-storage-files/pai-module-config-storage-files')
-const PAIFilesStorageDataSource = require('./../../../pai-module-config-storage-files/pai-module-data-source-files');
+const PAIModuleConfigStorageFiles = require('../../../modules-ext/modules-config-storage/pai-module-config-storage-files')
+const PAIFilesStorageDataSource = require('../../../modules-ext/modules-data-sources/pai-module-data-source-files');
 const { KnowledgeBase } = require('@pai-tech/pai-net-sdk');
 
 const CONFIG_BOT_MODULES = "bot_modules";

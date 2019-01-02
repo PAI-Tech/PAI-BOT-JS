@@ -24,13 +24,17 @@
     "@pai-tech/pai-net": "^1.1.41",
     "@pai-tech/pai-net-sdk": "^1.1.45",
     "@pai-tech/pai-os": "^1.0.67",
-    "@pai-tech/pai-scheduler": "^1.0.2",
+    "@pai-tech/pai-scheduler": "^1.0.4",
     "app-root-path": "^2.1.0",
     "jsonschema": "^1.2.4",
+    "mongoose": "^5.4.1",
     "npm": "^6.5.0",
     "shelljs": "^0.8.3"
   },
   "PAI": {
     "includeFiles": []
+  },
+  "devDependencies": {
+    "eslint": "^5.11.1"
   }
 }
