@@ -22,7 +22,7 @@ async function getPAIModuleFromKnowledgeBase(paiModule, parentCommand)
     try{
         commandsArray = await PAICode.executeString(`pai-net get-knowledge-base filters:"${paramsString}"`,context);
     }catch (e) {
-        console.error(e);
+		PAILogger.error(e);
     }
     
     if(!commandsArray || commandsArray.length === 0)
@@ -35,20 +35,19 @@ async function getPAIModuleFromKnowledgeBase(paiModule, parentCommand)
     
     if(!response.success)
     {
-        return reject(response.error);
+        throw response.error;
     }
     
     
     let listResponse = response.data.data;
     
-    if(listResponse.count == 0)
+    if(listResponse.count === 0)
     {
         throw new Error('knowledge base not found for module:' + paiModule);
     }
     
     
-    let knowledgebase = listResponse.records[0];
-    return knowledgebase;
+    return listResponse.records[0]; // knowledge base record
 }
 
 
@@ -65,11 +64,15 @@ function npmInstall(packageName)
             save:false
         }, function (er) {
             if (er)
-                return console.log(er);
+            {
+                PAILogger.error(er);
+				return reject(er);
+			}
             
             npm.commands.install([packageName], function (er, data) {
                 if (er) {
-                    console.log(er);
+					PAILogger.error(er);
+					return reject(er);
                 }
                 resolve(data);
                 // command succeeded, and data might have some info
@@ -124,9 +127,8 @@ async function applyBotDataSource(moduleInstance) {
  */
 async function getBotModules(config)
 {
-    let modulesStr = null;
-    modulesStr = await config.getConfigParam(CONFIG_BOT_MODULES).catch(err => {
-        console.log(err);
+	let modulesStr = await config.getConfigParam(CONFIG_BOT_MODULES).catch(err => {
+        PAILogger.error(err);
     });
     
     if(!modulesStr)
@@ -163,7 +165,8 @@ async function addBotModuleToConfig(config, newModule){
         return true;
     
     modules.push(newModule);
-    return await config.setConfigParam(CONFIG_BOT_MODULES, JSON.stringify(modules));
+    let success = await config.setConfigParam(CONFIG_BOT_MODULES, JSON.stringify(modules));
+	return success;
 }
 
 
@@ -189,7 +192,6 @@ module.exports = (module) => {
             
             let knowledgeBase = await getPAIModuleFromKnowledgeBase(paiModule,cmd).catch(err => {
                 PAILogger.error(err);
-                reject('could not get knowledge base: ' + paiModule);
                 rejected = true;
             });
             
@@ -198,8 +200,7 @@ module.exports = (module) => {
             
             if(knowledgeBase.repository && knowledgeBase.repository.length>0)
                 await npmInstall(knowledgeBase.repository).catch(err => {
-                    PAILogger.error(err);
-                    reject('could not install npm package: ' + knowledgeBase.repository);
+                    PAILogger.error("could not install npm package: " + knowledgeBase.repository,err);
                     rejected = true;
                 });
     
@@ -207,8 +208,8 @@ module.exports = (module) => {
                 return;
             
             await loadNpmModule(knowledgeBase).catch(err => {
-                PAILogger.error(err);
-                reject('could not load npm package');
+                PAILogger.error("could not load npm package",err);
+                
                 rejected = true;
             });
     

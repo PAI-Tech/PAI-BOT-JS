@@ -50,12 +50,12 @@ functions:
     
 		this.loadCommandWithSchema(new PAIModuleCommandSchema({
 			op: "update-bot",
-			func:"update_bot"
+			func:"updateBot"
 		}));
     
 		this.loadCommandWithSchema(new PAIModuleCommandSchema({
 			op: "update-modules",
-			func:"update_modules"
+			func:"updateModules"
 		}));
 		
 		this.loadCommandWithSchema(new PAIModuleCommandSchema({
@@ -83,9 +83,9 @@ functions:
 	 * @return {Promise<void>}
 	 */
 	async shutdown(cmd) {
-	    const sender = cmd.context.sender;
-	    PAILogger.warn("Shutdown command called by " + sender);
-	    process.exit(0);
+ 		const sender = cmd.context.sender;
+		PAILogger.warn("Shutdown command called by " + sender);
+   		process.exit(0);
 	}
 }
 

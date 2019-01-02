@@ -3,7 +3,7 @@ const PAIBotStatus = require('./models/pai-bot-status');
 const fs = require('fs');
 const shell = require('shelljs');
 const PAIBotOSUtils = require('./utils/pai-bot-os-utils');
-const { PAICode, PAIUtils, PAICodeCommandContext } = require('@pai-tech/pai-code');
+const { PAICode, PAIUtils, PAICodeCommandContext, PAILogger } = require('@pai-tech/pai-code');
 
 /**
  * Create all bot files in PAI-OS
@@ -22,7 +22,10 @@ function createBotFiles(bot)
         shell.mkdir('-p', settingsFolder);
         shell.mkdir('-p', queueFolder);
         
-        fs.writeFile(await PAIBotOSUtils.getBotStartupFile(), 'pai-code show version', 'utf8', async function(err,data){
+        fs.writeFile(await PAIBotOSUtils.getBotStartupFile(), 'pai-code show version', 'utf8', async function(err,data) {
+            
+            if(err)
+                PAILogger.error("Error while creating startup file", err);
             
             fs.writeFile(await PAIBotOSUtils.getBotSettingsFile(), json, 'utf8', function(err,data){
                 if(err)
@@ -43,9 +46,14 @@ function createBotFiles(bot)
 function isFileExists(filePath)
 {
     return new Promise( (resolve, reject) => {
-        fs.exists(filePath, function read(exists) {
-            return resolve(exists);
-        });
+        try {
+			fs.exists(filePath, function read(exists) {
+				return resolve(exists);
+			});
+		}catch (e) {
+            PAILogger.error("Cannot check if file exists: " + filePath, e);
+            reject(e);
+		}
     });
 }
 
@@ -97,7 +105,9 @@ class PAIBotManager {
             bot.createdAt = (new Date()).getTime();
             bot.status = PAIBotStatus.NEW;
     
-            await createBotFiles(bot);
+            await createBotFiles(bot).catch(err => {
+                reject(err);
+            });
     
             this.setBot(bot);
             
@@ -125,7 +135,9 @@ class PAIBotManager {
             if(botStartupCode)
             {
                 let context = new PAICodeCommandContext('sender','gateway');
-                let startupResponse = await PAICode.executeString(botStartupCode,context);
+                await PAICode.executeString(botStartupCode,context).catch(err => {
+					PAILogger.error("Cannot execute startup command",err);
+				});
             }
             
             this.activeBot = bot;
@@ -135,7 +147,6 @@ class PAIBotManager {
     }
     
     
-    // create bot in files
     
     /**
      *

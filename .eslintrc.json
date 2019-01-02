@@ -10,14 +10,11 @@
         "sourceType": "module"
     },
     "rules": {
-        "quotes": [
-            "error",
-            "double"
-        ],
         "semi": [
             "error",
             "always"
         ],
+        "no-unused-vars": "warn",
         "max-classes-per-file": ["error", 1],
         "no-eval": "error",
         "no-return-assign": "error",
