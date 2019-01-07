@@ -12,7 +12,7 @@ const paiOS = new PAI_OS();
 const paiNET = new PAINETModule();
 const paiScheduler = new PAISchedulerModule();
 
-const modules = [
+let modules = [
     paiOS,
     paiNET,
     paiBOT,
@@ -30,8 +30,8 @@ async function loadModulesConfig()
 {
     if(!modulesLoaded)
     {
-        for (let i = 0; i < modules.length; i++) {
-			applyBotDataSource(modules[i]);
+		for (let i = 0; i < modules.length; i++) {
+			await applyBotDataSource(modules[i]);
         }
         
         modulesLoaded = true;
