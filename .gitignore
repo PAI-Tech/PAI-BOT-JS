@@ -29,3 +29,7 @@ hs_err_pid*
 
 node_modules/
 
+# dotenv environment variables file
+*.env
+
+ssl/*
