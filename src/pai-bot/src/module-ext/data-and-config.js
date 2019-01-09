@@ -72,6 +72,8 @@ async function getDataSourceMongo() {
 		dbName: process.env.DATA_SOURCE_MONGO_DATABASE_NAME
 	});
 	
+	await mongo.connect();
+	
 	return mongo;
 }
 
@@ -88,7 +90,7 @@ async function applyBotDataSource(moduleInstance) {
     
     let dataSource = null;
     if(process.env.DATA_SOURCE === "MONGO")
-		dataSource = getDataSourceMongo();
+		dataSource = await getDataSourceMongo();
 	else
 		dataSource = await getDataSourceFile(moduleInstance);
     

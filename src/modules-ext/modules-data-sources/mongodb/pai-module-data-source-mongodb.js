@@ -1,7 +1,7 @@
 const {PAIEntity, PAIEntityList, PAIBaseDataSource, PAILogger} = require("@pai-tech/pai-code");
 const DBConnector = require("./db-connector");
 const EntityConvertor = require("./pai-entity-to-mongo-convertor");
-
+let isConnected = false;
 
 class PAIMongoDBDataSource extends PAIBaseDataSource {
     
@@ -18,20 +18,29 @@ class PAIMongoDBDataSource extends PAIBaseDataSource {
     
         this.config = Object.assign(defaults,config || {});
         
-        DBConnector.connect({
-            URL: this.config.URL,
-            port: this.config.port,
-            userName: this.config.userName,
-            password: this.config.password,
-            dbName: this.config.dbName
-		}).then( () =>{
-            // connection success
-			PAILogger.info("Connection with MongoDB is established successfully");
-        })
-        .catch((err) => {
-            PAILogger.error("COULD NOT CONNECT TO DATABASE!",err);
-        });
     }
+    
+    async connect() {
+		
+    	if(isConnected)
+			return;
+
+		await DBConnector.connect({
+			URL: this.config.URL,
+			port: this.config.port,
+			userName: this.config.userName,
+			password: this.config.password,
+			dbName: this.config.dbName
+		})	.catch((err) => {
+				isConnected = false;
+				PAILogger.error("COULD NOT CONNECT TO DATABASE!",err);
+				throw err;
+			});
+	
+		isConnected = true;
+		PAILogger.info("Connection with MongoDB is established successfully");
+		
+	}
 	
 	/**
 	 * @param {PAIEntity} entity
