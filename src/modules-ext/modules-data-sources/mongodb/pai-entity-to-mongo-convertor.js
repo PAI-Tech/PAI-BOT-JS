@@ -69,7 +69,7 @@ function getMongoModelForEntity(entity) {
  */
 function convertMongoRecordToPAIEntity(entity,mongoRecord)
 {
-	let clonedEntity = Object.assign(entity,{});
+	let clonedEntity = Object.assign({},entity);
 	
 	let mongoObj = JSON.parse(JSON.stringify(mongoRecord));
 	delete mongoObj["__v"]; // delete the version flag
