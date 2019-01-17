@@ -28,10 +28,7 @@ async function main() {
 			// modules failed to load
 		}
 		
-		let botLoaded = await loadBot();
-		if (!botLoaded) {
-			// bot failed to load
-		}
+		await manager.loadBotStartupFile();
 		
 		let QFolder = await PAIBotOSUtils.getBotQueueFolder();
 		
@@ -69,19 +66,6 @@ async function loadModules() {
 }
 
 
-/**
- *
- * @return {Promise<boolean>}
- */
-async function loadBot() {
-	let activeBot = await manager.loadBots();
-	
-	if (!activeBot) {
-		throw new Error("No active bots!");
-	}
-	
-	return (activeBot && activeBot.id && activeBot.id.length > 0);
-}
 
 /**
  * This function load additional files after the bot is loaded.

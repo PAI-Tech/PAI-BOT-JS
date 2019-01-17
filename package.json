@@ -1,13 +1,14 @@
 {
   "name": "@pai-tech/pai-bot",
-  "version": "1.0.26",
+  "version": "1.0.27",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node PAI.js",
     "init": "node init.js",
-    "config": "node config-generator.js"
+    "config": "node config-generator.js",
+    "install:clean": "rm -rf ./node_modules && rm package-lock.json && npm install"
   },
   "repository": {
     "type": "git",
@@ -22,7 +23,7 @@
   "dependencies": {
     "@pai-tech/pai-code": "^1.1.48",
     "@pai-tech/pai-conntectors": "^1.0.9",
-    "@pai-tech/pai-net": "^1.1.44",
+    "@pai-tech/pai-net": "^1.1.47",
     "@pai-tech/pai-net-sdk": "^1.1.45",
     "@pai-tech/pai-os": "^1.0.67",
     "@pai-tech/pai-scheduler": "^1.0.4",
@@ -31,7 +32,7 @@
     "inquirer": "^6.2.1",
     "inquirer-fuzzy-path": "^1.0.0",
     "jsonschema": "^1.2.4",
-    "mongoose": "^5.4.2",
+    "mongoose": "^5.4.4",
     "npm": "^6.5.0",
     "shelljs": "^0.8.3"
   },

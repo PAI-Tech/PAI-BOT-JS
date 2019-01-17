@@ -25,7 +25,7 @@
         "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
         "max-depth": ["error", 4],
         "max-lines": ["error", {"max": 300, "skipComments": true}],
-        "max-lines-per-function": ["error", { "max": 30, "skipBlankLines": true, "skipComments": true }],
+        "max-lines-per-function": ["error", { "max": 40, "skipBlankLines": true, "skipComments": true }],
         "multiline-comment-style": ["error", "starred-block"]
     }
 }

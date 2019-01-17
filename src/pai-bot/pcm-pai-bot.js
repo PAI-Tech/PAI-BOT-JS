@@ -83,9 +83,9 @@ functions:
 	 * @return {Promise<void>}
 	 */
 	async shutdown(cmd) {
- 		const sender = cmd.context.sender;
+		const sender = cmd.context.sender;
 		PAILogger.warn("Shutdown command called by " + sender);
-   		process.exit(0);
+		process.exit(0);
 	}
 }
 

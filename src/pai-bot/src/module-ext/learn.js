@@ -58,7 +58,8 @@ function npmInstall(packageName)
     return new Promise((resolve,reject) => {
         
         npm.load({
-            save:false
+            save:false,
+			progress: false
         }, function (er) {
             if (er)
             {
@@ -173,7 +174,8 @@ module.exports = (module) => {
             let paiModule = cmd.params["module"].value;
             
             let knowledgeBase = await getPAIModuleFromKnowledgeBase(paiModule,cmd).catch(err => {
-                PAILogger.error(err);
+                PAILogger.error("Could not find knowledge base " + err.message);
+                reject(new Error("Could not find knowledge base " + err.message));
                 rejected = true;
             });
             
@@ -183,6 +185,7 @@ module.exports = (module) => {
             if(knowledgeBase.repository && knowledgeBase.repository.length>0)
                 await npmInstall(knowledgeBase.repository).catch(err => {
                     PAILogger.error("could not install npm package: " + knowledgeBase.repository,err);
+                    reject(new Error("could not install npm package: " + knowledgeBase.repository));
                     rejected = true;
                 });
     
@@ -190,8 +193,8 @@ module.exports = (module) => {
                 return;
             
             await loadNpmModule(knowledgeBase).catch(err => {
-                PAILogger.error("could not load npm package",err);
-                
+                PAILogger.error("could not load npm package " + err.message);
+				reject(new Error("could not load npm package " + err.message));
                 rejected = true;
             });
     
