@@ -1,6 +1,6 @@
 {
   "name": "@pai-tech/pai-bot",
-  "version": "1.0.27",
+  "version": "1.0.29",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,7 @@
   "homepage": "https://github.com/PAI-Tech/PAI-BOT-JS#readme",
   "dependencies": {
     "@pai-tech/pai-code": "^1.1.48",
-    "@pai-tech/pai-conntectors": "^1.0.9",
+    "@pai-tech/pai-conntectors": "^1.1.0",
     "@pai-tech/pai-net": "^1.1.47",
     "@pai-tech/pai-net-sdk": "^1.1.45",
     "@pai-tech/pai-os": "^1.0.67",
@@ -32,14 +32,14 @@
     "inquirer": "^6.2.1",
     "inquirer-fuzzy-path": "^1.0.0",
     "jsonschema": "^1.2.4",
-    "mongoose": "^5.4.4",
-    "npm": "^6.5.0",
+    "mongoose": "^5.4.5",
+    "npm": "^6.6.0",
     "shelljs": "^0.8.3"
   },
   "PAI": {
     "includeFiles": []
   },
   "devDependencies": {
-    "eslint": "^5.12.0"
+    "eslint": "^5.12.1"
   }
 }
