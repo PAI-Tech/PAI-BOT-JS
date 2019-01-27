@@ -95,7 +95,7 @@ function getAllFilesInDirectory(dirPath){
 				return file.indexOf(".json") >= 0;
 			}));
 		});
-	})
+	});
 }
 
 
@@ -126,15 +126,11 @@ async function readFilesInDirectory(dirPath) {
 
 
 function convertToEntities(entity, data) {
-	
 	let ent = {};
-	Object.assign(ent, entity);
-	ent = Object.assign(ent,data);
+	Object.assign(ent, entity,data);
+	
 	return ent;
 }
-
-
-
 
 
 class PAIFilesStorageDataSource extends PAIBaseDataSource {
@@ -168,12 +164,15 @@ class PAIFilesStorageDataSource extends PAIBaseDataSource {
 		
 		let entityObjToSave = {};
 		
-		const fields = entity.__entity_schema.fields;
+		// support old version of PAIEntity
+		const oldVersionOfPAIEntity = (entity.__entity_schema) ? false : true;
+		
+		const fields = (!oldVersionOfPAIEntity) ? entity.__entity_schema.fields : entity;
 		const fieldKeys = Object.keys(fields);
 		
 		for (let i = 0; i < fieldKeys.length; i++) {
 			const fieldName = fieldKeys[i];
-			const fieldValue = fields[fieldName].value;
+			const fieldValue = (oldVersionOfPAIEntity) ? fields[fieldName] : fields[fieldName].value;
 			
 			if(fieldValue !== undefined && fieldValue !== null)
 			{
@@ -181,9 +180,10 @@ class PAIFilesStorageDataSource extends PAIBaseDataSource {
 			}
 		}
 		
+		const filePath = entityFolder + path.sep + entity._id + ".json";
 		
 		await saveToFile(
-			entityFolder + path.sep + entity._id + ".json",
+			filePath,
 			JSON.stringify(entityObjToSave)
 		);
 		
