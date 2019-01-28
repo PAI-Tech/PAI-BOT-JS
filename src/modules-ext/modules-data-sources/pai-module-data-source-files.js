@@ -126,8 +126,8 @@ async function readFilesInDirectory(dirPath) {
 
 
 function convertToEntities(entity, data) {
-	let ent = {};
-	Object.assign(ent, entity,data);
+	let ent = Object.assign( Object.create( Object.getPrototypeOf(entity)), entity);
+	Object.assign(ent,data);
 	
 	return ent;
 }
