@@ -101,6 +101,12 @@ async function registerToPAINET() {
 				const cmdArray = await PAICode.executeString(cmd, context);
 				const createBotCommand = cmdArray[0];
 				
+				const selectedBotId = createBotCommand.response.data._id;
+				
+				const cmdLogin = `pai-net bot-login username:"${verifiedUsername}" password:"${verifiedPassword}" bot_id:"${selectedBotId}"`;
+				await PAICode.executeString(cmdLogin, context);
+				
+				
 				PAILogger.info("DONE !");
 			}
 			

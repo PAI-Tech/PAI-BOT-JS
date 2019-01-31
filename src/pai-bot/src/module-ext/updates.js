@@ -23,7 +23,7 @@ function updateBot(cmd) {
 		if(rejected)
 			return;
 		
-		await PAICode.executeString(`pai-os run command:"cd ${appDir} && npm install"`,cmd.context).catch(err => {
+		await PAICode.executeString(`pai-os run command:"cd ${appDir} && npm run install:clean"`,cmd.context).catch(err => {
 			PAILogger.error(err);
 			rejected = true;
 			reject(err);
