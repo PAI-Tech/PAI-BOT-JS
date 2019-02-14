@@ -234,20 +234,46 @@ class PAIFilesStorageDataSource extends PAIBaseDataSource {
 			
 			let currentTime = new Date().getTime();
 			entity.updatedAt = currentTime;
-			
+
+			let jsonEntity = this._readAllFields(entity);
+
 			let entityFolder = this._getPathForEntity(entity);
 			await saveToFile(
 				entityFolder + path.sep + entity._id + ".json",
-				JSON.stringify(entity)
+				JSON.stringify(jsonEntity)
 			);
 			
 			
 			resolve(entity);
 		});
 	}
-	
-	
-	
+
+
+    _readAllFields(record) {
+
+        let recordData = {};
+        const entityFields = Object.keys(record.__entity_schema.fields);
+
+        for (let i = 0; i < entityFields.length; i++)
+        {
+
+            const field = entityFields[i];
+            let value = record[field];
+
+            if(field.startsWith("__"))
+            {
+                continue;
+            }
+
+            // TODO: prepare data to export by type - like date to timestamp etc...
+
+
+            recordData[field] = value;
+        }
+
+        return recordData;
+    }
+
 	delete(entity) {
 		return new Promise(async (resolve, reject) => {
 			
