@@ -95,6 +95,7 @@ function loadAdditionalFiles() {
 }
 
 main().then((success) => {
+
 	if (success) {
 		PAILogger.info("Bot started with success");
 	}

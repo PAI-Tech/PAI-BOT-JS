@@ -14,7 +14,7 @@ let models = {};
 function convertPAIEntityToMongoSchema(entity){
 	
 
-	const entityKeys = Object.keys(entity).filter(fieldName => {
+	const entityKeys = Object.keys(entity.__entity_schema.fields).filter(fieldName => {
 		return !(fieldName === "_id" ||
 			fieldName === "createdAt" ||
 			fieldName === "updatedAt" ||
@@ -26,7 +26,7 @@ function convertPAIEntityToMongoSchema(entity){
 	
 	for (let i = 0; i < entityKeys.length; i++) {
 		const field = entityKeys[i];
-		schemaFields[field] = String; // set string object by default
+		schemaFields[field] = convertFiledToMongo(entity.__entity_schema.fields[field].__field_schema.type);// String; // set string object by default
 	}
 	
 	
@@ -39,6 +39,35 @@ function convertPAIEntityToMongoSchema(entity){
 	return mongoose.model(entity.setEntityName(),entitySchema);
 }
 
+function convertFiledToMongo(type) {
+
+    let mongoType = String;
+
+    switch(type) {
+        case "string":
+            mongoType = String;
+            break;
+        case "object":
+            mongoType = mongoose.ObjectId;
+            break;
+        case "array":
+            mongoType = Array;
+            break;
+        case "number":
+            mongoType = Number;
+            break;
+        case "date":
+            mongoType = Date;
+            break;
+        case "boolean":
+            mongoType = Boolean;
+            break;
+        default:
+            mongoType = String;
+    }
+
+    return mongoType;
+}
 
 /**
  * Get MongoDB Model
@@ -75,7 +104,7 @@ function convertMongoRecordToPAIEntity(entity,mongoRecord)
 	let mongoObj = JSON.parse(JSON.stringify(mongoRecord));
 	delete mongoObj["__v"]; // delete the version flag
 	
-	const entityKeys = Object.keys(clonedEntity);
+	const entityKeys = Object.keys(clonedEntity.__entity_schema.fields);
 	for (let i = 0; i < entityKeys.length; i++) {
 		const field = entityKeys[i];
 		
@@ -86,7 +115,8 @@ function convertMongoRecordToPAIEntity(entity,mongoRecord)
 		else
 			clonedEntity[field] = mongoRecord[field];
 	}
-	
+
+
 	return clonedEntity;
 }
 

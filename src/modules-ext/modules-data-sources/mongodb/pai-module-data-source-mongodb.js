@@ -50,13 +50,28 @@ class PAIMongoDBDataSource extends PAIBaseDataSource {
     
         // convert PAIEntity into Mongo model
         const mongoModel = EntityConvertor.getMongoModelForEntity(entity);
-        
+
+
+        const entityKeys = Object.keys(entity.__entity_schema.fields).filter(fieldName => {
+        	return (fieldName != "_id" &&
+                fieldName != "createdAt" &&
+                fieldName != "updatedAt");
+		});
+
+
         // initiate Mongo model with the entity data
-        let mongoEntity = new mongoModel(entity);
-        
+        let mongoEntity = new mongoModel();
+
         // set id for the record we are about to create
         mongoEntity._id = DBConnector.mongoose.Types.ObjectId();
-        
+
+
+        for (let i = 0; i < entityKeys.length; i++) {
+            const name = entityKeys[i];
+            mongoEntity[name] = entity[name];
+        }
+
+
         // save the entity to MongoDB
         const createdMongoEntity = await mongoEntity.save().catch(err => { throw err; });
         
@@ -82,9 +97,9 @@ class PAIMongoDBDataSource extends PAIBaseDataSource {
             });
 	
 			results = results.map( record => {
-                return EntityConvertor.convertMongoRecordToPAIEntity(entity,record);
+               return EntityConvertor.convertMongoRecordToPAIEntity(entity,record);
             });
-	
+
 	
 			let result = new PAIEntityList();
 			result.count = results.length;
@@ -113,7 +128,9 @@ class PAIMongoDBDataSource extends PAIBaseDataSource {
 			let updatedMongoEntity = await record.save();
 	
 			const updatedPAIEntity = EntityConvertor.convertMongoRecordToPAIEntity(entity,updatedMongoEntity);
-			
+
+            delete updatedPAIEntity["__entity_schema"]; // delete the version flag
+
 			resolve(updatedPAIEntity);
         });
     }
