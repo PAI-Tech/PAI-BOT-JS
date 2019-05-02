@@ -53,7 +53,7 @@ class PAIMongoDBDataSource extends PAIBaseDataSource {
 
 
         const entityKeys = Object.keys(entity.__entity_schema.fields).filter(fieldName => {
-        	return (fieldName != "_id" &&
+			return (fieldName != "_id" &&
                 fieldName != "createdAt" &&
                 fieldName != "updatedAt");
 		});
@@ -139,7 +139,7 @@ class PAIMongoDBDataSource extends PAIBaseDataSource {
         return new Promise(async (resolve, reject) => {
 	
 			const mongoModel = EntityConvertor.getMongoModelForEntity(entity);
-			await mongoModel.findOneAndDelete(entity._id).catch(err => {
+			await mongoModel.findByIdAndRemove(entity._id).catch(err => {
 				reject(err);
 			});
 			

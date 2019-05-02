@@ -97,11 +97,11 @@ function loadAdditionalFiles() {
 main().then((success) => {
 
 	if (success) {
-		PAILogger.info("Bot started with success");
+		PAILogger.info("Bot started with great success");
 	}
 	else
-		PAILogger.error("Bot filed to start");
+		PAILogger.error("Bot failed to start");
 }).catch(e => {
-	PAILogger.error("Bot filed to start");
+	PAILogger.error("Bot failed to start");
 	PAILogger.error(e);
 });
