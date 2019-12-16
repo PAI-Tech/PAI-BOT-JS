@@ -27,20 +27,20 @@
     "@pai-tech/pai-net-sdk": "^1.1.49",
     "@pai-tech/pai-os": "^1.0.67",
     "@pai-tech/pai-scheduler": "^1.0.5",
-    "app-root-path": "^2.1.0",
+    "app-root-path": "^2.2.1",
     "dotenv": "^6.2.0",
-    "inquirer": "^6.2.2",
+    "inquirer": "^6.3.1",
     "inquirer-fuzzy-path": "^1.0.0",
     "jsonschema": "^1.2.4",
-    "mongoose": "^5.4.17",
-    "npm": "^6.8.0",
+    "mongoose": "^5.5.9",
+    "npm": "^6.9.0",
     "shelljs": "^0.8.3"
   },
   "PAI": {
     "includeFiles": []
   },
   "devDependencies": {
-    "eslint": "^5.15.0"
+    "eslint": "^5.16.0"
   },
   "directories": {
     "doc": "docs"
