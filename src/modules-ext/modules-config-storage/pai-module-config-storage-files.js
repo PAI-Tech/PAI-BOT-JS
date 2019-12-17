@@ -60,7 +60,7 @@ class PAIModuleConfigStorageFiles extends PAIModuleConfigStorage {
         super();
         
         let defaults = {
-            filePath: '/var/PAI/Bot/123.json'
+            filePath: '/var/PAI/Bot/settings/module.json'
         };
      
         this.config = Object.assign(defaults,config || {});

@@ -3,37 +3,7 @@ const PAIBotStatus = require('./models/pai-bot-status');
 const fs = require('fs');
 const shell = require('shelljs');
 const PAIBotOSUtils = require('./utils/pai-bot-os-utils');
-const { PAICode, PAIUtils, PAICodeCommandContext } = require('@pai-tech/pai-code');
-
-/**
- * Create all bot files in PAI-OS
- *
- * @param {PAIBot} bot
- * @return {Promise<any>}
- */
-function createBotFiles(bot)
-{
-    return new Promise(async (resolve,reject) => {
-        let json = JSON.stringify(bot);
-        
-        let settingsFolder = await PAIBotOSUtils.getBotSettingsFolder();
-        let queueFolder = await PAIBotOSUtils.getBotQueueFolder();
-        
-        shell.mkdir('-p', settingsFolder);
-        shell.mkdir('-p', queueFolder);
-        
-        fs.writeFile(await PAIBotOSUtils.getBotStartupFile(), 'pai-code show version', 'utf8', async function(err,data){
-            
-            fs.writeFile(await PAIBotOSUtils.getBotSettingsFile(), json, 'utf8', function(err,data){
-                if(err)
-                    return reject(err);
-                return resolve(data);
-            });
-            
-        });
-        
-    });
-}
+const { PAICode, PAIUtils, PAICodeCommandContext, PAILogger } = require('@pai-tech/pai-code');
 
 
 /**
@@ -43,9 +13,14 @@ function createBotFiles(bot)
 function isFileExists(filePath)
 {
     return new Promise( (resolve, reject) => {
-        fs.exists(filePath, function read(exists) {
-            return resolve(exists);
-        });
+        try {
+			fs.exists(filePath, function read(exists) {
+				return resolve(exists);
+			});
+		}catch (e) {
+            PAILogger.error("Cannot check if file exists: " + filePath, e);
+            reject(e);
+		}
     });
 }
 
@@ -79,73 +54,69 @@ function readFile(filePath)
 class PAIBotManager {
     
     constructor () {
-        this.activeBot = null;
-        process.pai.bot = null;
     }
     
     
     /**
-     *
+     * Create all bot files in PAI-OS
      * @return {Promise<PAIBot>}
      */
-    createNewBot() {
-        return new Promise( async (resolve,reject) => {
-            
-            let bot = new PAIBot();
-            
-            bot.nickname = 'sample bot';
-            bot.id = PAIUtils.pai_guid();
-            bot.createdAt = (new Date()).getTime();
-            bot.status = PAIBotStatus.NEW;
-    
-            await createBotFiles(bot);
-    
-            this.setBot(bot);
-            
-            return resolve(bot);
-        });
+	createBotFiles() {
+		return new Promise(async (resolve,reject) => {
+			
+			const settingsFolder = await PAIBotOSUtils.getBotSettingsFolder();
+			const queueFolder = await PAIBotOSUtils.getBotQueueFolder();
+		  	const startupFile = await PAIBotOSUtils.getBotStartupFile();
+			
+			shell.mkdir('-p', settingsFolder);
+			shell.mkdir('-p', queueFolder);
+		
+			if(!(await isFileExists(startupFile)))
+			{
+				fs.writeFile(startupFile, 'pai-code show version', 'utf8', async function(err,data) {
+				
+					if(err)
+					{
+						PAILogger.error("Error while creating startup file", err);
+						reject(err);
+					}
+					
+					resolve(true);
+				});
+			}
+			else
+			{
+				resolve(true);
+			}
+			
+		
+		});
     }
-    
-    /**
-     * Load all bots from file
-     * @return {Promise< PAIBot >}
-     */
-    async loadBots()
+	
+	/**
+	 * Load all bots from file
+	 */
+    async loadBotStartupFile()
     {
-        let botSettingsFile = await PAIBotOSUtils.getBotSettingsFile();
-        let file = await isFileExists(botSettingsFile);
-        if(file)
-        {
-            let fileData = await readFile(botSettingsFile);
-            let botObj = JSON.parse(fileData);
-    
-    
-            let bot = Object.assign(new PAIBot(),botObj);
-            
-            let botStartupCode = await readFile(await PAIBotOSUtils.getBotStartupFile());
-            if(botStartupCode)
-            {
-                let context = new PAICodeCommandContext('sender','gateway');
-                let startupResponse = await PAICode.executeString(botStartupCode,context);
-            }
-            
-            this.activeBot = bot;
-        }
+        const botStartupFile = await PAIBotOSUtils.getBotStartupFile();
+        const fileExists = await isFileExists(botStartupFile);
         
-        return this.activeBot;
+        if(!fileExists)
+        {
+            PAILogger.warn("startup.pai file not found");
+            return;
+		}
+        
+        let botStartupCode = await readFile(botStartupFile);
+        if(botStartupCode)
+        {
+            let context = new PAICodeCommandContext('sender','gateway');
+            await PAICode.executeString(botStartupCode,context).catch(err => {
+                PAILogger.error("Cannot execute startup command",err);
+            });
+        }
     }
     
-    
-    // create bot in files
-    
-    /**
-     *
-     * @param {PAIBot} bot
-     */
-    setBot(bot){
-        this.activeBot = bot;
-        process.pai.bot = bot;
-    }
 }
 
 
