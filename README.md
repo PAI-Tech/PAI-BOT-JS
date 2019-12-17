@@ -8,6 +8,4 @@ PAI Bot is designed for modularity with the ability to learn new skills and chai
 
 The Bot must live in a PAI Environment OS - (Read more about PAI Environment).
 
-
-
-
+-- hard reset
