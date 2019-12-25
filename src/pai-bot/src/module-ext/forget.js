@@ -54,6 +54,7 @@ function npmUnInstall(packageName) {
 
         npm.load({
             progress: false,
+            save:true,
         }, function (er) {
             if (er) {
                 PAILogger.error(er);
