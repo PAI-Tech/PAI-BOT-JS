@@ -186,12 +186,13 @@ module.exports = (module) => {
                 await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"KB found..."`,cmd.context);
 
 
-            if(knowledgeBase.repository && knowledgeBase.repository.length>0)
+            if(knowledgeBase.repository && knowledgeBase.repository.length>0) {
                 await npmInstall(knowledgeBase.repository).catch(err => {
-                    PAILogger.error("could not install npm package: " + knowledgeBase.repository,err);
+                    PAILogger.error("could not install npm package: " + knowledgeBase.repository, err);
                     reject(new Error("could not install npm package: " + knowledgeBase.repository));
                     rejected = true;
                 });
+            }
 
             if(rejected)
                 return;
