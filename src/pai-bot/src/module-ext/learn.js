@@ -187,18 +187,23 @@ module.exports = (module) => {
 
 
             if(knowledgeBase.repository && knowledgeBase.repository.length>0) {
-                await npmInstall(knowledgeBase.repository).catch(err => {
-                    PAILogger.error("could not install npm package: " + knowledgeBase.repository, err);
-                    reject(new Error("could not install npm package: " + knowledgeBase.repository));
-                    rejected = true;
-                });
+                // await npmInstall(knowledgeBase.repository).catch(err => {
+                //     PAILogger.error("could not install npm package: " + knowledgeBase.repository, err);
+                //     reject(new Error("could not install npm package: " + knowledgeBase.repository));
+                //     rejected = true;
+                // });
+
+                let install_command = "npm i " + knowledgeBase.repository;
+                await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"Learning..."`,cmd.context);
+                await PAICode.executeString(`pai-os run command:"${install_command}"`,cmd.context);
+                await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"npm ok..."`,cmd.context);
             }
 
             if(rejected)
                 return;
 
             if(cmd.context.sender)
-                await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"npm install..."`,cmd.context);
+                await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"installed..."`,cmd.context);
 
 
             await loadNpmModule(knowledgeBase).catch(err => {
@@ -208,7 +213,7 @@ module.exports = (module) => {
             });
 
             if(cmd.context.sender)
-                await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"npm load..."`,cmd.context);
+                await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"loaded..."`,cmd.context);
 
             if(rejected)
                 return;
