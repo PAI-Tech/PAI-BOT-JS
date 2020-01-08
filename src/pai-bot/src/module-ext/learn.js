@@ -233,8 +233,8 @@ module.exports = (module) => {
              */
             let module = JSON.parse(modules[i]);
 
-            if(module.repository && module.repository.length>0)
-                await npmInstall(module.repository);
+            // if(module.repository && module.repository.length>0)
+            //     await npmInstall(module.repository);
 
 
             await loadNpmModule(module);
