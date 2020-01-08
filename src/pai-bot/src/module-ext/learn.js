@@ -59,7 +59,7 @@ function npmInstall(packageName)
 
         npm.load({
             save:true,
-			progress: false,
+			progress: true,
         }, function (er) {
             if (er)
             {
