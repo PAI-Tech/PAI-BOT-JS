@@ -194,16 +194,15 @@ module.exports = (module) => {
                 // });
 
                 let install_command = "npm i " + knowledgeBase.repository;
-                await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"Learning..."`,cmd.context);
+                await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"installing packages..."`,cmd.context);
                 await PAICode.executeString(`pai-os run command:"${install_command}"`,cmd.context);
-                await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"npm ok..."`,cmd.context);
             }
 
             if(rejected)
                 return;
 
             if(cmd.context.sender)
-                await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"installed..."`,cmd.context);
+                await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"installed (I think)..."`,cmd.context);
 
 
             await loadNpmModule(knowledgeBase).catch(err => {
