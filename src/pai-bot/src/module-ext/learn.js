@@ -182,6 +182,10 @@ module.exports = (module) => {
             if(rejected)
                 return;
 
+            if(cmd.context.sender)
+                await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"KB found..."`,cmd.context);
+
+
             if(knowledgeBase.repository && knowledgeBase.repository.length>0)
                 await npmInstall(knowledgeBase.repository).catch(err => {
                     PAILogger.error("could not install npm package: " + knowledgeBase.repository,err);
@@ -192,11 +196,18 @@ module.exports = (module) => {
             if(rejected)
                 return;
 
+            if(cmd.context.sender)
+                await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"npm install..."`,cmd.context);
+
+
             await loadNpmModule(knowledgeBase).catch(err => {
                 PAILogger.error("could not load npm package " + err.message);
 				reject(new Error("could not load npm package " + err.message));
                 rejected = true;
             });
+
+            if(cmd.context.sender)
+                await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"npm load..."`,cmd.context);
 
             if(rejected)
                 return;

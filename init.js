@@ -13,18 +13,21 @@ let manager = new PAIBotManager();
 
 async function main() {
 	try {
-		
+
+        PAILogger.info("Hey :)");
 		await BotBaseModules.load();
-		
+        PAILogger.info("Loading bot modules, may the force be with us...");
 		let modulesLoaded = await loadModules();
 		
 		if (!modulesLoaded) {
 			// modules failed to load
+            PAILogger.info("FAILED to load modules!!!!!!!!!");
 		}
-		
+        PAILogger.info("Creating bot files");
 		await manager.createBotFiles();
+        PAILogger.info("Loading bot startup files");
 		await manager.loadBotStartupFile();
-		
+        PAILogger.info("Registering to PAI-NET");
 		await registerBotToPAINET();
 		
 		
