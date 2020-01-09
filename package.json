@@ -1,6 +1,10 @@
 {
   "name": "@pai-tech/pai-bot",
+<<<<<<< HEAD
   "version": "1.0.40",
+=======
+  "version": "1.0.41",
+>>>>>>> e661c894891c9a0f79a29e421419ed0ae6052d2f
   "description": "PAI BOT (Node JS) =================",
   "main": "index.js",
   "scripts": {
@@ -23,7 +27,7 @@
   "dependencies": {
     "@pai-tech/pai-bash": "^1.1.7",
     "@pai-tech/pai-code": "^1.1.56",
-    "@pai-tech/pai-conntectors": "^1.1.4",
+    "@pai-tech/pai-conntectors": "^1.1.41",
     "@pai-tech/pai-net": "^1.1.50",
     "@pai-tech/pai-net-sdk": "^1.1.52",
     "@pai-tech/pai-os": "^1.0.67",
@@ -33,7 +37,8 @@
     "inquirer": "^6.5.2",
     "inquirer-fuzzy-path": "^1.0.0",
     "jsonschema": "^1.2.5",
-    "mongoose": "^5.8.1",
+    "mongoose": "^5.8.5",
+    "npm": "^6.13.4",
     "shelljs": "^0.8.3"
   },
   "PAI": {
