@@ -67,6 +67,11 @@ functions:
             func: "shutdown"
         }));
 
+        this.loadCommandWithSchema(new PAIModuleCommandSchema({
+            op: "get-id",
+            func: "get_bot_id"
+        }));
+
 
         await this.loadExistingModules();
     }

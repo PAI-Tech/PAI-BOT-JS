@@ -90,15 +90,20 @@ async function loadNpmModule(knowledgeBase)
 {
     if(knowledgeBase.repository && knowledgeBase.repository.length > 0)
     {
-        const moduleContainer = require(knowledgeBase.repository);
-        const moduleInterface = moduleContainer[knowledgeBase.pai_interface];
-        let moduleInstance = new moduleInterface();
+        try {
+            const moduleContainer = require(knowledgeBase.repository);
+            const moduleInterface = moduleContainer[knowledgeBase.pai_interface];
+            let moduleInstance = new moduleInterface();
 
-        await applyBotDataSource(moduleInstance);
+            await applyBotDataSource(moduleInstance);
 
-        PAICode.loadModule(moduleInstance.setModuleName(),moduleInstance);
+            PAICode.loadModule(moduleInstance.setModuleName(),moduleInstance);
 
-        PAILogger.info('New module has been loaded => ' + moduleInstance.setModuleName());
+            PAILogger.info('New module has been loaded => ' + moduleInstance.setModuleName());
+        }catch (e) {
+            PAILogger.info('Unable to load module -==  ' + knowledgeBase.repository + " ==- \n" + e);
+        }
+
     }
 }
 

@@ -49,7 +49,7 @@ function updateModules(cmd) {
 		
 		let appDir = path.dirname(require.main.filename);
 		
-		await PAICode.executeString(`pai-os run command:"cd ${appDir} && npm update --no-save"`,cmd.context).catch(err => {
+		await PAICode.executeString(`pai-os run command:"cd ${appDir} && npm update "`,cmd.context).catch(err => {
 			PAILogger.error(err);
 			reject(err);
 		});
