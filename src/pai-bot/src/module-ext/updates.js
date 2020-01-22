@@ -7,7 +7,7 @@ function updateBot(cmd) {
 		
 		if(cmd.context.sender)
 			await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"Updating..."`,cmd.context).catch(err => {
-				PAILogger.error(err);
+				PAILogger.error("PAI-BOT (updateBot):" + err);
 			});
 		
 		let rejected = false;
@@ -15,7 +15,7 @@ function updateBot(cmd) {
 		let appDir = path.dirname(require.main.filename);
 		
 		await PAICode.executeString(`pai-os run command:"cd ${appDir} && git reset --hard && git pull"`,cmd.context).catch(err => {
-			PAILogger.error(err);
+			PAILogger.error("PAI-BOT (updateBot):" + err);
 			rejected = true;
 			reject(err);
 		});
@@ -24,7 +24,7 @@ function updateBot(cmd) {
 			return;
 		
 		await PAICode.executeString(`pai-os run command:"cd ${appDir} && npm run install:clean"`,cmd.context).catch(err => {
-			PAILogger.error(err);
+			PAILogger.error("PAI-BOT (updateBot):" + err);
 			rejected = true;
 			reject(err);
 		});
@@ -43,14 +43,14 @@ function updateModules(cmd) {
 	return new Promise(async (resolve, reject) => {
 		if(cmd.context.sender) {
 			await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"Updating..."`,cmd.context).catch(err => {
-				PAILogger.error(err);
+				PAILogger.error("PAI-BOT (updateModules):" + err);
 			});
 		}
 		
 		let appDir = path.dirname(require.main.filename);
 		
 		await PAICode.executeString(`pai-os run command:"cd ${appDir} && npm update "`,cmd.context).catch(err => {
-			PAILogger.error(err);
+			PAILogger.error("PAI-BOT (updateModules):" + err);
 			reject(err);
 		});
 		

@@ -42,7 +42,7 @@ async function main() {
 		
 	} catch (e) {
 		PAICode.stop();
-		PAILogger.error(e);
+		PAILogger.error("PAI-BOT (main):" + e);
 		return false;
 	}
 	
@@ -89,8 +89,7 @@ function loadAdditionalFiles() {
 			}
 		}
 	} catch (e) {
-		PAILogger.error("error while loading includeFiles from package.json");
-		PAILogger.error(e);
+		PAILogger.error("error while loading includeFiles from package.json " + e);
 	}
 }
 
@@ -102,6 +101,5 @@ main().then((success) => {
 	else
 		PAILogger.error("Bot failed to start");
 }).catch(e => {
-	PAILogger.error("Bot failed to start");
-	PAILogger.error(e);
+	PAILogger.error("Bot failed to start " + e);
 });

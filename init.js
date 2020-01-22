@@ -33,7 +33,7 @@ async function main() {
 		
 	} catch (e) {
 		PAICode.stop();
-		PAILogger.error(e);
+		PAILogger.error("PAI-BOT (main):" + e);
 	}
 	
 	return true;
@@ -80,7 +80,7 @@ async function registerBotToPAINET() {
 main().then((success) => {
 	process.exit(success ? 0 : 1);
 }).catch(e => {
-	PAILogger.error(e);
+	PAILogger.error("PAI-BOT (regsiterBotToPAINET):" + e);
 });
 
 

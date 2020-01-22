@@ -19,7 +19,7 @@ async function getPAIModuleFromKnowledgeBase(paiModule, parentCommand)
     try{
         commandsArray = await PAICode.executeString(`pai-net get-knowledge-base filters:"${paramsString}"`,context);
     }catch (e) {
-		PAILogger.error(e);
+		PAILogger.error("PAI-BOT (getPAIModuleFromKnowledgeBase):" + e);
     }
 
     if(!commandsArray || commandsArray.length === 0)
@@ -63,13 +63,13 @@ function npmInstall(packageName)
         }, function (er) {
             if (er)
             {
-                PAILogger.error(er);
+                PAILogger.error("PAI-BOT (npmInstall):" + er);
 				return reject(er);
 			}
 
             npm.commands.install([packageName], function (er, data) {
                 if (er) {
-					PAILogger.error(er);
+					PAILogger.error("PAI-BOT (npmInstall):" + er);
 					return reject(er);
                 }
                 resolve(data);
@@ -116,7 +116,7 @@ async function loadNpmModule(knowledgeBase)
 async function getBotModules(config)
 {
 	let modulesStr = await config.getConfigParam(CONFIG_BOT_MODULES).catch(err => {
-        PAILogger.error(err);
+        PAILogger.error("PAI-BOT (getBotModules):" + err);
     });
 
     if(!modulesStr)
