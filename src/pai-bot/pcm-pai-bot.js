@@ -52,10 +52,10 @@ functions:
             }
         }));
 
-        this.loadCommandWithSchema(new PAIModuleCommandSchema({
-            op: "update-bot",
-            func: "updateBot"
-        }));
+        // this.loadCommandWithSchema(new PAIModuleCommandSchema({
+        //     op: "update-bot",
+        //     func: "updateBot"
+        // }));
 
         this.loadCommandWithSchema(new PAIModuleCommandSchema({
             op: "update-modules",
