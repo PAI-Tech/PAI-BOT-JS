@@ -21,7 +21,6 @@
   },
   "homepage": "https://github.com/PAI-Tech/PAI-BOT-JS#readme",
   "dependencies": {
-    "@pai-tech/pai-bash": "^1.1.7",
     "@pai-tech/pai-code": "^1.1.59",
     "@pai-tech/pai-conntectors": "^1.1.41",
     "@pai-tech/pai-net": "^1.1.54",

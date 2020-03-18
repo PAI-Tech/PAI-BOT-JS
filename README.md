@@ -8,3 +8,11 @@ PAI Bot is designed for modularity with the ability to learn new skills and chai
 
 The Bot must live in a PAI Environment OS - (Read more about PAI Environment).
 
+ * Copyright PAI-TECH 2018, all right reserved
+
+ * This file is the entry point of your base module.
+
+ *      This program is free software; you can redistribute it and/or
+ *		modify it under the terms of the GNU General Public License
+ *		as published by the Free Software Foundation; either version
+ *		3 of the License, or (at your option) any later version.

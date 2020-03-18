@@ -1,3 +1,18 @@
+/**
+ * PAI-BOT JS
+ * Author       : Ron Fridman
+ * Date Created : 9/25/2019
+ * Copyright PAI-TECH 2018, all right reserved
+
+ * This file is the entry point of your base module.
+
+ *      This program is free software; you can redistribute it and/or
+ *		modify it under the terms of the GNU General Public License
+ *		as published by the Free Software Foundation; either version
+ *		3 of the License, or (at your option) any later version.
+ */
+
+
 const {PAICodeModule, PAIModuleConfigParam, PAIModuleCommandSchema, PAIModuleCommandParamSchema, PAILogger, PAICodeCommand} = require("@pai-tech/pai-code");
 
 const CONFIG_BOT_MODULES = "bot_modules";
