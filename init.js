@@ -3,15 +3,18 @@
  * Author       : Ron Fridman
  * Date Created : 9/25/2019
  * Copyright PAI-TECH 2018, all right reserved
-
- * This file is the entry point of your base module.
-
+ *
+ *
  *      This program is free software; you can redistribute it and/or
  *		modify it under the terms of the GNU General Public License
  *		as published by the Free Software Foundation; either version
  *		3 of the License, or (at your option) any later version.
  */
 
+
+const fs = require('fs');
+const path = require('path');
+const os = require("os");
 
 const {
 	PAICode,
@@ -26,10 +29,41 @@ const registerToPAINET = require("./src/installation/pai-net-registration/pai-ne
 
 let manager = new PAIBotManager();
 
+
+async function check_pai_os_folders()
+{
+
+    let pai_root_folder = (os.platform == "win32") ? "C:\\PAI\\" : "/var/PAI/";
+    const pai_bot_folder = pai_root_folder + "Bot";
+
+    PAILogger.info("Checking PAI O/S folders");
+
+    //create PAI O/S Folder
+    if (!fs.existsSync(pai_root_folder)) {
+        PAILogger.info("Creating PAI O/S folder " + pai_root_folder );
+        fs.mkdirSync(pai_root_folder);
+    }
+    else {
+        PAILogger.info("PAI O/S Folder is " +pai_root_folder );
+	}
+
+
+    if (!fs.existsSync(  pai_bot_folder)) {
+        PAILogger.info("Creating PAI-BOT folder " +   pai_bot_folder );
+        fs.mkdirSync(  pai_bot_folder);
+    }
+    else {
+        PAILogger.info("PAI-BOT Folder is " +pai_bot_folder );
+    }
+}
+
+
+
 async function main() {
 	try {
 
         PAILogger.info("Hey :)");
+        await check_pai_os_folders();
 		await BotBaseModules.load();
         PAILogger.info("Loading bot modules, may the force be with us...");
 		let modulesLoaded = await loadModules();

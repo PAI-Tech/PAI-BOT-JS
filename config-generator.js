@@ -1,5 +1,7 @@
 const {PAILogger} = require("@pai-tech/pai-code");
 const fs = require('fs');
+const path = require('path');
+const os = require("os");
 
 const CONFIG_FILE_PATH = "./config.env";
 
@@ -10,6 +12,7 @@ catch (e) {
 	fs.writeFileSync(CONFIG_FILE_PATH,'');
 	PAILogger.info('config file created -> config.env');
 }
+
 
 const configRes = require('./env-loader');
 
@@ -22,7 +25,28 @@ const config = configRes.parsed;
 const inquirer = require('inquirer');
 inquirer.registerPrompt('fuzzypath', require('inquirer-fuzzy-path'));
 
+function check_pai_os_folders()
+{
 
+	let pai_root_folder = (os.platform == "win32") ? "C:\\PAI\\" : "/var/PAI/";
+	const pai_bot_folder = pai_root_folder + "Bot";
+
+    console.log("Checking PAI folders ");
+
+	//create PAI O/S Folder
+	if (!fs.existsSync(pai_root_folder)) {
+		console.log("Creating PAI O/S folder " + pai_root_folder );
+		fs.mkdirSync(pai_root_folder);
+	}
+
+
+	if (!fs.existsSync(  pai_bot_folder)) {
+        console.log("Creating PAI-BOT folder " +   pai_bot_folder );
+		fs.mkdirSync(  pai_bot_folder);
+	}
+}
+
+check_pai_os_folders();
 
 const questions = [
 	{
@@ -121,7 +145,7 @@ const questions = [
 			{
 				PAILogger.error(`
                 invalid port
-                `)
+                `);
 			}
 			
 			return portIsValid;

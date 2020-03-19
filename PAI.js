@@ -3,9 +3,8 @@
  * Author       : Ron Fridman
  * Date Created : 9/25/2019
  * Copyright PAI-TECH 2018, all right reserved
-
+ *
  * This file is the entry point of your base module.
-
  *      This program is free software; you can redistribute it and/or
  *		modify it under the terms of the GNU General Public License
  *		as published by the Free Software Foundation; either version
