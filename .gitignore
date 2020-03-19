@@ -28,6 +28,7 @@ hs_err_pid*
 
 
 node_modules/
+package-lock.json
 
 # dotenv environment variables file
 *.env
