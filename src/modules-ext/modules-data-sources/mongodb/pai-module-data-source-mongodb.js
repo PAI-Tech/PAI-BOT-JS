@@ -42,6 +42,27 @@ class PAIMongoDBDataSource extends PAIBaseDataSource {
 
     }
 
+    countDocuments(entity) {
+        const mongoModel = EntityConvertor.getMongoModelForEntity(entity);
+        return mongoModel.countDocuments({}, function (err, c) {
+            return c;
+        });
+    }
+
+    async findWithLimit(entity, limit, skip) {
+        const mongoModel = EntityConvertor.getMongoModelForEntity(entity);
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await mongoModel.find({}, null, {skip: skip, limit: limit});
+                resolve(res);
+            } catch (e) {
+                reject(e);
+            }
+
+
+        });
+    }
+
     /**
      * @param {PAIEntity} entity
      * @return {Promise<PAIEntity>}
@@ -90,7 +111,7 @@ class PAIMongoDBDataSource extends PAIBaseDataSource {
      * @param limit
      * @return {Promise<PAIEntityList>}
      */
-    find(entity, options, limit) {
+    find(entity, options,limit) {
         return new Promise(async (resolve, reject) => {
 
             const mongoModel = EntityConvertor.getMongoModelForEntity(entity);
