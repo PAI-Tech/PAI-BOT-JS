@@ -11,7 +11,10 @@
  */
 
 
-const {PAICodeModule, PAIModuleConfigParam, PAIModuleCommandSchema, PAIModuleCommandParamSchema, PAILogger, PAICodeCommand} = require("@pai-tech/pai-code");
+const {PAICodeModule, PAIModuleConfigParam, PAIModuleCommandSchema, PAIModuleCommandParamSchema, PAILogger, PAICodeCommand,PAIUtils} = require("@pai-tech/pai-code");
+
+//const pai_bot_entity = require("./src/data/entities/pai-bot");
+const PAI_OS = require('@pai-tech/pai-os').PAI_OS;
 
 const CONFIG_BOT_MODULES = "bot_modules";
 
@@ -83,13 +86,20 @@ functions:
             func: "shutdown"
         }));
 
+        // this.loadCommandWithSchema(new PAIModuleCommandSchema({
+        //     op: "get-id",
+        //     func: "get_bot_id"
+        // }));
+
         this.loadCommandWithSchema(new PAIModuleCommandSchema({
-            op: "get-id",
-            func: "get_bot_id"
+            op: "get-bot-folder",
+            func: "get_bot_folder"
         }));
 
 
         await this.loadExistingModules();
+
+
     }
 
 
@@ -113,6 +123,12 @@ functions:
         const sender = cmd.context.sender;
         PAILogger.warn("Shutdown command called by " + sender);
         process.exit(0);
+    }
+
+    async get_bot_folder()
+    {
+        let paios = new  PAI_OS();
+        return (await paios.getOSPath()) + path.sep + "Bot" + path.sep
     }
 
 }

@@ -78,7 +78,7 @@ function getFromFile(filePath){
 			return resolve(data);
 		});
 		
-	})
+	});
 }
 
 
@@ -137,28 +137,30 @@ class PAIFilesStorageDataSource extends PAIBaseDataSource {
 	
 	
 	constructor(config) {
-		super();
-		
-		
-		let defaults = {
-			filePath: '/var/PAI/Bot/settings/module.json'
-		};
-		
-		this.config = Object.assign(defaults,config || {});
-		
-		
-		// create folder if not exists
-		if(!fs.existsSync(this.config.filePath))
-			shell.mkdir('-p',this.config.filePath);
-	}
-	
-	
+        super();
+
+
+        let defaults = {
+            filePath: '/var/PAI/Bot/settings/module.json'
+        };
+
+        this.config = Object.assign(defaults, config || {});
+
+
+        // create folder if not exists
+        if (!fs.existsSync(this.config.filePath))
+            shell.mkdir('-p', this.config.filePath);
+
+    }
+
 	async save(entity) {
 		let currentTime = new Date().getTime();
 		entity._id = PAIUtils.pai_guid();
 		entity.createdAt = currentTime;
 		entity.updatedAt = currentTime;
-		
+
+
+
 		let entityFolder = this._getPathForEntity(entity);
 		
 		
@@ -179,10 +181,12 @@ class PAIFilesStorageDataSource extends PAIBaseDataSource {
 				entityObjToSave[fieldName] = fieldValue;
 			}
 		}
-		
+
+
+
 		const filePath = entityFolder + path.sep + entity._id + ".json";
 		
-		await saveToFile(
+		 await saveToFile(
 			filePath,
 			JSON.stringify(entityObjToSave)
 		);
@@ -301,6 +305,8 @@ class PAIFilesStorageDataSource extends PAIBaseDataSource {
 		
 		return entityPath;
 	}
+
+
 	
 }
 

@@ -32,7 +32,7 @@ function getFromFile(filePath){
             return resolve(data);
         });
         
-    })
+    });
 }
 
 /**
