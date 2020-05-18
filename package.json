@@ -1,6 +1,6 @@
 {
   "name": "@pai-tech/pai-bot",
-  "version": "1.0.491",
+  "version": "1.0.492",
   "description": "PAI BOT (Node JS) =================",
   "main": "index.js",
   "scripts": {
@@ -21,7 +21,6 @@
   },
   "homepage": "https://github.com/PAI-Tech/PAI-BOT-JS#readme",
   "dependencies": {
-    "@pai-tech/mark": "^2.1.5",
     "@pai-tech/pai-code": "^1.1.69",
     "@pai-tech/pai-conntectors": "^1.1.6",
     "@pai-tech/pai-contacts": "^1.2.99",
