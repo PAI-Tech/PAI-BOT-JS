@@ -173,9 +173,6 @@ module.exports = (module) => {
             if(!cmd.params["module"] || !cmd.params["module"].value)
                 reject(new Error("module not specified"));
 
-            if(cmd.context.sender)
-                await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"Learning..."`,cmd.context);
-
             let paiModule = cmd.params["module"].value;
 
             let knowledgeBase = await getPAIModuleFromKnowledgeBase(paiModule,cmd).catch(err => {
@@ -184,11 +181,14 @@ module.exports = (module) => {
                 rejected = true;
             });
 
+
+            if(cmd.context.sender)
+                await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"Learning ${knowledgeBase.name}"`,cmd.context);
+
+
             if(rejected)
                 return;
 
-            if(cmd.context.sender)
-                await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"KB found..."`,cmd.context);
 
 
             if(knowledgeBase.repository && knowledgeBase.repository.length>0) {
@@ -201,7 +201,7 @@ module.exports = (module) => {
                  */
 
                 let installCommand = "npm i " + knowledgeBase.repository;
-                await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"installing packages..."`,cmd.context);
+                await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"installing npm package ${knowledgeBase.repository}"`,cmd.context);
                 await PAICode.executeString(`pai-os run command:"${installCommand}"`,cmd.context);
             }
 
