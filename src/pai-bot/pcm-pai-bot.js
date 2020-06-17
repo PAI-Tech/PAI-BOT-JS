@@ -5,13 +5,15 @@
  * Copyright PAI-TECH 2018, all right reserved
  * This file is the entry point of your base module.
  *      This program is free software; you can redistribute it and/or
- *		modify it under the terms of the GNU General Public License
- *		as published by the Free Software Foundation; either version
- *		3 of the License, or (at your option) any later version.
+ *        modify it under the terms of the GNU General Public License
+ *        as published by the Free Software Foundation; either version
+ *        3 of the License, or (at your option) any later version.
  */
 
 
-const {PAICodeModule, PAIModuleConfigParam, PAIModuleCommandSchema, PAIModuleCommandParamSchema, PAILogger, PAICodeCommand,PAIUtils} = require("@pai-tech/pai-code");
+const {PAICodeModule, PAIModuleConfigParam, PAIModuleCommandSchema, PAIModuleCommandParamSchema, PAILogger, PAICodeCommand, PAIUtils} = require("@pai-tech/pai-code");
+const npmLogin = require('npm-cli-login');
+
 
 //const pai_bot_entity = require("./src/data/entities/pai-bot");
 const PAI_OS = require('@pai-tech/pai-os').PAI_OS;
@@ -66,6 +68,18 @@ functions:
         }));
 
         this.loadCommandWithSchema(new PAIModuleCommandSchema({
+            op: "npm_login",
+            func: "npm_login",
+            params: {
+                "username": new PAIModuleCommandParamSchema("username", "npm user_name", true, "username"),
+                "password": new PAIModuleCommandParamSchema("password", "password", true, "password"),
+                "email": new PAIModuleCommandParamSchema("email", "email", true, "email")
+
+
+            }
+        }));
+
+        this.loadCommandWithSchema(new PAIModuleCommandSchema({
             op: "forget",
             func: "forget",
             params: {
@@ -105,10 +119,17 @@ functions:
     }
 
 
-
-
     setModuleName() {
         return "pai-bot";
+    }
+
+
+    npm_login(cmd) {
+        let username = cmd.params.username.value;
+        let email = cmd.params.email.value;
+        let password = cmd.params.password.value;
+        npmLogin(username, password, email);
+
     }
 
 
@@ -127,9 +148,8 @@ functions:
         process.exit(0);
     }
 
-    async get_bot_folder()
-    {
-        let paios = new  PAI_OS();
+    async get_bot_folder() {
+        let paios = new PAI_OS();
         return (await paios.getOSPath()) + path.sep + "Bot" + path.sep
     }
 

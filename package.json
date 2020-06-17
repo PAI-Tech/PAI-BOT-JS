@@ -28,14 +28,15 @@
     "@pai-tech/pai-os": "^1.0.9",
     "@pai-tech/pai-scheduler": "^1.0.5",
     "app-root-path": "^2.2.1",
+    "axios": "^0.19.2",
     "dotenv": "^6.2.0",
     "inquirer": "^6.5.2",
     "inquirer-fuzzy-path": "^1.0.0",
     "jsonschema": "^1.2.6",
     "mongoose": "^5.9.14",
     "npm": "^6.14.5",
-    "shelljs": "^0.8.4",
-    "axios": "^0.19.2"
+    "npm-cli-login": "^0.1.1",
+    "shelljs": "^0.8.4"
   },
   "PAI": {
     "includeFiles": []
