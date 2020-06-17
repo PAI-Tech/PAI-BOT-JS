@@ -59,7 +59,9 @@ functions:
             op: "learn",
             func: "learn",
             params: {
-                "module": new PAIModuleCommandParamSchema("module", "PAI Knowledge Base canonicalName to learn", true, "Module Canonical Name")
+                "module": new PAIModuleCommandParamSchema("module", "PAI Knowledge Base canonicalName to learn", true, "Module Canonical Name"),
+                "repo": new PAIModuleCommandParamSchema("repo", "Repo To Learn From", false, "Module Repo")
+
             }
         }));
 

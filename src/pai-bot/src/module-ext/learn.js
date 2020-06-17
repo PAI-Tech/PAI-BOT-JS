@@ -1,8 +1,9 @@
-const { PAICode, PAICodeCommand,PAICodeCommandContext,PAILogger, PAIModuleConfig } = require('@pai-tech/pai-code');
+const {PAICode, PAICodeCommand, PAICodeCommandContext, PAILogger, PAIModuleConfig} = require('@pai-tech/pai-code');
 const npm = require('npm');
-const { KnowledgeBase } = require('@pai-tech/pai-net-sdk');
+const {KnowledgeBase} = require('@pai-tech/pai-net-sdk');
 const applyBotDataSource = require("./data-and-config");
 const CONFIG_BOT_MODULES = "bot_modules";
+const axios = require('axios');
 
 /**
  *
@@ -10,36 +11,32 @@ const CONFIG_BOT_MODULES = "bot_modules";
  * @param {PAICodeCommand} parentCommand
  * @return {Promise<KnowledgeBase>}
  */
-async function getPAIModuleFromKnowledgeBase(paiModule, parentCommand)
-{
-    let params = {canonicalName:paiModule, status: "PUBLISHED"};
-    let paramsString = JSON.stringify(params).replace(/["]/g,"\\\"");
-    let context = new PAICodeCommandContext(parentCommand.context.sender,parentCommand.context.gateway,parentCommand);
+async function getPAIModuleFromKnowledgeBase(paiModule, parentCommand) {
+    let params = {canonicalName: paiModule, status: "PUBLISHED"};
+    let paramsString = JSON.stringify(params).replace(/["]/g, "\\\"");
+    let context = new PAICodeCommandContext(parentCommand.context.sender, parentCommand.context.gateway, parentCommand);
     let commandsArray = null;
-    try{
-        commandsArray = await PAICode.executeString(`pai-net get-knowledge-base filters:"${paramsString}"`,context);
-    }catch (e) {
-		PAILogger.error("PAI-BOT (getPAIModuleFromKnowledgeBase):" + e);
+    try {
+        commandsArray = await PAICode.executeString(`pai-net get-knowledge-base filters:"${paramsString}"`, context);
+    } catch (e) {
+        PAILogger.error("PAI-BOT (getPAIModuleFromKnowledgeBase):" + e);
     }
 
-    if(!commandsArray || commandsArray.length === 0)
-    {
+    if (!commandsArray || commandsArray.length === 0) {
         throw new Error('knowledge base not found for module:' + paiModule);
     }
 
     let response = commandsArray[0].response;
 
 
-    if(!response.success)
-    {
+    if (!response.success) {
         throw response.error;
     }
 
 
     let listResponse = response.data.data;
 
-    if(listResponse.count === 0)
-    {
+    if (listResponse.count === 0) {
         throw new Error('knowledge base not found for module:' + paiModule);
     }
 
@@ -53,24 +50,22 @@ async function getPAIModuleFromKnowledgeBase(paiModule, parentCommand)
  * @param {String} packageName
  * @return {Promise<any>}
  */
-function npmInstall(packageName)
-{
-    return new Promise((resolve,reject) => {
+function npmInstall(packageName) {
+    return new Promise((resolve, reject) => {
 
         npm.load({
-            save:true,
-			progress: true,
+            save: true,
+            progress: true,
         }, function (er) {
-            if (er)
-            {
+            if (er) {
                 PAILogger.error("PAI-BOT (npmInstall):" + er);
-				return reject(er);
-			}
+                return reject(er);
+            }
 
             npm.commands.install([packageName], function (er, data) {
                 if (er) {
-					PAILogger.error("PAI-BOT (npmInstall):" + er);
-					return reject(er);
+                    PAILogger.error("PAI-BOT (npmInstall):" + er);
+                    return reject(er);
                 }
                 resolve(data);
                 // command succeeded, and data might have some info
@@ -86,10 +81,8 @@ function npmInstall(packageName)
  * @param {KnowledgeBase} knowledgeBase
  * @return {Promise<void>}
  */
-async function loadNpmModule(knowledgeBase)
-{
-    if(knowledgeBase.repository && knowledgeBase.repository.length > 0)
-    {
+async function loadNpmModule(knowledgeBase) {
+    if (knowledgeBase.repository && knowledgeBase.repository.length > 0) {
         try {
             const moduleContainer = require(knowledgeBase.repository);
             const moduleInterface = moduleContainer[knowledgeBase.pai_interface];
@@ -97,10 +90,29 @@ async function loadNpmModule(knowledgeBase)
 
             await applyBotDataSource(moduleInstance);
 
-            PAICode.loadModule(moduleInstance.setModuleName(),moduleInstance);
+            PAICode.loadModule(moduleInstance.setModuleName(), moduleInstance);
 
             PAILogger.info('New module has been loaded => ' + moduleInstance.setModuleName());
-        }catch (e) {
+        } catch (e) {
+            PAILogger.info('Unable to load module -==  ' + knowledgeBase.repository + " ==- \n" + e);
+        }
+
+    }
+}
+
+async function loadNpmModuleFromRepo(knowledgeBase) {
+    if (knowledgeBase.platform && knowledgeBase.platform["platform-repo-name"]) {
+        try {
+            const moduleContainer = require(knowledgeBase.platform["platform-repo-name"]);
+            const moduleInterface = moduleContainer[knowledgeBase.pai_interface];
+            let moduleInstance = new moduleInterface();
+
+            await applyBotDataSource(moduleInstance);
+
+            PAICode.loadModule(moduleInstance.setModuleName(), moduleInstance);
+
+            PAILogger.info('New module has been loaded => ' + moduleInstance.setModuleName());
+        } catch (e) {
             PAILogger.info('Unable to load module -==  ' + knowledgeBase.repository + " ==- \n" + e);
         }
 
@@ -113,13 +125,12 @@ async function loadNpmModule(knowledgeBase)
  * @param {PAIModuleConfig} config
  * @return {Promise<[String]>}
  */
-async function getBotModules(config)
-{
-	let modulesStr = await config.getConfigParam(CONFIG_BOT_MODULES).catch(err => {
+async function getBotModules(config) {
+    let modulesStr = await config.getConfigParam(CONFIG_BOT_MODULES).catch(err => {
         PAILogger.error("PAI-BOT (getBotModules):" + err);
     });
 
-    if(!modulesStr)
+    if (!modulesStr)
         modulesStr = '[]';
 
     return JSON.parse(modulesStr);
@@ -133,7 +144,7 @@ async function getBotModules(config)
  * @param {String} newModule
  * @return {Promise<boolean>} success
  */
-async function addBotModuleToConfig(config, newModule){
+async function addBotModuleToConfig(config, newModule) {
 
     let newModuleObj = JSON.parse(newModule);
 
@@ -142,19 +153,38 @@ async function addBotModuleToConfig(config, newModule){
     let exists = false;
     for (let i = 0; i < modules.length; i++) {
         let module = JSON.parse(modules[i]);
-        if(module._id === newModuleObj._id)
-        {
+        if (module._id === newModuleObj._id) {
             exists = true;
             break;
         }
     }
 
-    if(exists)
+    if (exists)
         return true;
 
     modules.push(newModule);
     let success = await config.setConfigParam(CONFIG_BOT_MODULES, JSON.stringify(modules));
-	return success;
+    return success;
+}
+
+
+async function getKbFromRepo(repo, module) {
+    let repo_json = null;
+    try {
+        repo_json = await axios.get(repo);
+        repo_json = repo_json.data['pai-code-modules'];
+    } catch (e) {
+        throw new Error(e);
+    }
+    let found_kb = repo_json.filter((Module) => {
+        return (Module["module-name"] === module);
+    });
+    if (found_kb.length < 1) {
+        throw new Error('Module Not Found');
+    }
+    return found_kb[0];
+
+
 }
 
 
@@ -165,77 +195,136 @@ module.exports = (module) => {
      * @param {PAICodeCommand} cmd
      * @return {Promise<any>}
      */
-    module.prototype.learn = function(cmd) {
+    module.prototype.learn = function (cmd) {
         return new Promise(async (resolve, reject) => {
 
             let rejected = false;
-
-            if(!cmd.params["module"] || !cmd.params["module"].value)
+            if (!cmd.params["module"] || !cmd.params["module"].value)
                 reject(new Error("module not specified"));
 
-            let paiModule = cmd.params["module"].value;
+            if (!cmd.params["repo"] || !cmd.params["repo"].value) {
 
-            let knowledgeBase = await getPAIModuleFromKnowledgeBase(paiModule,cmd).catch(err => {
-                PAILogger.error("Could not find knowledge base " + err.message);
-                reject(new Error("Could not find knowledge base " + err.message));
-                rejected = true;
-            });
+                let paiModule = cmd.params["module"].value;
 
-
-            if(cmd.context.sender)
-                await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"Learning ${knowledgeBase.name}"`,cmd.context);
+                let knowledgeBase = await getPAIModuleFromKnowledgeBase(paiModule, cmd).catch(err => {
+                    PAILogger.error("Could not find knowledge base " + err.message);
+                    reject(new Error("Could not find knowledge base " + err.message));
+                    rejected = true;
+                });
 
 
-            if(rejected)
-                return;
+                if (cmd.context.sender)
+                    await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"Learning ${knowledgeBase.name}"`, cmd.context);
 
 
+                if (rejected)
+                    return;
 
-            if(knowledgeBase.repository && knowledgeBase.repository.length>0) {
+
+                if (knowledgeBase.repository && knowledgeBase.repository.length > 0) {
+                    /*
+                     * await npmInstall(knowledgeBase.repository).catch(err => {
+                     *     PAILogger.error("could not install npm package: " + knowledgeBase.repository, err);
+                     *     reject(new Error("could not install npm package: " + knowledgeBase.repository));
+                     *     rejected = true;
+                     * });
+                     */
+
+                    let installCommand = "npm i " + knowledgeBase.repository;
+                    await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"installing npm package ${knowledgeBase.repository}"`, cmd.context);
+                    await PAICode.executeString(`pai-os run command:"${installCommand}"`, cmd.context);
+                }
+
+                if (rejected)
+                    return;
+
                 /*
-                 * await npmInstall(knowledgeBase.repository).catch(err => {
-                 *     PAILogger.error("could not install npm package: " + knowledgeBase.repository, err);
-                 *     reject(new Error("could not install npm package: " + knowledgeBase.repository));
-                 *     rejected = true;
-                 * });
+                 * if(cmd.context.sender)
+                 *     await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"installed (I think)..."`,cmd.context);
                  */
 
-                let installCommand = "npm i " + knowledgeBase.repository;
-                await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"installing npm package ${knowledgeBase.repository}"`,cmd.context);
-                await PAICode.executeString(`pai-os run command:"${installCommand}"`,cmd.context);
+
+                await loadNpmModule(knowledgeBase).catch(err => {
+                    PAILogger.error("could not load npm package " + err.message);
+                    reject(new Error("could not load npm package " + err.message));
+                    rejected = true;
+                });
+
+                /*
+                 * if(cmd.context.sender)
+                 *     await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"loaded..."`,cmd.context);
+                 */
+
+                if (rejected)
+                    return;
+
+                await addBotModuleToConfig(this.config, JSON.stringify(knowledgeBase)); // TODO: change config to data
+
+                resolve('I know ' + knowledgeBase.name + '!');
+            } else {
+                let paiModule = cmd.params["module"].value;
+
+                let knowledgeBase = await getKbFromRepo(cmd.params.repo.value, paiModule).catch(err => {
+                    PAILogger.error("Could not find knowledge base " + err.message);
+                    reject(new Error("Could not find knowledge base " + err.message));
+                    rejected = true;
+                });
+                if (cmd.context.sender)
+                    await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"Learning ${knowledgeBase["module-name"]}"`, cmd.context);
+
+
+                if (rejected)
+                    return;
+
+
+                if (knowledgeBase.platform && knowledgeBase.platform["platform-repo-name"]) {
+                    /*
+                     * await npmInstall(knowledgeBase.repository).catch(err => {
+                     *     PAILogger.error("could not install npm package: " + knowledgeBase.repository, err);
+                     *     reject(new Error("could not install npm package: " + knowledgeBase.repository));
+                     *     rejected = true;
+                     * });
+                     */
+
+                    let installCommand = "npm i " + knowledgeBase.platform["platform-repo-name"];
+                    await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"installing npm package ${knowledgeBase.platform["platform-repo-name"]}"`, cmd.context);
+                    await PAICode.executeString(`pai-os run command:"${installCommand}"`, cmd.context);
+                }
+
+                if (rejected)
+                    return;
+
+                /*
+                 * if(cmd.context.sender)
+                 *     await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"installed (I think)..."`,cmd.context);
+                 */
+
+
+                await loadNpmModule(knowledgeBase).catch(err => {
+                    PAILogger.error("could not load npm package " + err.message);
+                    reject(new Error("could not load npm package " + err.message));
+                    rejected = true;
+                });
+
+                /*
+                 * if(cmd.context.sender)
+                 *     await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"loaded..."`,cmd.context);
+                 */
+
+                if (rejected)
+                    return;
+
+                await addBotModuleToConfig(this.config, JSON.stringify(knowledgeBase)); // TODO: change config to data
+
+                resolve('I know ' + knowledgeBase["module-name"] + '!');
             }
 
-            if(rejected)
-                return;
 
-            /*
-             * if(cmd.context.sender)
-             *     await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"installed (I think)..."`,cmd.context);
-             */
-
-
-            await loadNpmModule(knowledgeBase).catch(err => {
-                PAILogger.error("could not load npm package " + err.message);
-				reject(new Error("could not load npm package " + err.message));
-                rejected = true;
-            });
-
-            /*
-             * if(cmd.context.sender)
-             *     await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"loaded..."`,cmd.context);
-             */
-
-            if(rejected)
-                return;
-
-            await addBotModuleToConfig(this.config,JSON.stringify(knowledgeBase)); // TODO: change config to data
-
-            resolve('I know ' + knowledgeBase.name + '!');
         });
 
     };
 
-    module.prototype.loadExistingModules = async function() {
+    module.prototype.loadExistingModules = async function () {
 
         /**
          * @type {[String]}
