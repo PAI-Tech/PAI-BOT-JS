@@ -56,15 +56,15 @@ const questions = [
 		default: 3141,
 		validate: (val) => {
 			const portIsValid = validatePort(val);
-			
+
 			if(!portIsValid)
 			{
 				PAILogger.error(`
                 invalid port
                 `);
 			}
-			
-			
+
+
 			return portIsValid;
 		}
 	},
@@ -124,9 +124,9 @@ const questions = [
 		name: "DATA_SOURCE_MONGO_URL",
 		message: "Mongo DB URL",
 		validate: (val) => {
-			
+
 			// TODO: validate ip / url
-			
+
 			return true;
 		},
 		when: (val) => {
@@ -140,14 +140,14 @@ const questions = [
 		default: "27017",
 		validate: (val) => {
 			const portIsValid = validatePort(val);
-			
+
 			if(!portIsValid)
 			{
 				PAILogger.error(`
                 invalid port
                 `);
 			}
-			
+
 			return portIsValid;
 		},
 		when: (val) => {
@@ -161,7 +161,7 @@ const questions = [
 		when: (val) => {
 			return val.DATA_SOURCE === "MONGO";
 		}
-		
+
 	},
 	{
 		type: "password",
@@ -204,9 +204,9 @@ ${key}='${value}'
 function validatePort(val) {
 	if(isNaN(val))
 		return false;
-	
+
 	const numberPort = parseInt(val);
-	
+
 	return (numberPort < 65535 && numberPort > 0);
 }
 
@@ -217,30 +217,30 @@ function validatePort(val) {
 inquirer
 	.prompt(filteredQuestions)
 	.then(answers => {
-		
+
 		for (const key in answers) {
 			if (key.indexOf('_') === 0) {
 				delete answers[key];
 			}
 		}
-		
+
 		if(answers.length === 0)
 		{
 			PAILogger.info('Nothing to update');
 			return;
 		}
-		
-		
+
+
 		for (const key in answers) {
-			
+
 			if (answers.hasOwnProperty(key)) {
 				const value = answers[key];
 				writeToConfig(key,value);
 			}
 		}
-		
+
 		PAILogger.info('Configuration file created (config.env)');
-		
+
 	}).catch(err => {
 		PAILogger.error('error:' + err.message, err);
 	});
