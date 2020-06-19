@@ -87,6 +87,16 @@ functions:
             }
         }));
 
+        this.loadCommandWithSchema(new PAIModuleCommandSchema({
+            op: "config_env",
+            func: "edit_env_file",
+            params: {
+                "email": new PAIModuleCommandParamSchema("email", "Maintainer email", true, "Maintainer Email"),
+                "https": new PAIModuleCommandParamSchema("https", "Allow Https true or false", true, "Allow Https")
+
+            }
+        }));
+
         // this.loadCommandWithSchema(new PAIModuleCommandSchema({
         //     op: "update-bot",
         //     func: "updateBot"
@@ -151,6 +161,34 @@ functions:
     async get_bot_folder() {
         let paios = new PAI_OS();
         return (await paios.getOSPath()) + path.sep + "Bot" + path.sep
+    }
+
+    edit_env_file(cmd) {
+        let email = cmd.params.email.value;
+        let https = cmd.params.https.value;
+        const envfile = require('envfile');
+        let file;
+        try {
+            if (fs.existsSync('config.env')) {
+                file = fs.readFileSync('config.env', "utf8");
+                let parsed = envfile.parse(file);
+                parsed['MAINTAINER_EMAIL'] = email;
+                parsed['ALLOW_SSL'] = https;
+                fs.writeFileSync('config.env', envfile.stringify(parsed));
+                return 'config has been saved please restart bot!';
+            } else {
+                let obj = {};
+                obj['MAINTAINER_EMAIL'] = email;
+                obj['ALLOW_SSL'] = https;
+                fs.writeFileSync('config.env', envfile.stringify(obj));
+                return 'config has been saved please restart bot!';
+            }
+        } catch (e) {
+            PAILogger.error(e);
+            return e;
+        }
+
+
     }
 
 }
