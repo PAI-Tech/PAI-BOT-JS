@@ -176,22 +176,18 @@ functions:
         let email = cmd.params.email.value;
         let https = cmd.params.https.value;
         const envfile = require('envfile');
-        let file;
+        let obj;
         try {
             if (fs.existsSync('config.env')) {
-                file = fs.readFileSync('config.env', "utf8");
-                let parsed = envfile.parse(file);
-                parsed['MAINTAINER_EMAIL'] = email;
-                parsed['ALLOW_SSL'] = https;
-                fs.writeFileSync('config.env', envfile.stringify(parsed));
-                return 'config has been saved please restart bot!';
+                let file = fs.readFileSync('config.env', "utf8");
+                obj = envfile.parse(file);
             } else {
-                let obj = {};
-                obj['MAINTAINER_EMAIL'] = email;
-                obj['ALLOW_SSL'] = https;
-                fs.writeFileSync('config.env', envfile.stringify(obj));
-                return 'config has been saved please restart bot!';
+                obj = {};
             }
+            obj['MAINTAINER_EMAIL'] = email;
+            obj['ALLOW_SSL'] = https;
+            fs.writeFileSync('config.env', envfile.stringify(obj));
+            return 'config has been saved please restart bot!';
         } catch (e) {
             PAILogger.error(e);
             return e;
