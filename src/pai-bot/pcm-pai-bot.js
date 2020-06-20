@@ -11,9 +11,9 @@
  */
 
 
-const {PAICodeModule, PAIModuleConfigParam, PAIModuleCommandSchema, PAIModuleCommandParamSchema, PAILogger, PAICodeCommand, PAIUtils} = require("@pai-tech/pai-code");
+const {PAICodeModule, PAIModuleConfigParam, PAIModuleCommandSchema, PAIModuleCommandParamSchema, PAILogger, PAICodeCommand, PAIUtils, PAICode} = require("@pai-tech/pai-code");
 const npmLogin = require('npm-cli-login');
-
+const {exec} = require('child_process');
 
 //const pai_bot_entity = require("./src/data/entities/pai-bot");
 const PAI_OS = require('@pai-tech/pai-os').PAI_OS;
@@ -93,6 +93,15 @@ functions:
             params: {
                 "email": new PAIModuleCommandParamSchema("email", "Maintainer email", true, "Maintainer Email"),
                 "https": new PAIModuleCommandParamSchema("https", "Allow Https true or false", true, "Allow Https")
+
+            }
+        }));
+
+        this.loadCommandWithSchema(new PAIModuleCommandSchema({
+            op: "add_domain",
+            func: "add_domain",
+            params: {
+                "domain": new PAIModuleCommandParamSchema("domain", "domain to add", true, "domain")
 
             }
         }));
@@ -189,6 +198,23 @@ functions:
         }
 
 
+    }
+
+    async add_domain(cmd) {
+        const domain = cmd.params.domain.value;
+        let command = `npx greenlock add --subject ${domain} --altnames ${domain}`
+        // const cmdArray = await PAICode.executeString(cmd, context);
+        return exec(command, (err, stdout, stderr) => {
+            if (err) {
+                // node couldn't execute the command
+                return;
+            }
+
+            // the *entire* stdout and stderr (buffered)
+            console.log(`stdout: ${stdout}`);
+            console.log(`stderr: ${stderr}`);
+            return 'Domain Added';
+        });
     }
 
 }
