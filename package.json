@@ -22,7 +22,7 @@
   "homepage": "https://github.com/PAI-Tech/PAI-BOT-JS#readme",
   "dependencies": {
     "@pai-tech/pai-code": "^1.1.95",
-    "@pai-tech/pai-conntectors": "^1.1.8",
+    "@pai-tech/pai-conntectors": "^1.1.9",
     "@pai-tech/pai-net": "^1.1.56",
     "@pai-tech/pai-net-sdk": "^1.1.60",
     "@pai-tech/pai-os": "^1.0.9",
@@ -30,11 +30,11 @@
     "app-root-path": "^2.2.1",
     "axios": "^0.19.2",
     "dotenv": "^8.2.0",
-    "envfile": "^6.4.0",
+    "envfile": "^6.7.0",
     "inquirer": "^6.5.2",
     "inquirer-fuzzy-path": "^1.0.0",
     "jsonschema": "^1.2.6",
-    "mongoose": "^5.9.19",
+    "mongoose": "^5.9.20",
     "npm": "^6.14.5",
     "npm-cli-login": "^0.1.1",
     "shelljs": "^0.8.4"
