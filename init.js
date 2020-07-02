@@ -35,6 +35,7 @@ async function check_pai_os_folders()
 
     let pai_root_folder = (os.platform == "win32") ? "C:\\PAI\\" : "/var/PAI/";
     const pai_bot_folder = pai_root_folder + "Bot";
+	const pai_log_folder = pai_root_folder + "Logs";
 
     PAILogger.info("Checking PAI O/S folders");
 
@@ -47,6 +48,13 @@ async function check_pai_os_folders()
         PAILogger.info("PAI O/S Folder is " +pai_root_folder );
 	}
 
+	if (!fs.existsSync(  pai_log_folder)) {
+		PAILogger.info("Creating PAI Logs folder " +   pai_log_folder );
+		fs.mkdirSync(  pai_log_folder);
+	}
+	else {
+		PAILogger.info("PAI-BOT Folder is " +pai_bot_folder );
+	}
 
     if (!fs.existsSync(  pai_bot_folder)) {
         PAILogger.info("Creating PAI-BOT folder " +   pai_bot_folder );
