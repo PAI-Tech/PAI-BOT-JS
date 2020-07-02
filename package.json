@@ -1,6 +1,6 @@
 {
   "name": "@pai-tech/pai-bot",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "PAI BOT (Node JS) =================",
   "main": "index.js",
   "scripts": {
