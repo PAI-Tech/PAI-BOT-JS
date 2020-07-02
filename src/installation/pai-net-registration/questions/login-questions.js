@@ -10,7 +10,7 @@ const loginQuestions = [
 		type: "input",
 		name: "PAI_NET_URL",
 		message: "Please enter PAI-NET url: ",
-		default: "https://console.pai-net.org",
+		default: "https://developers.pai-net.org",
 		when: (val) => {
 			return val.SHOULD_REGISTER_BOT;
 		}
