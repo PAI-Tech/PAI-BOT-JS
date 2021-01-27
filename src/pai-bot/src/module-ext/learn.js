@@ -212,8 +212,10 @@ module.exports = (module) => {
                     rejected = true;
                 });
 
+                PAILogger.info('FOUND KB!');
 
-                if (cmd.context.sender)
+
+                if (cmd.context.sender && cmd.context.sender !== 'sender')
                     await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"Learning ${knowledgeBase.name}"`, cmd.context);
 
 
@@ -230,8 +232,11 @@ module.exports = (module) => {
                      * });
                      */
 
+
                     let installCommand = "npm i " + knowledgeBase.repository;
-                    await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"installing npm package ${knowledgeBase.repository}"`, cmd.context);
+                    if (cmd.context.sender && cmd.context.sender !== 'sender')
+                        await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"installing npm package ${knowledgeBase.repository}"`, cmd.context);
+                    PAILogger.info('RUNNING NPM I KB!');
                     await PAICode.executeString(`pai-os run command:"${installCommand}"`, cmd.context);
                 }
 
@@ -243,7 +248,7 @@ module.exports = (module) => {
                  *     await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"installed (I think)..."`,cmd.context);
                  */
 
-
+                PAILogger.info('LOADING KB TO BOT!');
                 await loadNpmModule(knowledgeBase).catch(err => {
                     PAILogger.error("could not load npm package " + err.message);
                     reject(new Error("could not load npm package " + err.message));
