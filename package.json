@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node $NODE_DEBUG_OPTION PAI.js",
     "init": "node init.js",
+    "bot": "node PAI.js",
     "config": "node config-generator.js",
     "install:clean": "rm -rf ./node_modules && rm package-lock.json && npm install"
   },
