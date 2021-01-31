@@ -85,7 +85,7 @@ async function loadNpmModule(knowledgeBase) {
     if (knowledgeBase.repository && knowledgeBase.repository.length > 0) {
         try {
             const moduleContainer = require(knowledgeBase.repository);
-            const moduleInterface = moduleContainer[knowledgeBase.pai_interface];
+            const moduleInterface = knowledgeBase.pai_interface ? moduleContainer[knowledgeBase.pai_interface] : moduleContainer["Module"];
             let moduleInstance = new moduleInterface();
 
             await applyBotDataSource(moduleInstance);
@@ -177,7 +177,7 @@ async function getKbFromRepo(repo, module) {
         throw new Error(e);
     }
     let found_kb = repo_json.filter((Module) => {
-        return (Module["module-name"] === module);
+        return (Module["canonicalName"] === module);
     });
     if (found_kb.length < 1) {
         throw new Error('Module Not Found');
@@ -282,7 +282,7 @@ module.exports = (module) => {
                     return;
 
 
-                if (knowledgeBase.platform && knowledgeBase.platform["platform-repo-name"]) {
+                if (knowledgeBase.repository && knowledgeBase.repository.length > 0) {
                     /*
                      * await npmInstall(knowledgeBase.repository).catch(err => {
                      *     PAILogger.error("could not install npm package: " + knowledgeBase.repository, err);
@@ -291,7 +291,7 @@ module.exports = (module) => {
                      * });
                      */
 
-                    let installCommand = "npm i " + knowledgeBase.platform["platform-repo-name"];
+                    let installCommand = "npm i " + knowledgeBase.repository;
                     if (cmd.context.sender && cmd.context.sender !== 'sender' && cmd.context.sender !== "host")
                         await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"installing npm package ${knowledgeBase.platform["platform-repo-name"]}"`, cmd.context);
                     await PAICode.executeString(`pai-os run command:"${installCommand}"`, cmd.context);
