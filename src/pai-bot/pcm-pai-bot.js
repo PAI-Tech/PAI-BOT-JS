@@ -61,12 +61,11 @@ functions:
             params: {
                 "module": new PAIModuleCommandParamSchema("module", "PAI Knowledge Base canonicalName to learn", true, "Module Canonical Name"),
                 "repo": new PAIModuleCommandParamSchema("repo", "Repo To Learn From", false, "Module Repo")
-
             }
         }));
 
         this.loadCommandWithSchema(new PAIModuleCommandSchema({
-            op: "npm_login",
+            op: "npm-login",
             func: "npm_login",
             params: {
                 "username": new PAIModuleCommandParamSchema("username", "npm user_name", true, "username"),
@@ -83,24 +82,24 @@ functions:
             }
         }));
 
-        this.loadCommandWithSchema(new PAIModuleCommandSchema({
-            op: "config_env",
-            func: "edit_env_file",
-            params: {
-                "email": new PAIModuleCommandParamSchema("email", "Maintainer email", true, "Maintainer Email"),
-                "https": new PAIModuleCommandParamSchema("https", "Allow Https true or false", true, "Allow Https")
-
-            }
-        }));
-
-        this.loadCommandWithSchema(new PAIModuleCommandSchema({
-            op: "add_domain",
-            func: "add_domain",
-            params: {
-                "domain": new PAIModuleCommandParamSchema("domain", "domain to add", true, "domain")
-
-            }
-        }));
+        // this.loadCommandWithSchema(new PAIModuleCommandSchema({
+        //     op: "config-env",
+        //     func: "edit_env_file",
+        //     params: {
+        //         "email": new PAIModuleCommandParamSchema("email", "Maintainer email", true, "Maintainer Email"),
+        //         "https": new PAIModuleCommandParamSchema("https", "Allow Https true or false", true, "Allow Https")
+        //     }
+        // }));
+        //
+        // this.loadCommandWithSchema(new PAIModuleCommandSchema({
+        //     op: "add_domain",
+        //     func: "add_domain",
+        //     params: {
+        //         "domain": new PAIModuleCommandParamSchema("domain", "domain to add", true, "domain")
+        //
+        //     },
+        //     showOnInterface:"false"
+        // }));
 
         // this.loadCommandWithSchema(new PAIModuleCommandSchema({
         //     op: "update-bot",
@@ -124,7 +123,8 @@ functions:
 
         this.loadCommandWithSchema(new PAIModuleCommandSchema({
             op: "get-bot-folder",
-            func: "get_bot_folder"
+            func: "get_bot_folder",
+            showOnInterface:"false"
         }));
 
 

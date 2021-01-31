@@ -1,6 +1,6 @@
 {
   "name": "@pai-tech/pai-bot",
-  "version": "1.7.0",
+  "version": "1.7.5",
   "description": "PAI BOT (Node JS) =================",
   "main": "index.js",
   "scripts": {
@@ -23,20 +23,20 @@
   "homepage": "https://github.com/PAI-Tech/PAI-BOT-JS#readme",
   "dependencies": {
     "@pai-tech/pai-code": "^1.2.7",
-    "@pai-tech/pai-conntectors": "^1.1.9",
+    "@pai-tech/pai-conntectors": "^1.2.9",
     "@pai-tech/pai-net": "^1.1.56",
     "@pai-tech/pai-net-sdk": "^1.1.60",
     "@pai-tech/pai-os": "^1.0.9",
     "@pai-tech/pai-scheduler": "^1.0.5",
     "app-root-path": "^2.2.1",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "dotenv": "^8.2.0",
     "envfile": "^6.14.0",
     "inquirer": "^6.5.2",
     "inquirer-fuzzy-path": "^1.0.0",
-    "jsonschema": "^1.2.8",
-    "mongoose": "^5.10.7",
-    "npm": "^6.14.8",
+    "jsonschema": "^1.4.0",
+    "mongoose": "^5.11.14",
+    "npm": "^6.14.11",
     "npm-cli-login": "^0.1.1",
     "shelljs": "^0.8.4"
   },

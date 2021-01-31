@@ -31,11 +31,12 @@ let manager = new PAIBotManager();
 let fileConnector;
 let httpConnector;
 
-console.log(process.env.MAINTAINER_EMAIL);
+
 
 async function main() {
     try {
         await check_pai_os_folders();
+
         PAICode.start();
 
         await BotBaseModules.load();
@@ -45,6 +46,8 @@ async function main() {
         if (!modulesLoaded) {
             // modules failed to load
         }
+
+        await manager.createBotFiles();
 
         await manager.loadBotStartupFile();
 
