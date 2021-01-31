@@ -1,18 +1,16 @@
-const inquirer = require('inquirer');
 const fs = require('fs');
+const pai_code = process.argv.slice(2).join(' ');
+const PAIBotOSUtils = require("./src/pai-bot/src/utils/pai-bot-os-utils");
 
 
-inquirer.prompt([
-    {
-        type: 'input',
-        name: 'PAI_CODE',
-        message: 'Insert pai-code to run'
-    }
-]).then((ans) => {
-    fs.writeFileSync('/var/PAI/Bot/queue/in.pai', ans.PAI_CODE, 'utf8');
+const run = async () => {
+    const queueFolder = await PAIBotOSUtils.getBotQueueFolder();
+    console.log(pai_code);
+    fs.writeFileSync(`${queueFolder}in.pai`, pai_code, 'utf8');
     console.log('Done');
+};
 
 
-}).catch((e) => {
-    console.log(e);
-});
+run();
+
+
