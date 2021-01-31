@@ -267,6 +267,7 @@ module.exports = (module) => {
 
                 resolve('I know ' + knowledgeBase.name + '!');
             } else {
+
                 let paiModule = cmd.params["module"].value;
 
                 let knowledgeBase = await getKbFromRepo(cmd.params.repo.value, paiModule).catch(err => {
@@ -274,9 +275,8 @@ module.exports = (module) => {
                     reject(new Error("Could not find knowledge base " + err.message));
                     rejected = true;
                 });
-                if (cmd.context.sender)
+                if (cmd.context.sender && cmd.context.sender !== 'sender' && cmd.context.sender !== "host")
                     await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"Learning ${knowledgeBase["module-name"]}"`, cmd.context);
-
 
                 if (rejected)
                     return;
@@ -292,7 +292,8 @@ module.exports = (module) => {
                      */
 
                     let installCommand = "npm i " + knowledgeBase.platform["platform-repo-name"];
-                    await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"installing npm package ${knowledgeBase.platform["platform-repo-name"]}"`, cmd.context);
+                    if (cmd.context.sender && cmd.context.sender !== 'sender' && cmd.context.sender !== "host")
+                        await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"installing npm package ${knowledgeBase.platform["platform-repo-name"]}"`, cmd.context);
                     await PAICode.executeString(`pai-os run command:"${installCommand}"`, cmd.context);
                 }
 
@@ -304,7 +305,7 @@ module.exports = (module) => {
                  *     await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"installed (I think)..."`,cmd.context);
                  */
 
-
+                console.log('Loading Module');
                 await loadNpmModule(knowledgeBase).catch(err => {
                     PAILogger.error("could not load npm package " + err.message);
                     reject(new Error("could not load npm package " + err.message));
@@ -320,7 +321,7 @@ module.exports = (module) => {
                     return;
 
                 await addBotModuleToConfig(this.config, JSON.stringify(knowledgeBase)); // TODO: change config to data
-
+                console.log('Module Loaded');
                 resolve('I know ' + knowledgeBase["module-name"] + '!');
             }
 
