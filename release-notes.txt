@@ -1,0 +1,6 @@
+PAI-BOT II
+----------------
+
+
+
+- pai-bot-manager -> changed to singleton

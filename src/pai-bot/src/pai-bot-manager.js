@@ -6,48 +6,6 @@ const PAIBotOSUtils = require('./utils/pai-bot-os-utils');
 const { PAICode, PAIUtils, PAICodeCommandContext, PAILogger } = require('@pai-tech/pai-code');
 
 
-/**
- *
- * @return {Promise<Boolean>}
- */
-function isFileExists(filePath)
-{
-    return new Promise( (resolve, reject) => {
-        try {
-			fs.exists(filePath, function read(exists) {
-				return resolve(exists);
-			});
-		}catch (e) {
-            PAILogger.error("Cannot check if file exists: " + filePath, e);
-            reject(e);
-		}
-    });
-}
-
-
-
-/**
- * Read text from file
- *
- * @param {String} filePath
- * @return {Promise<String>}
- */
-function readFile(filePath)
-{
-    return new Promise( (resolve, reject) => {
-        fs.readFile(filePath, function read(err, data) {
-            if (err) {
-                return reject(err);
-            }
-            if(data)
-                data = data.toString('utf8');
-            
-            return resolve(data);
-        });
-    });
-}
-
-
 
 
 
@@ -71,7 +29,7 @@ class PAIBotManager {
 			shell.mkdir('-p', settingsFolder);
 			shell.mkdir('-p', queueFolder);
 		
-			if(!(await isFileExists(startupFile)))
+			if(!(fs.existsSync(startupFile)))
 			{
 				fs.writeFile(startupFile, 'pai-code show version', 'utf8', async function(err,data) {
 				
@@ -99,7 +57,7 @@ class PAIBotManager {
     async loadBotStartupFile()
     {
         const botStartupFile = await PAIBotOSUtils.getBotStartupFile();
-        const fileExists = await isFileExists(botStartupFile);
+        const fileExists = fs.existsSync(botStartupFile);
         
         if(!fileExists)
         {
@@ -107,13 +65,15 @@ class PAIBotManager {
             return;
 		}
         
-        let botStartupCode = await readFile(botStartupFile);
+        let botStartupCode = await fs.readFileSync(botStartupFile,"utf8");
         if(botStartupCode)
         {
             let context = new PAICodeCommandContext('sender','gateway');
-            await PAICode.executeString(botStartupCode,context).catch(err => {
-                PAILogger.error("Cannot execute startup command",err);
-            });
+            // await PAICode.(botStartupCode,context).catch(err => {
+            //     PAILogger.error("Cannot execute startup command",err);
+            // });
+            let res = await PAICode.run(botStartupCode);
+            PAILogger.info( + "startup file response:\n" + res);
         }
     }
     

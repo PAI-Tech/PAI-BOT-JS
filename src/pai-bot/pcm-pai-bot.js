@@ -51,10 +51,8 @@ functions:
     async load() {
         await super.load(this);
 
-
         this.loadCommandWithSchema(new PAIModuleCommandSchema({
-            op: "version",
-            func: "version"
+            op: "version", func: "version"
         }));
 
         this.loadCommandWithSchema(new PAIModuleCommandSchema({
@@ -74,8 +72,6 @@ functions:
                 "username": new PAIModuleCommandParamSchema("username", "npm user_name", true, "username"),
                 "password": new PAIModuleCommandParamSchema("password", "password", true, "password"),
                 "email": new PAIModuleCommandParamSchema("email", "email", true, "email")
-
-
             }
         }));
 
