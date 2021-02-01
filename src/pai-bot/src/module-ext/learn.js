@@ -210,7 +210,7 @@ module.exports = (module) => {
      * @param {PAICodeCommand} cmd
      * @return {Promise<any>}
      */
-    module.prototype.install = async (cmd) => {
+    module.prototype.install = async function (cmd) {
         if (!cmd.params["module"] || !cmd.params["module"].value)
             throw (new Error("module not specified"));
 
@@ -245,6 +245,7 @@ module.exports = (module) => {
             PAILogger.info('RUNNING NPM I KB!');
             await PAICode.executeString(`pai-os run command:"${installCommand}"`, cmd.context);
         }
+
         PAILogger.info('LOADING KB TO BOT!');
 
         await loadNpmModule(knowledgeBase).catch(err => {
@@ -252,8 +253,11 @@ module.exports = (module) => {
             throw(new Error("could not load npm package " + err.message));
         });
 
-        await addBotModuleToConfig(this.config, JSON.stringify(knowledgeBase)); // TODO: change config to data
-        PAILogger.info('LOADED KB TO BOT!');
+        await addBotModuleToConfig(this.config, JSON.stringify(knowledgeBase)).then(() => {
+            PAILogger.info('LOADED KB TO BOT!');
+        }).catch((err) => {
+            PAILogger.error(err);
+        }); // TODO: change config to data
 
 
     };
