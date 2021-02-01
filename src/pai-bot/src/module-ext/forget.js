@@ -54,7 +54,7 @@ function npmUnInstall(packageName) {
 
         npm.load({
             progress: false,
-            save:true,
+            save: true,
         }, function (er) {
             if (er) {
                 PAILogger.error("PAI-BOT (npmUninstall):" + er);
@@ -131,7 +131,68 @@ async function removeBotModuleFromConfig(config, newModule) {
 }
 
 
+async function getKbFromPaiBotJson(config, canonicalName) {
+    let modules = await getBotModules(config);
+    let index;
+    let found = false;
+    for (let i = 0; i < modules.length; i++) {
+        let module = JSON.parse(modules[i]);
+        if (module.canonicalName === canonicalName) {
+            index = i;
+            found = true;
+        }
+    }
+    if (found === false)
+        throw 'Not Found';
+
+    return JSON.parse(modules[index]);
+}
+
+
 module.exports = (module) => {
+    /**
+     * Uninstall A Module Without PAI-NET
+     * @param {PAICodeCommand} cmd
+     * @return {Promise<any>}
+     */
+    module.prototype.uninstall = function (cmd) {
+        return new Promise(async (resolve, reject) => {
+
+            let rejected = false;
+
+            if (!cmd.params["module"] || !cmd.params["module"].value)
+                reject(new Error("module not specified"));
+
+
+            let paiModule = cmd.params["module"].value;
+
+            let knowledgeBase = await getKbFromPaiBotJson(this.config, paiModule).catch(err => {
+                PAILogger.error("Could not find knowledge base " + err.message);
+                reject(new Error("Could not find knowledge base " + err.message));
+                rejected = true;
+            });
+
+            if (rejected)
+                return;
+
+            if (knowledgeBase.repository && knowledgeBase.repository.length > 0)
+                await npmUnInstall(knowledgeBase.repository).catch(err => {
+                    PAILogger.error("could not install npm package: " + knowledgeBase.repository, err);
+                    reject(new Error("could not install npm package: " + knowledgeBase.repository));
+                    rejected = true;
+                });
+
+            if (rejected)
+                return;
+
+
+            await removeBotModuleFromConfig(this.config, JSON.stringify(knowledgeBase)); // TODO: change config to data
+
+            console.log('I Forgot ' + knowledgeBase.name + '! Please Restart Bot');
+        });
+
+    };
+
 
     /**
      *
@@ -173,7 +234,7 @@ module.exports = (module) => {
 
             await removeBotModuleFromConfig(this.config, JSON.stringify(knowledgeBase)); // TODO: change config to data
 
-            resolve('I Forgot ' + knowledgeBase.name + '! Please Restart Bot' );
+            resolve('I Forgot ' + knowledgeBase.name + '! Please Restart Bot');
         });
 
     };

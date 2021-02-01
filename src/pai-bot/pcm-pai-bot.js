@@ -96,6 +96,15 @@ functions:
             }
         }));
 
+
+        this.loadCommandWithSchema(new PAIModuleCommandSchema({
+            op: "uninstall",
+            func: "uninstall",
+            params: {
+                "module": new PAIModuleCommandParamSchema("module", "PAI Knowledge Base canonicalName to forget", true, "Module Canonical Name")
+            }
+        }));
+
         this.loadCommandWithSchema(new PAIModuleCommandSchema({
             op: "forget",
             func: "forget",

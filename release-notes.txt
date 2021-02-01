@@ -14,7 +14,7 @@ PAI-BOT II
 roie's changes
 ------------
 
-install command added:
+install and uninstall command added:
 
 pai-bot install module:"module-name"
 
@@ -23,5 +23,8 @@ contains 1 required param which is: module
 contains 3 more optional params which are : from-url (repo url) , from-file (file path) , from-text(currently not implemented)
 
 when not specifying any of the three optional params bot will install from basic file repo (basic-repo.json file which is located in project root folder)
+--------
 
+for uninstall
+pai-bot uninstall module:"module-name"
 
