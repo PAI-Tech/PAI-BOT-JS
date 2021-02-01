@@ -11,7 +11,16 @@
  */
 
 
-const {PAICodeModule, PAIModuleConfigParam, PAIModuleCommandSchema, PAIModuleCommandParamSchema, PAILogger, PAICodeCommand, PAIUtils, PAICode} = require("@pai-tech/pai-code");
+const {
+    PAICodeModule,
+    PAIModuleConfigParam,
+    PAIModuleCommandSchema,
+    PAIModuleCommandParamSchema,
+    PAILogger,
+    PAICodeCommand,
+    PAIUtils,
+    PAICode
+} = require("@pai-tech/pai-code");
 const npmLogin = require('npm-cli-login');
 const {exec} = require('child_process');
 
@@ -53,6 +62,19 @@ functions:
 
         this.loadCommandWithSchema(new PAIModuleCommandSchema({
             op: "version", func: "version"
+        }));
+
+        this.loadCommandWithSchema(new PAIModuleCommandSchema({
+            op: "install",
+            func: "install",
+            params: {
+                "module": new PAIModuleCommandParamSchema("module", "PAI Knowledge Base canonicalName to learn", true, "Module Canonical Name"),
+                "from-text": new PAIModuleCommandParamSchema("from-text", "Text To Learn From", false, "Text Repo"),
+                "from-file": new PAIModuleCommandParamSchema("from-file", "File To Learn From", false, "File Repo"),
+                "from-url": new PAIModuleCommandParamSchema("from-url", "Url To Learn From", false, "Url Repo")
+
+
+            }
         }));
 
         this.loadCommandWithSchema(new PAIModuleCommandSchema({
@@ -124,7 +146,7 @@ functions:
         this.loadCommandWithSchema(new PAIModuleCommandSchema({
             op: "get-bot-folder",
             func: "get_bot_folder",
-            showOnInterface:"false"
+            showOnInterface: "false"
         }));
 
 
@@ -165,7 +187,7 @@ functions:
 
     async get_bot_folder() {
         let paios = new PAI_OS();
-        return (await paios.getOSPath()) + path.sep + "Bot" + path.sep
+        return (await paios.getOSPath()) + path.sep + "Bot" + path.sep;
     }
 
     edit_env_file(cmd) {
@@ -194,7 +216,7 @@ functions:
 
     async add_domain(cmd) {
         const domain = cmd.params.domain.value;
-        let command = `npx greenlock add --subject ${domain} --altnames ${domain}`
+        let command = `npx greenlock add --subject ${domain} --altnames ${domain}`;
         // const cmdArray = await PAICode.executeString(cmd, context);
         return exec(command, (err, stdout, stderr) => {
             if (err) {

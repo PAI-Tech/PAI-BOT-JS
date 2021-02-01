@@ -4,6 +4,8 @@ const {KnowledgeBase} = require('@pai-tech/pai-net-sdk');
 const applyBotDataSource = require("./data-and-config");
 const CONFIG_BOT_MODULES = "bot_modules";
 const axios = require('axios');
+const fs = require('fs');
+const appRoot = require('app-root-path');
 
 /**
  *
@@ -168,7 +170,7 @@ async function addBotModuleToConfig(config, newModule) {
 }
 
 
-async function getKbFromRepo(repo, module) {
+async function getKbFromRepo(module, repo) {
     let repo_json = null;
     try {
         repo_json = await axios.get(repo);
@@ -188,7 +190,74 @@ async function getKbFromRepo(repo, module) {
 }
 
 
+async function getKbFromFile(module, filePath = appRoot + '/basic-repo.json') {
+    const repo_file_json = JSON.parse(fs.readFileSync(filePath));
+    let found_kb = repo_file_json["pai-code-modules"].filter((kb) => {
+        return (kb["canonicalName"] === module);
+    });
+    if (found_kb.length < 1) {
+        throw new Error('Module Not Found');
+    }
+    return found_kb[0];
+
+}
+
+
 module.exports = (module) => {
+
+    /**
+     * Install a PAI-MODULE without a connection to pai-net
+     * @param {PAICodeCommand} cmd
+     * @return {Promise<any>}
+     */
+    module.prototype.install = async (cmd) => {
+        if (!cmd.params["module"] || !cmd.params["module"].value)
+            throw (new Error("module not specified"));
+
+        let paiModule = cmd.params["module"].value;
+
+        let knowledgeBase;
+        if (cmd.params["from-text"] || cmd.params["from-url"] || cmd.params["from-file"]) {
+            if (cmd.params["from-url"]) {
+
+                knowledgeBase = await getKbFromRepo(paiModule, cmd.params["from-url"].value).catch(err => {
+                    PAILogger.error("Could not find knowledge base " + err.message);
+                    throw (new Error("Could not find knowledge base " + err.message));
+                });
+
+            } else if (cmd.params["from-file"]) {
+
+                knowledgeBase = await getKbFromFile(paiModule, cmd.params["from-file"].value).catch(err => {
+                    PAILogger.error("Could not find knowledge base " + err.message);
+                    throw (new Error("Could not find knowledge base " + err.message));
+                });
+            }
+
+        } else {
+            knowledgeBase = await getKbFromFile(paiModule).catch(err => {
+                PAILogger.error("Could not find knowledge base " + err.message);
+                throw (new Error("Could not find knowledge base " + err.message));
+            });
+        }
+
+        if (knowledgeBase.repository && knowledgeBase.repository.length > 0) {
+            let installCommand = "npm i " + knowledgeBase.repository;
+            PAILogger.info('RUNNING NPM I KB!');
+            await PAICode.executeString(`pai-os run command:"${installCommand}"`, cmd.context);
+        }
+        PAILogger.info('LOADING KB TO BOT!');
+
+        await loadNpmModule(knowledgeBase).catch(err => {
+            PAILogger.error("could not load npm package " + err.message);
+            throw(new Error("could not load npm package " + err.message));
+        });
+
+        await addBotModuleToConfig(this.config, JSON.stringify(knowledgeBase)); // TODO: change config to data
+        PAILogger.info('LOADED KB TO BOT!');
+
+
+    };
+
 
     /**
      *
@@ -270,7 +339,7 @@ module.exports = (module) => {
 
                 let paiModule = cmd.params["module"].value;
 
-                let knowledgeBase = await getKbFromRepo(cmd.params.repo.value, paiModule).catch(err => {
+                let knowledgeBase = await getKbFromRepo(paiModule, cmd.params.repo.value).catch(err => {
                     PAILogger.error("Could not find knowledge base " + err.message);
                     reject(new Error("Could not find knowledge base " + err.message));
                     rejected = true;
@@ -354,6 +423,7 @@ module.exports = (module) => {
 
     module.prototype.applyBotDataSource = applyBotDataSource;
 
-};
+}
+;
 
 
