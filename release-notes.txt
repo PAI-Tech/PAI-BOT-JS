@@ -22,6 +22,6 @@ contains 1 required param which is: module
 
 contains 3 more optional params which are : from-url (repo url) , from-file (file path) , from-text(currently not implemented)
 
-when not specifying any of the two optional params bot will install from basic file repo (basic-repo.json file which is located in project root folder)
+when not specifying any of the three optional params bot will install from basic file repo (basic-repo.json file which is located in project root folder)
 
 
