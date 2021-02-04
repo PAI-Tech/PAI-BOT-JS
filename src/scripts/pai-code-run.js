@@ -3,7 +3,7 @@ const path = require('path');
 const inquirer = require('inquirer');
 
 
-const PAIBotOSUtils = require("./src/pai-bot/src/utils/pai-bot-os-utils");
+const PAIBotOSUtils = require("../pai-bot/src/utils/pai-bot-os-utils");
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));

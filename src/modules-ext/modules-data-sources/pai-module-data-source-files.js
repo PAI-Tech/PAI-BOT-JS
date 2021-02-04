@@ -141,7 +141,7 @@ class PAIFilesStorageDataSource extends PAIBaseDataSource {
 
 
         let defaults = {
-            filePath: '/var/PAI/Bot/settings/module.json'
+            filePath: '../PAI/Bot/settings/module.json'
         };
 
         this.config = Object.assign(defaults, config || {});

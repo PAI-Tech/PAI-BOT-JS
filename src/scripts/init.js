@@ -23,9 +23,9 @@ const {
 } = require("@pai-tech/pai-code");
 const env = require("./env-loader");
 
-const PAIBotManager = require("./src/pai-bot/src/pai-bot-manager");
-const BotBaseModules = require("./src/pai-bot/src/modules/bot-base-modules");
-const registerToPAINET = require("./src/installation/pai-net-registration/pai-net-registration-flow");
+const PAIBotManager = require("../pai-bot/src/pai-bot-manager");
+const BotBaseModules = require("../pai-bot/src/modules/bot-base-modules");
+const registerToPAINET = require("../installation/pai-net-registration/pai-net-registration-flow");
 
 let manager = new PAIBotManager();
 
@@ -33,7 +33,7 @@ let manager = new PAIBotManager();
 async function check_pai_os_folders()
 {
 
-    let pai_root_folder = (os.platform == "win32") ? "C:\\PAI\\" : "/var/PAI/";
+    let pai_root_folder = (os.platform == "win32") ? "..\\PAI\\" : "../PAI/";
     const pai_bot_folder = pai_root_folder + "Bot";
 	const pai_log_folder = pai_root_folder + "Logs";
 

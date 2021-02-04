@@ -18,7 +18,7 @@ const {
 } = require("@pai-tech/pai-code");
 
 // const env = require("./env-loader");
-require('dotenv').config({path:'./config.env'});
+require('dotenv').config({path: './config.env'});
 const path = require("path");
 const fs = require('fs');
 const os = require("os");
@@ -30,7 +30,6 @@ const PAIBotOSUtils = require("./src/pai-bot/src/utils/pai-bot-os-utils");
 let manager = new PAIBotManager();
 let fileConnector;
 let httpConnector;
-
 
 
 async function main() {
@@ -53,11 +52,16 @@ async function main() {
 
         let QFolder = await PAIBotOSUtils.getBotQueueFolder();
 
-        fileConnector = new PAIFileConnector({path: `${QFolder}/in.pai`});
-        fileConnector.start();
 
-        httpConnector = new PAIHTTPConnector({port: (process.env.HTTP_PORT || 3141)});
-        httpConnector.start(false);
+        if (process.env.PAI_CONNECTORS.includes('FILES')) {
+            fileConnector = new PAIFileConnector({path: `${QFolder}/in.pai`});
+            fileConnector.start();
+        }
+        if (process.env.PAI_CONNECTORS.includes('HTTP')) {
+            httpConnector = new PAIHTTPConnector({port: (process.env.HTTP_PORT || 3141)});
+            httpConnector.start(false);
+        }
+
 
         loadAdditionalFiles();
 
@@ -115,11 +119,9 @@ function loadAdditionalFiles() {
 }
 
 
+async function check_pai_os_folders() {
 
-async function check_pai_os_folders()
-{
-
-    let pai_root_folder = (os.platform == "win32") ? "C:\\PAI\\" : "/var/PAI/";
+    let pai_root_folder = (os.platform == "win32") ? "..\\PAI\\" : "../PAI/";
     const pai_bot_folder = pai_root_folder + "Bot";
     const pai_log_folder = pai_root_folder + "Logs";
 
@@ -127,27 +129,24 @@ async function check_pai_os_folders()
 
     //create PAI O/S Folder
     if (!fs.existsSync(pai_root_folder)) {
-        PAILogger.info("Creating PAI O/S folder " + pai_root_folder );
+        PAILogger.info("Creating PAI O/S folder " + pai_root_folder);
         fs.mkdirSync(pai_root_folder);
-    }
-    else {
-        PAILogger.info("PAI O/S Folder is " +pai_root_folder );
-    }
-
-    if (!fs.existsSync(  pai_log_folder)) {
-        PAILogger.info("Creating PAI Logs folder " +   pai_log_folder );
-        fs.mkdirSync(  pai_log_folder);
-    }
-    else {
-        PAILogger.info("PAI-BOT Logs is " +pai_log_folder );
+    } else {
+        PAILogger.info("PAI O/S Folder is " + pai_root_folder);
     }
 
-    if (!fs.existsSync(  pai_bot_folder)) {
-        PAILogger.info("Creating PAI-BOT folder " +   pai_bot_folder );
-        fs.mkdirSync(  pai_bot_folder);
+    if (!fs.existsSync(pai_log_folder)) {
+        PAILogger.info("Creating PAI Logs folder " + pai_log_folder);
+        fs.mkdirSync(pai_log_folder);
+    } else {
+        PAILogger.info("PAI-BOT Logs is " + pai_log_folder);
     }
-    else {
-        PAILogger.info("PAI-BOT Folder is " +pai_bot_folder );
+
+    if (!fs.existsSync(pai_bot_folder)) {
+        PAILogger.info("Creating PAI-BOT folder " + pai_bot_folder);
+        fs.mkdirSync(pai_bot_folder);
+    } else {
+        PAILogger.info("PAI-BOT Folder is " + pai_bot_folder);
     }
 }
 
@@ -156,8 +155,10 @@ main().then((success) => {
 
     if (success) {
         PAILogger.info("Bot started with great success");
-        httpConnector.add_catch_all();
-        PAILogger.info("Number of modules loaded " );
+        if(process.env.PAI_CONNECTORS.includes('HTTP')){
+            httpConnector.add_catch_all();
+        }
+        PAILogger.info("Number of modules loaded ");
     } else
         PAILogger.error("Bot failed to start");
 }).catch(e => {

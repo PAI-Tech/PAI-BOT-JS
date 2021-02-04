@@ -1,15 +1,15 @@
 {
   "name": "@pai-tech/pai-bot",
-  "version": "1.7.8",
+  "version": "1.7.9",
   "description": "PAI BOT (Node JS) =================",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node $NODE_DEBUG_OPTION PAI.js",
-    "init": "node init.js",
-    "pai-code": "node pai-code-run.js",
+    "init": "node src/scripts/init.js",
+    "pai-code": "node src/scripts/pai-code-run.js",
     "bot": "node PAI.js",
-    "config": "node config-generator.js",
+    "config": "node src/scripts/config-generator.js",
     "install:clean": "rm -rf ./node_modules && rm package-lock.json && npm install"
   },
   "repository": {
@@ -27,7 +27,7 @@
     "@pai-tech/pai-conntectors": "^1.3.2",
     "@pai-tech/pai-net": "^1.1.7",
     "@pai-tech/pai-net-sdk": "^1.1.7",
-    "@pai-tech/pai-os": "^1.0.9",
+    "@pai-tech/pai-os": "^1.0.91",
     "@pai-tech/pai-scheduler": "^1.0.7",
     "app-root-path": "^2.2.1",
     "axios": "^0.21.1",
@@ -36,7 +36,7 @@
     "inquirer": "^6.5.2",
     "inquirer-fuzzy-path": "^1.0.0",
     "jsonschema": "^1.4.0",
-    "mongoose": "^5.11.14",
+    "mongoose": "^5.11.15",
     "npm": "^6.14.11",
     "npm-cli-login": "^0.1.1",
     "shelljs": "^0.8.4"

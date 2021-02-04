@@ -28,7 +28,7 @@ inquirer.registerPrompt('fuzzypath', require('inquirer-fuzzy-path'));
 function check_pai_os_folders()
 {
 
-	let pai_root_folder = (os.platform == "win32") ? "C:\\PAI\\" : "/var/PAI/";
+	let pai_root_folder = (os.platform == "win32") ? "..\\PAI\\" : "../PAI/";
 	const pai_bot_folder = pai_root_folder + "Bot";
 
     console.log("Checking PAI folders ");
@@ -47,6 +47,7 @@ function check_pai_os_folders()
 }
 
 check_pai_os_folders();
+
 
 const questions = [
 	{
@@ -113,11 +114,20 @@ const questions = [
 		}
 	},
 	{
+		type: "checkbox",
+		name: "PAI_CONNECTORS",
+		message: "Which Connectors To Use?",
+		choices: [
+			'HTTP',
+			'FILES'
+		]
+	},
+	{
 		type: "list",
 		name: "DATA_SOURCE",
 		message: "Choose Bot Data Source:",
 		default: "FILES",
-		choices: [ "FILES" , "MONGO" ]
+		choices: [ "PAI-DDB" , "MONGO" ]
 	},
 	{
 		type: "input",
@@ -217,7 +227,6 @@ function validatePort(val) {
 inquirer
 	.prompt(filteredQuestions)
 	.then(answers => {
-
 		for (const key in answers) {
 			if (key.indexOf('_') === 0) {
 				delete answers[key];
