@@ -31,7 +31,7 @@ let manager = new PAIBotManager();
 let fileConnector;
 let httpConnector;
 
-let pai_root_folder = (os.platform == "win32") ? "..\\PAI\\" : "../PAI/";
+let pai_root_folder = (os.platform == "win32") ? ".\\PAI\\" : "./PAI/";
 const pai_bot_folder = pai_root_folder + "Bot";
 const pai_log_folder = pai_root_folder + "Logs";
 const pai_bot_settings_file = pai_bot_folder + "/settings/pai-bot-settings.json";
