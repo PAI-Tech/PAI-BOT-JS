@@ -6,15 +6,7 @@ PAI-BOT II
 - pai-bot-manager -> changed to singleton
 
 
-
-
-
-
-------------
-roie's changes
-------------
-
-install and uninstall command added:
+- install and uninstall command added:
 
 pai-bot install module:"module-name"
 

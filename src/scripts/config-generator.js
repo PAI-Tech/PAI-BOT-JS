@@ -4,7 +4,7 @@ const path = require('path');
 const os = require("os");
 
 
-let pai_root_folder = (os.platform == "win32") ? "..\\PAI\\" : "../PAI/";
+let pai_root_folder = (os.platform == "win32") ? ".\\PAI\\" : "./PAI/";
 const pai_bot_folder = pai_root_folder + "Bot";
 const pai_bot_settings = pai_root_folder + "Bot/settings";
 check_pai_os_folders();

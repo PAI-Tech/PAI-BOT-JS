@@ -22,7 +22,7 @@ The Bot must live in a PAI Environment OS - (Read more about PAI Environment)
 
 ## For more information
 
-+ Documentation is available at [PAI-TECH Knowledge-base](https://blog.pai-tech.org/knowledge-base).
++ Documentation is available at [PAI-TECH Knowledge-base](https://developers.pai-tech.org/knowledge-base).
 + Ask for help on the
 [Email](mailto:community@pai-tech.org).
 
