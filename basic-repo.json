@@ -47,6 +47,29 @@
       "gpu": [],
       "createdAt": 1612129382665,
       "updatedAt": 1612129412877
+    },
+    {
+      "_id": "e59bca1e-ebf7-4c57-93f8-3f3caf0d46f2",
+      "name": "bot-terminal",
+      "canonicalName": "bot-terminal",
+      "status": "PUBLISHED",
+      "codeLanguage": "node-js",
+      "version": "1.0.0",
+      "owner": "da276dc6-c3c9-43f5-858a-c35d10850259",
+      "description": "bot-console",
+      "keywords": [],
+      "author": "roie",
+      "repository": "@pai-tech/bot-console",
+      "thumbnailImage": "",
+      "images": [],
+      "containerImage": "",
+      "paymentPolicy": "Free",
+      "price": 0,
+      "os": [],
+      "cpu": [],
+      "gpu": [],
+      "createdAt": 1612129382665,
+      "updatedAt": 1612129412877
     }
   ]
 }
