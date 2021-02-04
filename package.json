@@ -24,10 +24,10 @@
   "homepage": "https://github.com/PAI-Tech/PAI-BOT-JS#readme",
   "dependencies": {
     "@pai-tech/pai-code": "^1.2.7",
-    "@pai-tech/pai-conntectors": "^1.1.95",
+    "@pai-tech/pai-conntectors": "^1.2.0",
     "@pai-tech/pai-net": "^1.1.7",
     "@pai-tech/pai-net-sdk": "^1.1.7",
-    "@pai-tech/pai-os": "^1.0.91",
+    "@pai-tech/pai-os": "^1.1.0",
     "@pai-tech/pai-scheduler": "^1.0.7",
     "app-root-path": "^2.2.1",
     "axios": "^0.21.1",
