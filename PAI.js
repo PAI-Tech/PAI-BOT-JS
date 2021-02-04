@@ -31,6 +31,11 @@ let manager = new PAIBotManager();
 let fileConnector;
 let httpConnector;
 
+let pai_root_folder = (os.platform == "win32") ? "..\\PAI\\" : "../PAI/";
+const pai_bot_folder = pai_root_folder + "Bot";
+const pai_log_folder = pai_root_folder + "Logs";
+const pai_bot_settings_file = pai_bot_folder + "/settings/pai-bot-settings.json";
+
 
 async function main() {
     try {
@@ -53,12 +58,14 @@ async function main() {
         let QFolder = await PAIBotOSUtils.getBotQueueFolder();
 
 
-        if (process.env.PAI_CONNECTORS.includes('FILES')) {
+        let pai_bot_settings = JSON.parse(fs.readFileSync(pai_bot_settings_file));
+
+        if (pai_bot_settings.PAI_CONNECTORS.includes('FILES')) {
             fileConnector = new PAIFileConnector({path: `${QFolder}/in.pai`});
             fileConnector.start();
         }
-        if (process.env.PAI_CONNECTORS.includes('HTTP')) {
-            httpConnector = new PAIHTTPConnector({port: (process.env.HTTP_PORT || 3141)});
+        if (pai_bot_settings.PAI_CONNECTORS.includes('HTTP')) {
+            httpConnector = new PAIHTTPConnector({port: (pai_bot_settings.HTTP_PORT || 3141)});
             httpConnector.start(false);
         }
 
@@ -121,10 +128,6 @@ function loadAdditionalFiles() {
 
 async function check_pai_os_folders() {
 
-    let pai_root_folder = (os.platform == "win32") ? "..\\PAI\\" : "../PAI/";
-    const pai_bot_folder = pai_root_folder + "Bot";
-    const pai_log_folder = pai_root_folder + "Logs";
-
     PAILogger.info("Checking PAI O/S folders");
 
     //create PAI O/S Folder
@@ -155,7 +158,8 @@ main().then((success) => {
 
     if (success) {
         PAILogger.info("Bot started with great success");
-        if(process.env.PAI_CONNECTORS.includes('HTTP')){
+        let pai_bot_settings = JSON.parse(fs.readFileSync(pai_bot_settings_file));
+        if (pai_bot_settings.PAI_CONNECTORS.includes('HTTP')) {
             httpConnector.add_catch_all();
         }
         PAILogger.info("Number of modules loaded ");
