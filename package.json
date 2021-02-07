@@ -23,8 +23,8 @@
   },
   "homepage": "https://github.com/PAI-Tech/PAI-BOT-JS#readme",
   "dependencies": {
-    "@pai-tech/pai-code": "^1.2.7",
-    "@pai-tech/pai-conntectors": "^1.2.0",
+    "@pai-tech/pai-code": "^1.2.9",
+    "@pai-tech/pai-conntectors": "^1.2.3",
     "@pai-tech/pai-net": "^1.1.7",
     "@pai-tech/pai-net-sdk": "^1.1.7",
     "@pai-tech/pai-os": "^1.1.0",
@@ -44,9 +44,7 @@
   "PAI": {
     "includeFiles": []
   },
-  "devDependencies": {
-    "eslint": "^5.16.0"
-  },
+  "devDependencies": {},
   "directories": {
     "doc": "docs"
   }

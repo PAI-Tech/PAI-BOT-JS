@@ -11,8 +11,8 @@ const path = require('path');
 const PAIModuleConfigStorageFiles = require('../../../modules-ext/modules-config-storage/pai-module-config-storage-files');
 const PAIFilesStorageDataSource = require('../../../modules-ext/modules-data-sources/pai-module-data-source-files');
 const MongoDataSource = require('../../../modules-ext/modules-data-sources/mongodb/pai-module-data-source-mongodb');
-const PAIBotOSUtils = require("./../utils/pai-bot-os-utils");
-
+const os_utils = require("./../utils/bot-os-utils");
+const pai_bot_settings = require("./../utils/pai-bot-settings").get_instance();
 
 /**
  *
@@ -22,8 +22,7 @@ const PAIBotOSUtils = require("./../utils/pai-bot-os-utils");
 
 
 async function getConfigFileStorage(moduleInstance) {
-    const botFolder = await PAIBotOSUtils.getBotFolder();
-    let botSettingsFolder = `${botFolder}settings${path.sep}`;
+    let botSettingsFolder = os_utils.get_bot_settings_folder();
 
     let storage = new PAIModuleConfigStorageFiles({
         filePath: botSettingsFolder + moduleInstance.setModuleName() + '.json'
@@ -39,8 +38,8 @@ async function getConfigFileStorage(moduleInstance) {
  * @return {Promise<PAIFilesStorageDataSource>}
  */
 async function getDataSourceFile(moduleInstance) {
-    const botFolder = await PAIBotOSUtils.getBotFolder();
-    let botDataFolder = `${botFolder}data${path.sep}`;
+
+    let botDataFolder = os_utils.check_bot_folders("data");
 
     let storage = new PAIFilesStorageDataSource({
         filePath: botDataFolder + moduleInstance.setModuleName()
@@ -52,38 +51,27 @@ async function getDataSourceFile(moduleInstance) {
 /**
  *
  * @param {PAICodeModule} moduleInstance
- * @return {Promise<PAIFilesStorageDataSource>}
+ * @return {Promise<MongoDataSource>}
  */
 async function getDataSourceMongo() {
-    const pai_bot_settings_file = JSON.parse(fs.readFileSync(await PAIBotOSUtils.getBotFolder() + "settings/pai-bot-settings.json"));
+    //const pai_bot_settings_file = JSON.parse(fs.readFileSync(await PAIBotOSUtils.getBotFolder() + "settings/pai-bot-settings.json"));
+
+    if (pai_bot_settings.has_params(["mongo-url","mongo-port","mongo-user-name","mongo-pwd","mongo-schema"])) {
 
 
-    if (!pai_bot_settings_file.DATA_SOURCE_MONGO_URL)
-        PAILogger.error("Missing Data Source Mongo Configuration: DATA_SOURCE_MONGO_URL");
+        const mongo = new MongoDataSource({
+            URL: pai_bot_settings.all["mongo-url"],
+            port: pai_bot_settings.all["mongo-port"],
+            userName: pai_bot_settings.all["mongo-user-name"],
+            password: pai_bot_settings.all["mongo-pwd"],
+            dbName: pai_bot_settings.all["mongo-schema"]
+        });
 
-    if (!pai_bot_settings_file.DATA_SOURCE_MONGO_PORT)
-        PAILogger.error("Missing Data Source Mongo Configuration: DATA_SOURCE_MONGO_PORT");
+        await mongo.connect();
 
-    if (!pai_bot_settings_file.DATA_SOURCE_MONGO_USER_NAME)
-        PAILogger.error("Missing Data Source Mongo Configuration: DATA_SOURCE_MONGO_USER_NAME");
+        return mongo;
+    }
 
-    if (!pai_bot_settings_file.DATA_SOURCE_MONGO_PASSWORD)
-        PAILogger.error("Missing Data Source Mongo Configuration: DATA_SOURCE_MONGO_PASSWORD");
-
-    if (!pai_bot_settings_file.DATA_SOURCE_MONGO_DATABASE_NAME)
-        PAILogger.error("Missing Data Source Mongo Configuration: DATA_SOURCE_MONGO_DATABASE_NAME");
-
-    const mongo = new MongoDataSource({
-        URL: pai_bot_settings_file.DATA_SOURCE_MONGO_URL,
-        port: pai_bot_settings_file.DATA_SOURCE_MONGO_PORT,
-        userName: pai_bot_settings_file.DATA_SOURCE_MONGO_USER_NAME,
-        password: pai_bot_settings_file.DATA_SOURCE_MONGO_PASSWORD,
-        dbName: pai_bot_settings_file.DATA_SOURCE_MONGO_DATABASE_NAME
-    });
-
-    await mongo.connect();
-
-    return mongo;
 }
 
 
@@ -93,17 +81,30 @@ async function getDataSourceMongo() {
  * @return {Promise<void>}
  */
 async function applyBotDataSource(moduleInstance) {
-    const pai_bot_settings_file = JSON.parse(fs.readFileSync(await PAIBotOSUtils.getBotFolder() + "settings/pai-bot-settings.json"));
+    //const pai_bot_settings_file = JSON.parse(fs.readFileSync(await PAIBotOSUtils.getBotFolder() + "settings/pai-bot-settings.json"));
 
 
     moduleInstance.config.storage = await getConfigFileStorage(moduleInstance);
 
 
     let dataSource = null;
-    if (pai_bot_settings_file.DATA_SOURCE === "MONGO")
-        dataSource = await getDataSourceMongo();
-    else
+
+    if (pai_bot_settings.has_param("data-source")) {
+        let ds = pai_bot_settings.get_param("data-source");
+        if(ds === "MONGO") {
+            dataSource = await getDataSourceMongo();
+        }
+        else
+            dataSource = await getDataSourceFile(moduleInstance);
+    }
+    else {
+        pai_bot_settings.set_param("data-source","PAI-DDB")
         dataSource = await getDataSourceFile(moduleInstance);
+    }
+
+
+
+
 
     moduleInstance.data.dataSource = dataSource;
 }

@@ -1,222 +1,254 @@
-const {PAILogger} = require("@pai-tech/pai-code");
-const fs = require('fs');
-const path = require('path');
+const {PAILogger,PAIUtils} = require("@pai-tech/pai-code");
+//BOTS 2.0
+const os_utils = require("../pai-bot/src/utils/bot-os-utils");
+const pai_bot_settings = require("../pai-bot/src/utils/pai-bot-settings").get_instance();
 const os = require("os");
-
-
-let pai_root_folder = (os.platform == "win32") ? ".\\PAI\\" : "./PAI/";
-const pai_bot_folder = pai_root_folder + "Bot";
-const pai_bot_settings = pai_root_folder + "Bot/settings";
-check_pai_os_folders();
-
-let pai_bot_settings_file=pai_bot_settings+'/pai-bot-settings.json';
-
-
-
-
-
 const inquirer = require('inquirer');
-inquirer.registerPrompt('fuzzypath', require('inquirer-fuzzy-path'));
+
+run_bot_script();
 
 
-function check_pai_os_folders() {
+function run_bot_script() {
 
-    console.log("Checking PAI folders ");
+    inquirer.registerPrompt('fuzzypath', require('inquirer-fuzzy-path'));
 
-    //create PAI O/S Folder
-    if (!fs.existsSync(pai_root_folder)) {
-        console.log("Creating PAI O/S folder " + pai_root_folder);
-        fs.mkdirSync(pai_root_folder);
-    }
+    os_utils.check_bot_folders();
 
 
-    if (!fs.existsSync(pai_bot_folder)) {
-        console.log("Creating PAI-BOT folder " + pai_bot_folder);
-        fs.mkdirSync(pai_bot_folder);
-    }
-    if (!fs.existsSync(pai_bot_settings)) {
-        console.log("Creating PAI-BOT folder " + pai_bot_settings);
-        fs.mkdirSync(pai_bot_settings);
-    }
-}
+    const questions = [
+        {
+            type: "input",
+            name: "pai-bot-name",
+            message: "How do you like to call the bot ? ",
+            default: "PB1",
+        },
+        {
+            type: "checkbox",
+            name: "connectors",
+            message: "Which Connectors To Use?",
+            choices: [
+                'HTTP',
+                'FILES'
+            ]
+        },
+        {
+            type: "input",
+            name: "http-port",
+            message: "please specify http port for the bot HTTP connector",
+            default: 3141,
+            validate: (val) => {
+                const portIsValid = validatePort(val);
 
-
-
-const questions = [
-    {
-        type: "input",
-        name: "HTTP_PORT",
-        message: "What port do you want to listen to ? ",
-        default: 3141,
-        validate: (val) => {
-            const portIsValid = validatePort(val);
-
-            if (!portIsValid) {
-                PAILogger.error(`
+                if (!portIsValid) {
+                    PAILogger.error(`
                 invalid port
                 `);
+                }
+
+
+                return portIsValid;
+            },
+            when: (val) => {
+                return val.connectors =="HTTP" ;
             }
-
-
-            return portIsValid;
-        }
-    },
-    {
-        type: "confirm",
-        name: "_activate_ssl",
-        message: "Do you want to activate SSL ? ",
-        default: true
-    },
-    {
-        type: "fuzzypath",
-        name: "HTTPS_PRIVATE_KEY_PATH",
-        message: "SSL Private Key file Path (.pem file)",
-        suggestOnly: false,
-        rootPath: 'ssl',
-        validate: (val) => {
-            return true;
         },
-        when: (val) => {
-            return val._activate_ssl;
-        }
-    },
-    {
-        type: "fuzzypath",
-        name: "HTTPS_CERTIFICATE_PATH",
-        message: "SSL Certificate file Path (.pem file)",
-        suggestOnly: false,
-        rootPath: 'ssl',
-        when: (val) => {
-            return val._activate_ssl;
-        }
-    },
-    {
-        type: "fuzzypath",
-        name: "HTTPS_CHAIN_PATH",
-        message: "SSL Chain file Path (.pem file)",
-        suggestOnly: false,
-        rootPath: 'ssl',
-        when: (val) => {
-            return val._activate_ssl;
-        }
-    },
-    {
-        type: "checkbox",
-        name: "PAI_CONNECTORS",
-        message: "Which Connectors To Use?",
-        choices: [
-            'HTTP',
-            'FILES'
-        ]
-    },
-    {
-        type: "list",
-        name: "DATA_SOURCE",
-        message: "Choose Bot Data Source:",
-        default: "FILES",
-        choices: ["PAI-DDB", "MONGO"]
-    },
-    {
-        type: "input",
-        name: "DATA_SOURCE_MONGO_URL",
-        message: "Mongo DB URL",
-        validate: (val) => {
-
-            // TODO: validate ip / url
-
-            return true;
+        {
+            type: "confirm",
+            name: "ssl",
+            message: "Do you want to secure th bot HTTP interface with SSL (HTTPS)? ",
+            default: false,
+            when: (val) => {
+                return val.connectors =="HTTP";
+            }
         },
-        when: (val) => {
-            return val.DATA_SOURCE === "MONGO";
-        }
-    },
-    {
-        type: "input",
-        name: "DATA_SOURCE_MONGO_PORT",
-        message: "Mongo DB Port",
-        default: "27017",
-        validate: (val) => {
-            const portIsValid = validatePort(val);
+        {
+            type: "fuzzypath",
+            name: "ssl-pk-path",
+            message: "SSL Private Key file Path (.pem file)",
+            suggestOnly: false,
+            rootPath: os_utils.get_bot_folder("ssl"),
+            validate: (val) => {
+                return true;
+            },
+            when: (val) => {
+                return val.ssl;
+            }
+        },
+        {
+            type: "fuzzypath",
+            name: "ssl-cert-path",
+            message: "SSL Certificate file Path (.pem file)",
+            suggestOnly: false,
+            rootPath: 'ssl',
+            when: (val) => {
+                return val.ssl;
+            }
+        },
+        {
+            type: "fuzzypath",
+            name: "ssl-chain-path",
+            message: "SSL Chain file Path (.pem file)",
+            suggestOnly: false,
+            rootPath: 'ssl',
+            when: (val) => {
+                return val.ssl;
+            }
+        },
 
-            if (!portIsValid) {
-                PAILogger.error(`
+        {
+            type: "list",
+            name: "data-source",
+            message: "Choose Bot Data Source:",
+            default: "FILES",
+            choices: ["PAI-DDB", "MONGO"]
+        },
+        {
+            type: "input",
+            name: "mongo-url",
+            message: "Mongo DB URL",
+            validate: (val) => {
+
+                // TODO: validate ip / url
+
+                return true;
+            },
+            when: (val) => {
+                return val["data-source"] === "MONGO";
+            }
+        },
+        {
+            type: "input",
+            name: "mongo-port",
+            message: "Mongo DB Port",
+            default: "27017",
+            validate: (val) => {
+                const portIsValid = validatePort(val);
+
+                if (!portIsValid) {
+                    PAILogger.error(`
                 invalid port
                 `);
-            }
+                }
 
-            return portIsValid;
+                return portIsValid;
+            },
+            when: (val) => {
+                return val["data-source"]  === "MONGO";
+            }
         },
-        when: (val) => {
-            return val.DATA_SOURCE === "MONGO";
-        }
-    },
-    {
-        type: "input",
-        name: "DATA_SOURCE_MONGO_USER_NAME",
-        message: "Mongo DB Username",
-        when: (val) => {
-            return val.DATA_SOURCE === "MONGO";
-        }
+        {
+            type: "input",
+            name: "mongo-user-name",
+            message: "Mongo DB Username",
+            when: (val) => {
+                return val["data-source"]  === "MONGO";
+            }
 
-    },
-    {
-        type: "password",
-        name: "DATA_SOURCE_MONGO_PASSWORD",
-        message: "Mongo DB password",
-        when: (val) => {
-            return val.DATA_SOURCE === "MONGO";
-        }
-    },
-    {
-        type: "input",
-        name: "DATA_SOURCE_MONGO_DATABASE_NAME",
-        message: "Mongo Data Base schema name",
-        when: (val) => {
-            return val.DATA_SOURCE === "MONGO";
-        }
-    }
-];
-
-
-
-function writeToSettings(data) {
-    if(fs.existsSync(pai_bot_settings_file)){
-
-    }
-    fs.writeFileSync(pai_bot_settings_file, JSON.stringify(data));
-
-}
-
-
-function validatePort(val) {
-    if (isNaN(val))
-        return false;
-
-    const numberPort = parseInt(val);
-
-    return (numberPort < 65535 && numberPort > 0);
-}
-
-
-inquirer
-    .prompt(questions)
-    .then(answers => {
-        for (const key in answers) {
-            if (key.indexOf('_') === 0) {
-                delete answers[key];
+        },
+        {
+            type: "password",
+            name: "mongo-pwd",
+            message: "Mongo DB password",
+            when: (val) => {
+                return val["data-source"]  === "MONGO";
+            }
+        },
+        {
+            type: "input",
+            name: "mongo-schema",
+            message: "Mongo Data Base schema name",
+            when: (val) => {
+                return val["data-source"]  === "MONGO";
             }
         }
-
-        if (answers.length === 0) {
-            PAILogger.info('Nothing to update');
-            return;
-        }
+    ];
 
 
-        writeToSettings(answers);
+    function validatePort(val) {
+        if (isNaN(val))
+            return false;
 
-        PAILogger.info('Configuration file created (pai-bot-settings.json)');
+        const numberPort = parseInt(val);
 
-    }).catch(err => {
-    PAILogger.error('error:' + err.message, err);
-});
+        return (numberPort < 65535 && numberPort > 0);
+    }
+
+
+    inquirer
+        .prompt(questions)
+        .then(answers => {
+            for (const key in answers) {
+                if (key.indexOf('_') === 0) {
+                    delete answers[key];
+                }
+            }
+
+            if (answers.length === 0) {
+                PAILogger.info('Nothing to update');
+                return;
+            }
+
+            let pbs = {
+                "pai-bot-name":answers["bot-name"],
+                "pai-bot-id" : PAIUtils.pai_guid(),
+                "connectors" : [],
+                "data-source": {
+                    "type":"PAI-DDB",
+                    "db-data": {
+                        "db-host-name" : "",
+                        "db-user-name": "",
+                        "db-pwd" : "",
+                        "db-schema" : ""
+                    }
+                }
+            }
+
+            if(answers.hasOwnProperty("connectors")) {
+                answers.connectors.forEach( connector => {
+                    if(connector === "HTTP") {
+                        let con = {
+                            "type" : "HTTP",
+                            "port" : answers["http-port"]
+                        }
+                        if(answers.hasOwnProperty("ssl")) {
+                            let ssl_con = {
+                                "pk-file" : answers["ssl-pk-path"],
+                                "cert-file": answers["ssl-cert-path"],
+                                "chain-file": answers["ssl-chain-path"]
+                            }
+                            con.ssl = ssl_con;
+                        }
+                        pbs["connectors"].push(con);
+                    }
+                    else if(connector === "FILES") {
+                        let con = {
+                            "name":"FILES",
+                            "queue-folder": "./PAI/Bot/queue/",
+                            "incoming-file-name": "in.pai",
+                            "outgoing-file-name": "out.pai",
+                            "interval" : 500
+                        }
+                        pbs["connectors"].push(con);
+                    }
+                })
+            }
+            if(answers["data-source"] === "MONGO") {
+                pbs["data-source"].type = answers["data-source"];
+                pbs["data-source"].type["db-data"] = {
+                    "db-host-name" : answers["mongo-url"],
+                    "db-user-name": answers["mongo-user-name"],
+                    "db-pwd" : answers["mongo-pwd"],
+                    "db-schema" : answers["mongo-schema"]
+                };
+            }
+
+
+
+            pai_bot_settings.set_all(pbs);
+
+
+        }).catch(err => {
+        PAILogger.error('error:' + err.message, err);
+    });
+}
+

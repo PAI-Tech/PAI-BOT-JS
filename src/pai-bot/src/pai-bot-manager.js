@@ -17,6 +17,7 @@ class PAIBotManager {
     
     /**
      * Create all bot files in PAI-OS
+	 * @deprecated
      * @return {Promise<PAIBot>}
      */
 	createBotFiles() {

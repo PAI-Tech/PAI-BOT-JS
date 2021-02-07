@@ -4,7 +4,8 @@
  * Date Created : 9/25/2018
  * Copyright PAI-TECH 2018, all right reserved
  *
- * This file is the entry point of your base module.
+ *  This file is the entry point of the bot.
+ *
  *      This program is free software; you can redistribute it and/or
  *        modify it under the terms of the GNU General Public License
  *        as published by the Free Software Foundation; either version
@@ -12,10 +13,7 @@
  */
 
 
-const {
-    PAICode,
-    PAILogger,
-} = require("@pai-tech/pai-code");
+const {PAICode,PAILogger} = require("@pai-tech/pai-code");
 
 // const env = require("./env-loader");
 require('dotenv').config({path: './config.env'});
@@ -27,21 +25,23 @@ const PAIBotManager = require("./src/pai-bot/src/pai-bot-manager");
 const BotBaseModules = require("./src/pai-bot/src/modules/bot-base-modules");
 const PAIBotOSUtils = require("./src/pai-bot/src/utils/pai-bot-os-utils");
 
+//BOTS 2.0
+const os_utils = require("./src/pai-bot/src/utils/bot-os-utils");
+const pai_bot_settings = require("./src/pai-bot/src/utils/pai-bot-settings").get_instance();
+
 let manager = new PAIBotManager();
 let fileConnector;
 let httpConnector;
 
-let pai_root_folder = (os.platform == "win32") ? ".\\PAI\\" : "./PAI/";
-const pai_bot_folder = pai_root_folder + "Bot";
-const pai_log_folder = pai_root_folder + "Logs";
-const pai_bot_settings_file = pai_bot_folder + "/settings/pai-bot-settings.json";
 
 
 async function main() {
     try {
-        await check_pai_os_folders();
 
-        PAICode.start();
+        os_utils.check_bot_folders();
+        pai_bot_settings.load();
+
+        //PAICode.start();
 
         await BotBaseModules.load();
 
@@ -51,29 +51,33 @@ async function main() {
             // modules failed to load
         }
 
-        await manager.createBotFiles();
+        //await manager.createBotFiles();
 
-        await manager.loadBotStartupFile();
-
-        let QFolder = await PAIBotOSUtils.getBotQueueFolder();
+        //await manager.loadBotStartupFile();
 
 
-        let pai_bot_settings = JSON.parse(fs.readFileSync(pai_bot_settings_file));
-
-        if (pai_bot_settings.PAI_CONNECTORS.includes('FILES')) {
-            fileConnector = new PAIFileConnector({path: `${QFolder}/in.pai`});
-            fileConnector.start();
+        let connectors = pai_bot_settings.all["connectors"];
+        if(connectors) {
+            connectors.forEach( connector => {
+                if(connector.type === "HTTP") {
+                    httpConnector = new PAIHTTPConnector(connector);
+                    httpConnector.start(false);
+                }
+                else if(connector.type === "FILES") {
+                    fileConnector = new PAIFileConnector(connector);
+                    fileConnector.start();;
+                }
+            })
         }
-        if (pai_bot_settings.PAI_CONNECTORS.includes('HTTP')) {
-            httpConnector = new PAIHTTPConnector({port: (pai_bot_settings.HTTP_PORT || 3141)});
-            httpConnector.start(false);
+        else {
+            PAILogger.info("NO Connector configured for bot. run bot config to configure connectors");
         }
 
 
         loadAdditionalFiles();
 
     } catch (e) {
-        PAICode.stop();
+        //PAICode.stop();
         PAILogger.error("PAI-BOT (main):" + e);
         return false;
     }
@@ -125,33 +129,6 @@ function loadAdditionalFiles() {
     }
 }
 
-
-async function check_pai_os_folders() {
-
-    PAILogger.info("Checking PAI O/S folders");
-
-    //create PAI O/S Folder
-    if (!fs.existsSync(pai_root_folder)) {
-        PAILogger.info("Creating PAI O/S folder " + pai_root_folder);
-        fs.mkdirSync(pai_root_folder);
-    } else {
-        PAILogger.info("PAI O/S Folder is " + pai_root_folder);
-    }
-
-    if (!fs.existsSync(pai_log_folder)) {
-        PAILogger.info("Creating PAI Logs folder " + pai_log_folder);
-        fs.mkdirSync(pai_log_folder);
-    } else {
-        PAILogger.info("PAI-BOT Logs is " + pai_log_folder);
-    }
-
-    if (!fs.existsSync(pai_bot_folder)) {
-        PAILogger.info("Creating PAI-BOT folder " + pai_bot_folder);
-        fs.mkdirSync(pai_bot_folder);
-    } else {
-        PAILogger.info("PAI-BOT Folder is " + pai_bot_folder);
-    }
-}
 
 
 main().then((success) => {

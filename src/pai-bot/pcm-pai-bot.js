@@ -72,8 +72,6 @@ functions:
                 "from-text": new PAIModuleCommandParamSchema("from-text", "Text To Learn From", false, "Text Repo"),
                 "from-file": new PAIModuleCommandParamSchema("from-file", "File To Learn From", false, "File Repo"),
                 "from-url": new PAIModuleCommandParamSchema("from-url", "Url To Learn From", false, "Url Repo")
-
-
             }
         }));
 

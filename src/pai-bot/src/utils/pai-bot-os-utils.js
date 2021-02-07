@@ -1,27 +1,41 @@
-let _PAI_FOLDER = null;
-const PAI_OS = require('@pai-tech/pai-os').PAI_OS;
-const path = require('path');
+/**
+ PAI BOT OS Utils
+ @description BOT Utilities for pai-os
+ @class PAI_BOT_OS_UTILS
+ @author Tamir Fridman
+ Date Created : 01/02/2021
+ @deprecated
+ @copyright PAI-TECH 2018, all right reserved
 
-async function getPAIFolder(){
-    if(!_PAI_FOLDER)
-    {
-        _PAI_FOLDER = await (new PAI_OS()).getOSPath();
+ **/
+
+
+//static private members
+
+/**
+ * @deprecated
+ */
+let _PAI_FOLDER = null;
+
+function getPAIFolder(){
+    if(!_PAI_FOLDER) {
+        _PAI_FOLDER = (new PAI_OS()).getOSPath();
     }
     return _PAI_FOLDER;
 }
 
 /**
- *
+ * @deprecated
  * @return {string}
  */
 async function getBotFolder()
 {
-    return `${await getPAIFolder()}${path.sep}Bot${path.sep}`;
+    return `${getPAIFolder()}${path.sep}BOT_FOLDER_NAME${path.sep}`;
 }
 
 
 /**
- *
+ * @deprecated
  * @return {string}
  */
 async function getBotSettingsFolder()
@@ -31,7 +45,7 @@ async function getBotSettingsFolder()
 
 
 /**
- *
+ * @deprecated
  * @return {string}
  */
 async function getBotSettingsFile()
@@ -40,7 +54,7 @@ async function getBotSettingsFile()
 }
 
 /**
- *
+ * @deprecated
  * @return {string}
  */
 async function getBotStartupFile()
@@ -51,7 +65,7 @@ async function getBotStartupFile()
 
 
 /**
- *
+ * @deprecated
  * @return {string}
  */
 async function getBotQueueFolder()
@@ -69,3 +83,5 @@ module.exports = {
     getBotStartupFile,
     getBotQueueFolder
 };
+
+
