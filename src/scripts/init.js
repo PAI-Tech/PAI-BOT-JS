@@ -12,6 +12,7 @@
  */
 
 
+
 const fs = require('fs');
 const path = require('path');
 const os = require("os");
@@ -23,6 +24,10 @@ const {
 } = require("@pai-tech/pai-code");
 const env = require("./env-loader");
 
+//BOTS 2.0
+const os_utils = require("../pai-bot/src/utils/bot-os-utils");
+const pai_bot_settings = require("../pai-bot/src/utils/pai-bot-settings").get_instance();
+
 const PAIBotManager = require("../pai-bot/src/pai-bot-manager");
 const BotBaseModules = require("../pai-bot/src/modules/bot-base-modules");
 const registerToPAINET = require("../installation/pai-net-registration/pai-net-registration-flow");
@@ -30,48 +35,13 @@ const registerToPAINET = require("../installation/pai-net-registration/pai-net-r
 let manager = new PAIBotManager();
 
 
-async function check_pai_os_folders()
-{
-
-    let pai_root_folder = (os.platform == "win32") ? ".\\PAI\\" : "./PAI/";
-    const pai_bot_folder = pai_root_folder + "Bot";
-	const pai_log_folder = pai_root_folder + "Logs";
-
-    PAILogger.info("Checking PAI O/S folders");
-
-    //create PAI O/S Folder
-    if (!fs.existsSync(pai_root_folder)) {
-        PAILogger.info("Creating PAI O/S folder " + pai_root_folder );
-        fs.mkdirSync(pai_root_folder);
-    }
-    else {
-        PAILogger.info("PAI O/S Folder is " +pai_root_folder );
-	}
-
-	if (!fs.existsSync(  pai_log_folder)) {
-		PAILogger.info("Creating PAI Logs folder " +   pai_log_folder );
-		fs.mkdirSync(  pai_log_folder);
-	}
-	else {
-		PAILogger.info("PAI-BOT Folder is " +pai_bot_folder );
-	}
-
-    if (!fs.existsSync(  pai_bot_folder)) {
-        PAILogger.info("Creating PAI-BOT folder " +   pai_bot_folder );
-        fs.mkdirSync(  pai_bot_folder);
-    }
-    else {
-        PAILogger.info("PAI-BOT Folder is " +pai_bot_folder );
-    }
-}
-
 
 
 async function main() {
 	try {
 
-        PAILogger.info("Hey :)");
-        await check_pai_os_folders();
+        PAILogger.info("Staring bot pai-net registration");
+        os_utils.check_bot_folders();
 		await BotBaseModules.load();
         PAILogger.info("Loading bot modules, may the force be with us...");
 		let modulesLoaded = await loadModules();
@@ -80,11 +50,11 @@ async function main() {
 			// modules failed to load
             PAILogger.info("FAILED to load modules!!!!!!!!!");
 		}
-        PAILogger.info("Creating bot files");
-		await manager.createBotFiles();
-        PAILogger.info("Loading bot startup files");
-		await manager.loadBotStartupFile();
-        PAILogger.info("Registering to PAI-NET");
+        // PAILogger.info("Creating bot files");
+		// await manager.createBotFiles();
+        // PAILogger.info("Loading bot startup files");
+		// await manager.loadBotStartupFile();
+		PAILogger.info("Registering to PAI-NET");
 		await registerBotToPAINET();
 		
 		
