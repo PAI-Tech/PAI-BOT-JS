@@ -3,6 +3,7 @@ const {PAILogger,PAIUtils} = require("@pai-tech/pai-code");
 const os_utils = require("../pai-bot/src/utils/bot-os-utils");
 const pai_bot_settings = require("../pai-bot/src/utils/pai-bot-settings").get_instance();
 const os = require("os");
+const fs = require("fs");
 const inquirer = require('inquirer');
 
 run_bot_script();
@@ -68,7 +69,13 @@ function run_bot_script() {
             suggestOnly: false,
             rootPath: "/",
             validate: (val) => {
-                return true;
+                let v = fs.existsSync(val) && fs.statSync(val).isFile();
+                if(!v) {
+                    PAILogger.error(`
+                    file ${val} not found or not a file, please type again
+                    `);
+                }
+                return v;
             },
             when: (val) => {
                 return val.ssl;
@@ -79,7 +86,15 @@ function run_bot_script() {
             name: "ssl-cert-path",
             message: "SSL Certificate file Path (.pem file)",
             suggestOnly: false,
-            rootPath: 'ssl',
+            validate: (val) => {
+                let v = fs.existsSync(val) && fs.statSync(val).isFile();
+                if(!v) {
+                    PAILogger.error(`
+                    file ${val} not found or not a file, please type again
+                    `);
+                }
+                return v;
+            },
             when: (val) => {
                 return val.ssl;
             }
@@ -89,7 +104,16 @@ function run_bot_script() {
             name: "ssl-chain-path",
             message: "SSL Chain file Path (.pem file)",
             suggestOnly: false,
-            rootPath: 'ssl',
+            validate: (val) => {
+                let v = fs.existsSync(val) && fs.statSync(val).isFile();
+                if(!v) {
+                    PAILogger.error(`
+                    file ${val} not found or not a file, please type again
+                    `);
+                }
+                return v;
+            },
+
             when: (val) => {
                 return val.ssl;
             }
