@@ -31,6 +31,8 @@ const CONFIG_BOT_MODULES = "bot_modules";
 
 const path = require('path');
 const fs = require('fs');
+const os_utils = require("./src/utils/bot-os-utils");
+
 
 class PCM_PAI_BOT extends PAICodeModule {
     constructor() {
@@ -50,6 +52,7 @@ functions:
             new PAIModuleConfigParam("Modules list", "This list specify the modules that the Bot has learned", CONFIG_BOT_MODULES, "[]")
         ];
 
+        this.set_module_name("pai-bot-module")
 
     }
 
@@ -58,7 +61,7 @@ functions:
      * and load all the functions for this module
      */
     async load() {
-        await super.load(this);
+        await super.load();
 
         this.loadCommandWithSchema(new PAIModuleCommandSchema({
             op: "version", func: "version"
@@ -192,9 +195,8 @@ functions:
         process.exit(0);
     }
 
-    async get_bot_folder() {
-        let paios = new PAI_OS();
-        return (await paios.getOSPath()) + path.sep + "Bot" + path.sep;
+    get_bot_folder() {
+        return os_utils.get_bot_folder()
     }
 
     edit_env_file(cmd) {

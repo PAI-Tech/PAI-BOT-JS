@@ -10,7 +10,7 @@ run_bot_script();
 
 function run_bot_script() {
 
-    inquirer.registerPrompt('fuzzypath', require('inquirer-fuzzy-path'));
+    //inquirer.registerPrompt('fuzzypath', require('inquirer-fuzzy-path'));
 
     os_utils.check_bot_folders();
 
@@ -55,18 +55,18 @@ function run_bot_script() {
         {
             type: "confirm",
             name: "ssl",
-            message: "Do you want to secure th bot HTTP interface with SSL (HTTPS)? ",
+            message: "Do you want to secure the bot HTTP interface with SSL (HTTPS)? ",
             default: false,
             when: (val) => {
                 return val.connectors =="HTTP";
             }
         },
         {
-            type: "fuzzypath",
+            type: "input",
             name: "ssl-pk-path",
             message: "SSL Private Key file Path (.pem file)",
             suggestOnly: false,
-            rootPath: os_utils.get_bot_folder("ssl"),
+            rootPath: "/",
             validate: (val) => {
                 return true;
             },
@@ -75,7 +75,7 @@ function run_bot_script() {
             }
         },
         {
-            type: "fuzzypath",
+            type: "input",
             name: "ssl-cert-path",
             message: "SSL Certificate file Path (.pem file)",
             suggestOnly: false,
@@ -85,7 +85,7 @@ function run_bot_script() {
             }
         },
         {
-            type: "fuzzypath",
+            type: "input",
             name: "ssl-chain-path",
             message: "SSL Chain file Path (.pem file)",
             suggestOnly: false,
@@ -234,7 +234,7 @@ function run_bot_script() {
             }
             if(answers["data-source"] === "MONGO") {
                 pbs["data-source"].type = answers["data-source"];
-                pbs["data-source"].type["db-data"] = {
+                pbs["data-source"]["db-data"] = {
                     "db-host-name" : answers["mongo-url"],
                     "db-user-name": answers["mongo-user-name"],
                     "db-pwd" : answers["mongo-pwd"],

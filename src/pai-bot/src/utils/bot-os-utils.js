@@ -82,7 +82,7 @@ class PAI_BOT_OS_UTILS {
         PAI_BOT_OS_UTILS.check_folder(PAI_BOT_OS_UTILS.get_bot_folder(),"Bot");
         let bf_keys = Object.keys(Bot_Folders);
         bf_keys.forEach(folder => PAI_BOT_OS_UTILS.check_folder(PAI_BOT_OS_UTILS.get_bot_folder(folder),folder));
-        console.log("Bot folders OK");
+        console.log("PAI-OS:] Bot folders OK, let the bot begin...");
     }
 
 }

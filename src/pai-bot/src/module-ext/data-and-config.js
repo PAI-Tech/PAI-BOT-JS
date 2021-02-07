@@ -39,7 +39,7 @@ async function getConfigFileStorage(moduleInstance) {
  */
 async function getDataSourceFile(moduleInstance) {
 
-    let botDataFolder = os_utils.check_bot_folders("data");
+    let botDataFolder = os_utils.get_bot_folder("data");
 
     let storage = new PAIFilesStorageDataSource({
         filePath: botDataFolder + moduleInstance.setModuleName()
@@ -57,8 +57,6 @@ async function getDataSourceMongo() {
     //const pai_bot_settings_file = JSON.parse(fs.readFileSync(await PAIBotOSUtils.getBotFolder() + "settings/pai-bot-settings.json"));
 
     if (pai_bot_settings.has_params(["mongo-url","mongo-port","mongo-user-name","mongo-pwd","mongo-schema"])) {
-
-
         const mongo = new MongoDataSource({
             URL: pai_bot_settings.all["mongo-url"],
             port: pai_bot_settings.all["mongo-port"],

@@ -20,7 +20,7 @@ require('dotenv').config({path: './config.env'});
 const path = require("path");
 const fs = require('fs');
 const os = require("os");
-const {PAIFileConnector, PAIHTTPConnector} = require("@pai-tech/pai-conntectors");
+const {PAIFileConnector, PAIHTTPConnector} = require("@pai-tech/pai-connectors");
 const PAIBotManager = require("./src/pai-bot/src/pai-bot-manager");
 const BotBaseModules = require("./src/pai-bot/src/modules/bot-base-modules");
 const PAIBotOSUtils = require("./src/pai-bot/src/utils/pai-bot-os-utils");
@@ -61,7 +61,7 @@ async function main() {
             connectors.forEach( connector => {
                 if(connector.type === "HTTP") {
                     httpConnector = new PAIHTTPConnector(connector);
-                    httpConnector.start(false);
+                    httpConnector.start(true);
                 }
                 else if(connector.type === "FILES") {
                     fileConnector = new PAIFileConnector(connector);
@@ -135,11 +135,6 @@ main().then((success) => {
 
     if (success) {
         PAILogger.info("Bot started with great success");
-        let pai_bot_settings = JSON.parse(fs.readFileSync(pai_bot_settings_file));
-        if (pai_bot_settings.PAI_CONNECTORS.includes('HTTP')) {
-            httpConnector.add_catch_all();
-        }
-        PAILogger.info("Number of modules loaded ");
     } else
         PAILogger.error("Bot failed to start");
 }).catch(e => {
