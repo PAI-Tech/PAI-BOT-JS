@@ -15,7 +15,7 @@ const path = require("path");
 const fs = require('fs');
 
 
-const PAI_BOT_SETTINGS_FILE = os_utils.get_bot_settings_folder() + "pai-bot.json";
+const PAI_BOT_SETTINGS_FILE = os_utils.get_bot_settings_folder() + "pai-bot-config.json";
 
 let pai_bot_settings_instance = null;
 

@@ -1,6 +1,6 @@
 const PAIBotStatus = require('./pai-bot-status');
 
-let pai_bot_instance = null;
+
 
 class PAI_BOT {
 
@@ -12,12 +12,7 @@ class PAI_BOT {
         this.createdAt = null;
     }
 
-    static get get_instance() {
-        if (!pai_bot_instance) {
-            pai_bot_instance = new PAI_BOT();
-        }
-        return pai_bot_instance;
-    }
+
 
 
 

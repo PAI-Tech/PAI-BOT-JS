@@ -12,6 +12,7 @@
  *		3 of the License, or (at your option) any later version.
  */
 
+const pai_logger = require("@pai-tech/pai-code").PAILogger;
 const { PAINETModule } = require("@pai-tech/pai-net");
 const { PAI_OS } = require("@pai-tech/pai-os");
 const PAIBotModule = require("../../pcm-pai-bot");
@@ -21,16 +22,16 @@ const PAISchedulerModule = require("@pai-tech/pai-scheduler").Module;
 const applyBotDataSource = require("./../module-ext/data-and-config");
 
 
-const paiBOT = new PAIBotModule();
-const paiOS = new PAI_OS();
-const paiNET = new PAINETModule();
-const paiScheduler = new PAISchedulerModule();
+const pai_bot = new PAIBotModule();
+const pai_os = new PAI_OS();
+const pai_net = new PAINETModule();
+const pai_scheduler = new PAISchedulerModule();
 
 let modules = [
-    paiOS,
-    paiNET,
-    paiBOT,
-    paiScheduler
+    pai_os,
+    pai_net,
+    pai_bot,
+    pai_scheduler
 ];
 
 let modulesLoaded = false;
@@ -45,6 +46,7 @@ async function loadModulesConfig()
     if(!modulesLoaded)
     {
 		for (let i = 0; i < modules.length; i++) {
+            pai_logger.info("loading bot base module " + modules[i].get_module_name())
 			await applyBotDataSource(modules[i]);
         }
         

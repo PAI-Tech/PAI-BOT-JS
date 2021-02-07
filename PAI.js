@@ -16,68 +16,38 @@
 const {PAICode,PAILogger} = require("@pai-tech/pai-code");
 
 // const env = require("./env-loader");
-require('dotenv').config({path: './config.env'});
+//require('dotenv').config({path: './config.env'});
 const path = require("path");
 const fs = require('fs');
 const os = require("os");
-const {PAIFileConnector, PAIHTTPConnector} = require("@pai-tech/pai-connectors");
-const PAIBotManager = require("./src/pai-bot/src/pai-bot-manager");
-const BotBaseModules = require("./src/pai-bot/src/modules/bot-base-modules");
-const PAIBotOSUtils = require("./src/pai-bot/src/utils/pai-bot-os-utils");
+
+const pai_bot = require("./src/pai-bot/src/pai-bot").get_instance;
+//const BotBaseModules = require("./src/pai-bot/src/modules/bot-base-modules");
+//const PAIBotOSUtils = require("./src/pai-bot/src/utils/pai-bot-os-utils");
 
 //BOTS 2.0
-const os_utils = require("./src/pai-bot/src/utils/bot-os-utils");
-const pai_bot_settings = require("./src/pai-bot/src/utils/pai-bot-settings").get_instance();
-
-let manager = new PAIBotManager();
-let fileConnector;
-let httpConnector;
-
+//const os_utils = require("./src/pai-bot/src/utils/bot-os-utils");
+//const pai_bot_settings = require("./src/pai-bot/src/utils/pai-bot-settings").get_instance();
 
 
 async function main() {
     try {
-
-        os_utils.check_bot_folders();
-        pai_bot_settings.load();
-
-        //PAICode.start();
-
-        await BotBaseModules.load();
-
-        let modulesLoaded = await loadModules();
-
-        if (!modulesLoaded) {
-            // modules failed to load
-        }
+        await pai_bot.run();
+        //let modulesLoaded = await loadModules();
 
         //await manager.createBotFiles();
 
         //await manager.loadBotStartupFile();
 
 
-        let connectors = pai_bot_settings.all["connectors"];
-        if(connectors) {
-            connectors.forEach( connector => {
-                if(connector.type === "HTTP") {
-                    httpConnector = new PAIHTTPConnector(connector);
-                    httpConnector.start(true);
-                }
-                else if(connector.type === "FILES") {
-                    fileConnector = new PAIFileConnector(connector);
-                    fileConnector.start();;
-                }
-            })
-        }
-        else {
-            PAILogger.info("NO Connector configured for bot. run bot config to configure connectors");
-        }
 
 
-        loadAdditionalFiles();
+
+        //loadAdditionalFiles();
+
 
     } catch (e) {
-        //PAICode.stop();
+        PAICode.stop();
         PAILogger.error("PAI-BOT (main):" + e);
         return false;
     }
@@ -86,7 +56,7 @@ async function main() {
 }
 
 /**
- *
+ * @deprecated
  * @return {Promise<boolean>}
  */
 async function loadModules() {
@@ -106,6 +76,7 @@ async function loadModules() {
 /**
  * This function load additional files after the bot is loaded.
  * Additional files specify in package.json of your project under: PAI.includeFiles = [ "yourFile.js" ]
+ * @deprecated
  */
 function loadAdditionalFiles() {
     try {

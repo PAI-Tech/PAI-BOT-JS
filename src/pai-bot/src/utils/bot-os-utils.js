@@ -9,6 +9,7 @@
  **/
 
 const pai_os = require('@pai-tech/pai-os').PAI_OS;
+const pai_logger = require("@pai-tech/pai-code").PAILogger;
 const path = require('path');
 const fs = require('fs');
 
@@ -70,19 +71,26 @@ class PAI_BOT_OS_UTILS {
 
     static check_folder(folder,folder_name) {
         if (!fs.existsSync(folder)) {
-            console.log("Creating "+ folder_name +" folder ");
+            pai_logger.info("Creating "+ folder_name +" folder ");
             fs.mkdirSync(folder);
         }
     }
 
-    static check_bot_folders()
+    static async check_bot_folders()
     {
-        //create PAI O/S Folder
-        PAI_BOT_OS_UTILS.check_folder(PAI_BOT_OS_UTILS.get_pai_folder(),"PAI");
-        PAI_BOT_OS_UTILS.check_folder(PAI_BOT_OS_UTILS.get_bot_folder(),"Bot");
-        let bf_keys = Object.keys(Bot_Folders);
-        bf_keys.forEach(folder => PAI_BOT_OS_UTILS.check_folder(PAI_BOT_OS_UTILS.get_bot_folder(folder),folder));
-        console.log("PAI-OS:] Bot folders OK, let the bot begin...");
+        return new Promise((resolve, reject) => {
+            try {
+                PAI_BOT_OS_UTILS.check_folder(PAI_BOT_OS_UTILS.get_pai_folder(), "PAI");
+                PAI_BOT_OS_UTILS.check_folder(PAI_BOT_OS_UTILS.get_bot_folder(), "Bot");
+                let bf_keys = Object.keys(Bot_Folders);
+                bf_keys.forEach(folder => PAI_BOT_OS_UTILS.check_folder(PAI_BOT_OS_UTILS.get_bot_folder(folder), folder));
+                pai_logger.info("Bot folders OK, let the bot begin...");
+                resolve(true);
+            } catch (exp) {
+                pai_logger.error("Error on bot folders " +exp);
+                reject(false);
+            }
+        });
     }
 
 

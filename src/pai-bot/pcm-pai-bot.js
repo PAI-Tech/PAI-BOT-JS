@@ -52,7 +52,7 @@ functions:
             new PAIModuleConfigParam("Modules list", "This list specify the modules that the Bot has learned", CONFIG_BOT_MODULES, "[]")
         ];
 
-        this.set_module_name("pai-bot-module")
+        this.set_module_name("pai-bot")
 
     }
 
@@ -166,8 +166,16 @@ functions:
     }
 
 
+    /**
+     * @deprecated
+     * @return {string}
+     */
     setModuleName() {
-        return "pai-bot";
+        return this.get_module_name();
+    }
+
+    get_module_name() {
+        return "pai-bot"
     }
 
 
