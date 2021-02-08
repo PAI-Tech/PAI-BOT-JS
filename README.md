@@ -4,7 +4,7 @@ PAI BOT (Node JS)
 
  # Description
 
- This project is a Javascript implementation of [PAI-BOT](https://blog.pai-tech.org/knowledge-base/pai-bot/).
+This project is a Javascript implementation of [PAI-BOT](https://developers.pai-tech.org/knowledge-base/pai-bot/).
 
 PAI Bot is a self living software container.
 
@@ -12,11 +12,11 @@ PAI Bot is designed for modularity with the ability to learn new skills and chai
 
 The Bot must live in a PAI Environment OS - (Read more about PAI Environment)
 
- How to run a pai-bot using this project?
+How to run a pai-bot using this project?
 
  1. Download the project 
  2. Run `npm install` to install node modules.
- 3. For the first time only run `npm run init` to configure your pai-bot and connect it to a pai-net (distributed network)
+ 3. For the first time only run `npm run config` to configure your pai-bot and connect it to a pai-net (distributed network)
  4. Run `npm run bot` to run your pai-bot
 
 

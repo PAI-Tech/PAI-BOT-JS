@@ -3,6 +3,7 @@
 const { PAICode, PAIUtils, PAICodeCommandContext, PAILogger } = require('@pai-tech/pai-code');
 const PAIBotStatus = require('./models/pai-bot-status');
 
+const path = require('path');
 const fs = require('fs');
 const os_utils = require('./utils/bot-os-utils');
 const pai_bot_settings = require("./utils/pai-bot-settings").get_instance();
@@ -38,6 +39,7 @@ class PAIBot {
 		await pai_bot_base_modules.load();
 		await this.load_modules();
 		await this.load_connector();
+		this.load_additional_files();
 	}
 
 	async load_modules() {
@@ -72,8 +74,35 @@ class PAIBot {
 			PAILogger.info("NO Connector configured for bot. run bot config to configure connectors");
 		}
 	}
-    
 
+
+
+	/**
+	 * This function load additional files after the bot is loaded.
+	 * Additional files specify in package.json of your project under: PAI.includeFiles = [ "yourFile.js" ]
+	 *
+	 */
+	load_additional_files() {
+		try {
+			const appRootPath = require("app-root-path").path;
+			const packageJsonPath = appRootPath + path.sep + "package.json";
+			const packageData = require(packageJsonPath);
+
+			if (packageData && packageData.hasOwnProperty("PAI")) {
+				if (packageData.PAI && packageData.PAI.hasOwnProperty("includeFiles")) {
+					const additionalFiles = packageData.PAI.includeFiles;
+
+					PAILogger.info("Additional files to load: " + JSON.stringify(additionalFiles));
+
+					for (let i = 0; i < additionalFiles.length; i++) {
+						require(appRootPath + "/" + additionalFiles[i]);
+					}
+				}
+			}
+		} catch (e) {
+			PAILogger.error("error while loading includeFiles from package.json " + e);
+		}
+	}
     
 }
 

@@ -33,19 +33,6 @@ const pai_bot = require("./src/pai-bot/src/pai-bot").get_instance;
 async function main() {
     try {
         await pai_bot.run();
-        //let modulesLoaded = await loadModules();
-
-        //await manager.createBotFiles();
-
-        //await manager.loadBotStartupFile();
-
-
-
-
-
-        //loadAdditionalFiles();
-
-
     } catch (e) {
         PAICode.stop();
         PAILogger.error("PAI-BOT (main):" + e);
@@ -60,16 +47,7 @@ async function main() {
  * @return {Promise<boolean>}
  */
 async function loadModules() {
-
-    for (let i = 0; i < BotBaseModules.modules.length; i++) {
-        let mod_m = BotBaseModules.modules[i];
-        let success = await mod_m.registerModule();
-
-        if (!success)
-            return false;
-    }
-
-    return true;
+    return pai_bot.load_modules();
 }
 
 
@@ -79,25 +57,7 @@ async function loadModules() {
  * @deprecated
  */
 function loadAdditionalFiles() {
-    try {
-        const appRootPath = require("app-root-path").path;
-        const packageJsonPath = appRootPath + path.sep + "package.json";
-        const packageData = require(packageJsonPath);
-
-        if (packageData && packageData.hasOwnProperty("PAI")) {
-            if (packageData.PAI && packageData.PAI.hasOwnProperty("includeFiles")) {
-                const additionalFiles = packageData.PAI.includeFiles;
-
-                PAILogger.info("Additional files to load: " + JSON.stringify(additionalFiles));
-
-                for (let i = 0; i < additionalFiles.length; i++) {
-                    require(appRootPath + "/" + additionalFiles[i]);
-                }
-            }
-        }
-    } catch (e) {
-        PAILogger.error("error while loading includeFiles from package.json " + e);
-    }
+    return pai_bot.load_additional_files();
 }
 
 

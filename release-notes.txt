@@ -3,6 +3,13 @@ PAI-BOT II
 
 
 
+
+
+1.8.0
+----------
+
+- settings object for pai-bot
+
 - pai-bot-manager -> changed to singleton
 
 

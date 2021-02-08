@@ -2,7 +2,7 @@ pai-bot-js 2.0
 -------------------
 
 
-- settings object
+
 - logs
 - terminal
 - pai-ddb support
