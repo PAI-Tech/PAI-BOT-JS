@@ -38,7 +38,6 @@ class PAIStoreManager {
     }
 
     del_store(pai_store_name) {
-
         if (pai_bot_settings.has_param('pai-stores')) {
             let pai_stores = pai_bot_settings.get_param('pai-stores');
             pai_stores = pai_stores.filter((pai_store) => {
@@ -63,26 +62,42 @@ class PAIStoreManager {
 
     }
 
-    async get_module(pai_store_name, module_name) {
-        if (pai_bot_settings.has_param('pai-stores')) {
+    async get_module(module_name, pai_store_name = null) {
+
+        //Search in basic repo
+
+        let basic_repo = JSON.parse(fs.readFileSync('./pai-store-basic-repo.json'));
+        let foundModule;
+        foundModule = basic_repo.filter((kb) => {
+            return kb.canonicalName === module_name;
+        });
+
+        if (foundModule.length > 1) {
+            return foundModule[0];
+        }
+
+// search in pai-store
+        if (pai_store_name && pai_bot_settings.has_param('pai-stores')) {
             let found_pai_store = pai_bot_settings.get_param('pai-stores').filter((ps) => {
                 return ps.name === pai_store_name;
             });
 
             if (found_pai_store.length < 1)
-                return 'Not Found';
+                return null;
 
-            let foundModule = await axios.get(found_pai_store[0].url, {
+            foundModule = await axios.get(found_pai_store[0].url+'/knowledgebases', {
                 params: {
                     filters: {canonicalName: module_name}
                 }
             });
 
             if (foundModule.data.records.length < 1)
-                return 'Not Found';
+                return null;
 
             return foundModule.data.records[0];
         }
+
+        return null;
 
     }
 
