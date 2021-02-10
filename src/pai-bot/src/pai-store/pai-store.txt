@@ -1,0 +1,27 @@
+PAI-STORE
+------------
+
+
+PAI-STORE is a repository of PAI-BOT Modules and Data.
+
+PAI-BOT can access any PAI-STORE (with credentials if required) and can hold multiple connections.
+
+ ---------       ------------
+| PAI-BOT | --> | PAI-STORE 1|
+ ---------       ------------
+                      ||
+                 ------------
+                | PAI-STORE 2|
+                 ------------
+                      ::
+
+
+ PAI-BOT learn process can find the learning data and information within the pai-store.
+
+
+
+learn:
+
+pai-bot learn module:"net-bot"->
+search in  basic-repo and connected KBBots (Knowledgebase)
+    if not found and

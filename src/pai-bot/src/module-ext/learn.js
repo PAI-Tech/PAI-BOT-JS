@@ -190,7 +190,7 @@ async function getKbFromRepo(module, repo) {
 }
 
 
-async function getKbFromFile(module, filePath = appRoot + '/basic-repo.json') {
+async function getKbFromFile(module, filePath = appRoot + '/pai-store-basic-repo.json') {
     const repo_file_json = JSON.parse(fs.readFileSync(filePath));
     let found_kb = repo_file_json["pai-code-modules"].filter((kb) => {
         return (kb["canonicalName"] === module);

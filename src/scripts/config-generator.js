@@ -1,6 +1,6 @@
 const {PAILogger,PAIUtils} = require("@pai-tech/pai-code");
 //BOTS 2.0
-const os_utils = require("../pai-bot/src/utils/bot-os-utils");
+const os_utils = require("../pai-bot/src/utils/os-utils");
 const pai_bot_settings = require("../pai-bot/src/utils/pai-bot-settings").get_instance();
 const os = require("os");
 const fs = require("fs");
@@ -258,7 +258,7 @@ async function ask_questions() {
                         else if(connector === "FILES") {
                             let con = {
                                 "name":"FILES",
-                                "queue-folder": "./PAI/Bot/queue/",
+                                "queue-folder": os_utils.get_bot_queue_folder(),
                                 "incoming-file-name": "in.pai",
                                 "outgoing-file-name": "out.pai",
                                 "interval" : 500

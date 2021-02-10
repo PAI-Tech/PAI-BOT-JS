@@ -46,7 +46,7 @@ async function loadModulesConfig()
     if(!modulesLoaded)
     {
 		for (let i = 0; i < modules.length; i++) {
-            pai_logger.info("loading bot base module " + modules[i].get_module_name())
+            pai_logger.info("loading module " + modules[i].get_module_name())
 			await applyBotDataSource(modules[i]);
         }
         
@@ -57,5 +57,5 @@ async function loadModulesConfig()
 
 module.exports = {
     modules,
-    load: loadModulesConfig
+    load_config: loadModulesConfig
 };

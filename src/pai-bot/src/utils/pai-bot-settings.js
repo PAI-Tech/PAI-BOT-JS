@@ -1,7 +1,7 @@
 /**
  PAI BOT Settings
  @description This object stores the bot global settings
- @class PAI_BOT_SETTINGS
+ @class PAIBotSettings
  @author Tamir Fridman
  Date Created : 01/02/2021
  @copyright PAI-TECH 2018, all right reserved
@@ -9,7 +9,7 @@
  **/
 
 
-const os_utils = require("./bot-os-utils");
+const os_utils = require("./os-utils");
 const pai_logger = require("@pai-tech/pai-code").PAILogger;
 const path = require("path");
 const fs = require('fs');
@@ -19,7 +19,7 @@ const PAI_BOT_SETTINGS_FILE = os_utils.get_bot_settings_folder() + "pai-bot-conf
 
 let pai_bot_settings_instance = null;
 
-class PAI_BOT_SETTINGS {
+class PAIBotSettings {
 
     /**
      * @constructor
@@ -34,7 +34,7 @@ class PAI_BOT_SETTINGS {
      */
     static get_instance() {
         if (!pai_bot_settings_instance) {
-            pai_bot_settings_instance = new PAI_BOT_SETTINGS();
+            pai_bot_settings_instance = new PAIBotSettings();
         }
         return pai_bot_settings_instance;
     }
@@ -102,4 +102,4 @@ class PAI_BOT_SETTINGS {
 }
 
 
-module.exports = PAI_BOT_SETTINGS;
+module.exports = PAIBotSettings;

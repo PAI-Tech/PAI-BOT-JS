@@ -29,7 +29,7 @@ const Bot_Folders = {
 let _pai_folder;
 
 
-class PAI_BOT_OS_UTILS {
+class OSUtils {
 
 
     static get_pai_folder() {
@@ -46,9 +46,8 @@ class PAI_BOT_OS_UTILS {
      * @static
      * @return {string}
      */
-    static get_bot_folder(folder = null)
-    {
-        let bf = PAI_BOT_OS_UTILS.get_pai_folder() + path.sep + Bot_Folder_Name + path.sep;
+    static get_bot_folder(folder = null) {
+        let bf = OSUtils.get_pai_folder() + path.sep + Bot_Folder_Name + path.sep;
         if(folder && Bot_Folders.hasOwnProperty(folder)) {
             bf = bf + folder + path.sep;
         }
@@ -61,11 +60,11 @@ class PAI_BOT_OS_UTILS {
      * @return {string}
      */
     static get_bot_settings_folder() {
-        return PAI_BOT_OS_UTILS.get_bot_folder("settings");
+        return OSUtils.get_bot_folder("settings");
     }
 
     static get_bot_queue_folder() {
-        return PAI_BOT_OS_UTILS.get_bot_folder("queue");
+        return OSUtils.get_bot_folder("queue");
     }
 
 
@@ -80,10 +79,10 @@ class PAI_BOT_OS_UTILS {
     {
         return new Promise((resolve, reject) => {
             try {
-                PAI_BOT_OS_UTILS.check_folder(PAI_BOT_OS_UTILS.get_pai_folder(), "PAI");
-                PAI_BOT_OS_UTILS.check_folder(PAI_BOT_OS_UTILS.get_bot_folder(), "Bot");
+                OSUtils.check_folder(OSUtils.get_pai_folder(), "PAI");
+                OSUtils.check_folder(OSUtils.get_bot_folder(), "Bot");
                 let bf_keys = Object.keys(Bot_Folders);
-                bf_keys.forEach(folder => PAI_BOT_OS_UTILS.check_folder(PAI_BOT_OS_UTILS.get_bot_folder(folder), folder));
+                bf_keys.forEach(folder => OSUtils.check_folder(OSUtils.get_bot_folder(folder), folder));
                 pai_logger.info("Bot folders OK, let the bot begin...");
                 resolve(true);
             } catch (exp) {
@@ -97,6 +96,6 @@ class PAI_BOT_OS_UTILS {
 
 }
 
-module.exports = PAI_BOT_OS_UTILS;
+module.exports = OSUtils;
 
 

@@ -1,11 +1,11 @@
 {
-  "name": "@pai-tech/pai-bot-dev",
+  "name": "@pai-tech/pai-bot",
   "version": "1.8.4",
   "description": "PAI BOT (Node JS) =================",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node PAI.js",
+    "start": "node $NODE_DEBUG_OPTION PAI.js",
     "pai-net": "node src/scripts/config-pai-net.js",
     "pai-code": "node src/scripts/pai-code-run.js",
     "bot": "node PAI.js",

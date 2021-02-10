@@ -11,7 +11,7 @@ const path = require('path');
 const PAIModuleConfigStorageFiles = require('../../../modules-ext/modules-config-storage/pai-module-config-storage-files');
 const PAIFilesStorageDataSource = require('../../../modules-ext/modules-data-sources/pai-module-data-source-files');
 const MongoDataSource = require('../../../modules-ext/modules-data-sources/mongodb/pai-module-data-source-mongodb');
-const os_utils = require("./../utils/bot-os-utils");
+const os_utils = require("../utils/os-utils");
 const pai_bot_settings = require("./../utils/pai-bot-settings").get_instance();
 
 /**

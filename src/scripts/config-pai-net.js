@@ -25,7 +25,7 @@ const {
 } = require("@pai-tech/pai-code");
 
 //BOTS 2.0
-const os_utils = require("../pai-bot/src/utils/bot-os-utils");
+const os_utils = require("../pai-bot/src/utils/os-utils");
 const pai_bot_settings = require("../pai-bot/src/utils/pai-bot-settings").get_instance();
 
 

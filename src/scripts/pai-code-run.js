@@ -3,7 +3,7 @@ const path = require('path');
 const inquirer = require('inquirer');
 
 
-const PAIBotOSUtils = require("../pai-bot/src/utils/pai-bot-os-utils");
+const os_utils = require("../pai-bot/src/utils/os-utils");
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -12,7 +12,7 @@ function sleep(ms) {
 
 
 const run = async () => {
-    const queueFolder = await PAIBotOSUtils.getBotQueueFolder();
+    const queueFolder = await os_utils.get_bot_queue_folder();
 
 
     fs.readdir(queueFolder, (err, files) => {

@@ -5,7 +5,7 @@ const PAIBotStatus = require('./models/pai-bot-status');
 
 const path = require('path');
 const fs = require('fs');
-const os_utils = require('./utils/bot-os-utils');
+const os_utils = require('./utils/os-utils');
 const pai_bot_settings = require("./utils/pai-bot-settings").get_instance();
 const pai_bot_base_modules = require("./modules/bot-base-modules");
 const {PAIFileConnector, PAIHTTPConnector} = require("@pai-tech/pai-connectors");
@@ -35,15 +35,19 @@ class PAIBot {
 		await PAICode.on_ready();
 		await os_utils.check_bot_folders();
 		pai_bot_settings.load();
-		PAICode.start();
-		await pai_bot_base_modules.load();
 		await this.load_modules();
 		await this.load_connector();
 		this.load_additional_files();
+		PAICode.start();
 	}
 
-	async load_modules() {
 
+	/**
+	 * load bot
+	 * @return {Promise<boolean>}
+	 */
+	async load_modules() {
+		await pai_bot_base_modules.load_config();
 		for (let i = 0; i < pai_bot_base_modules.modules.length; i++) {
 			let mod_m = pai_bot_base_modules.modules[i];
 			let success = await mod_m.registerModule();
@@ -51,7 +55,6 @@ class PAIBot {
 			if (!success)
 				return false;
 		}
-
 		return true;
 	}
 

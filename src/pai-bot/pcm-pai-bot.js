@@ -31,7 +31,7 @@ const CONFIG_BOT_MODULES = "bot_modules";
 
 const path = require('path');
 const fs = require('fs');
-const os_utils = require("./src/utils/bot-os-utils");
+const os_utils = require("./src/utils/os-utils");
 
 
 class PCM_PAI_BOT extends PAICodeModule {
