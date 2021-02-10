@@ -284,7 +284,7 @@ module.exports = (module) => {
             let knowledgeBase = null;
 
             await Promise.all(pai_stores.map(async (ps) => {
-                let foundKb = await pai_store_manager.get_module(paiModule, ps);
+                let foundKb = await pai_store_manager.get_module(paiModule, ps.name);
                 if (foundKb) {
                     knowledgeBase = foundKb;
                 }
