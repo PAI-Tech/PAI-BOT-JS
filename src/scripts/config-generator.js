@@ -52,8 +52,30 @@ async function ask_questions() {
                 default: "HTTP",
                 choices: [
                     'HTTP',
-                    'FILES'
+                    'FILES',
+                    'TCP'
                 ]
+            },
+            {
+                type: "input",
+                name: "tcp-port",
+                message: "please specify port for the bot TCP connector",
+                default: 3000,
+                validate: (val) => {
+                    const portIsValid = validatePort(val);
+
+                    if (!portIsValid) {
+                        PAILogger.error(`
+                invalid port
+                `);
+                    }
+
+
+                    return portIsValid;
+                },
+                when: (val) => {
+                    return val.connectors =="TCP" ;
+                }
             },
             {
                 type: "input",
@@ -262,6 +284,13 @@ async function ask_questions() {
                                 "incoming-file-name": "in.pai",
                                 "outgoing-file-name": "out.pai",
                                 "interval" : 500
+                            }
+                            pbs["connectors"].push(con);
+                        }
+                        else if(connector === "TCP") {
+                            let con = {
+                                "type" : "TCP",
+                                "port" : answers["tcp-port"]
                             }
                             pbs["connectors"].push(con);
                         }

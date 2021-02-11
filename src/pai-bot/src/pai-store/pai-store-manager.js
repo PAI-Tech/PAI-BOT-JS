@@ -3,6 +3,7 @@ const path = require('path');
 const pai_bot_settings = require("../utils/pai-bot-settings").get_instance();
 const axios = require('axios');
 const PAIStore = require('./pai-store');
+const basic_repo=require('./pai-store-basic-repo.json');
 
 
 let pai_store_manager_instance = null;
@@ -14,7 +15,7 @@ class PAIStoreManager {
      */
     constructor() {
         let ps = new PAIStore();
-        ps.load(JSON.parse(fs.readFileSync('./pai-store-basic-repo.json')));
+        ps.load(basic_repo);
         this.stores = {
             "base-local-pai-store": ps
         };
