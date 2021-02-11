@@ -16,7 +16,20 @@ PAI-BOT can access any PAI-STORE (with credentials if required) and can hold mul
                       ::
 
 
- PAI-BOT learn process can find the learning data and information within the pai-store.
+PAI-BOT learn process can find the learning data and information within the pai-store.
+
+
+PAI-STORE Manager:
+-------------------
+PAI-BOT manages the stores connection via the PAI-STORE Manager. The manager holds instances of PAI-STORE
+
+
+
+
+KB MANAGER API:
+------------------
+
+
 
 
 

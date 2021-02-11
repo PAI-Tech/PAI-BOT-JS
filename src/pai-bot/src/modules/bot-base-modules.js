@@ -17,6 +17,7 @@ const { PAINETModule } = require("@pai-tech/pai-net");
 const { PAI_OS } = require("@pai-tech/pai-os");
 const PAIBotModule = require("../../pcm-pai-bot");
 const PAISchedulerModule = require("@pai-tech/pai-scheduler").Module;
+const PAIStoreModule = require("../pai-store/pcm-pai-store");
 
 
 const applyBotDataSource = require("./../module-ext/data-and-config");
@@ -25,12 +26,15 @@ const applyBotDataSource = require("./../module-ext/data-and-config");
 const pai_bot = new PAIBotModule();
 const pai_os = new PAI_OS();
 const pai_net = new PAINETModule();
+const pai_store = new PAIStoreModule();
 const pai_scheduler = new PAISchedulerModule();
+
 
 let modules = [
     pai_os,
     pai_net,
     pai_bot,
+    pai_store,
     pai_scheduler
 ];
 

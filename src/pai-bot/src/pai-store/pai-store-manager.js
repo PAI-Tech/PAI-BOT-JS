@@ -12,7 +12,11 @@ class PAIStoreManager {
      * @constructor
      */
     constructor() {
-        this.stores = {};
+        let local_store = new PAIStore();
+        local_store.load(JSON.parse(fs.readFileSync('./pai-store-basic-repo.json')));
+        this.stores = {
+            "local":local_store
+        };
     }
 
     /**
@@ -59,7 +63,9 @@ class PAIStoreManager {
     }
 
     connect(pai_store_name) {
-
+        if(this.stores.hasOwnProperty(pai_store_name)) {
+            this.stores[pai_store_name].connect();
+        }
     }
 
     async get_module(module_name, pai_store_name = null) {

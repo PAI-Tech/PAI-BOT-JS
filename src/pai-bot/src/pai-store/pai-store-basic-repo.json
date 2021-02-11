@@ -1,6 +1,7 @@
 {
   "pai-store-name": "pai-tech",
-  "pai-store-description": "pai-tech open store",
+  "pai-store-description": "pai-tech open store (local)",
+  "pai-store-type": "data",
   "pai-code-modules": [
     {
       "_id": "e59bca1e-ebf7-4c57-93f8-3f3caf0d46f2",

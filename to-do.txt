@@ -7,6 +7,8 @@ pai-bot-js 2.0
 - terminal
 - pai-ddb support/remove
 - pai-store manager (src/pai-bot/pai-store/pai-store.txt)
+- connector manager
+
 
 
 
