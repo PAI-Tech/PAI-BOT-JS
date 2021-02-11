@@ -87,7 +87,7 @@ class PAIStoreManager {
 
     async get_module(module_name, pai_store_name = null) {
         if (pai_store_name) {
-            return this.stores[pai_store_name].get_module(module_name);
+            return await this.stores[pai_store_name].get_module(module_name);
         } else {
             let KB = null;
             await Promise.all(this.stores.map(async (ps) => {
