@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const pai_bot_settings = require("../utils/pai-bot-settings").get_instance();
 const axios = require('axios');
+const PAIStore = require('./pai-store');
 
 
 let pai_store_manager_instance = null;
@@ -12,11 +13,12 @@ class PAIStoreManager {
      * @constructor
      */
     constructor() {
-        let local_store = new PAIStore();
-        local_store.load(JSON.parse(fs.readFileSync('./pai-store-basic-repo.json')));
+        let ps = new PAIStore();
+        ps.load(JSON.parse(fs.readFileSync('./pai-store-basic-repo.json')));
         this.stores = {
-            "local":local_store
+            "base-local-pai-store": ps
         };
+        this.load();
     }
 
     /**
@@ -30,6 +32,19 @@ class PAIStoreManager {
         return pai_store_manager_instance;
     }
 
+
+    load() {
+        if (pai_bot_settings.has_param('pai-stores')) {
+            let pai_stores = pai_bot_settings.get_param('pai-stores');
+            pai_stores.forEach((ps) => {
+                let ps_instance = new PAIStore();
+                ps_instance.load(ps);
+                this.stores[ps["pai-store-name"]] = ps_instance;
+            });
+
+        }
+    }
+
     add_store(pai_store) {
         if (pai_bot_settings.has_param('pai-stores')) {
             let pai_stores = pai_bot_settings.get_param('pai-stores');
@@ -39,6 +54,7 @@ class PAIStoreManager {
         } else {
             pai_bot_settings.set_param('pai-stores', [pai_store]);
         }
+        this.load();
     }
 
     del_store(pai_store_name) {
@@ -48,6 +64,7 @@ class PAIStoreManager {
                 return pai_store.name !== pai_store_name;
             });
             pai_bot_settings.set_param('pai-stores', pai_stores);
+            this.load();
 
         }
 
@@ -63,47 +80,24 @@ class PAIStoreManager {
     }
 
     connect(pai_store_name) {
-        if(this.stores.hasOwnProperty(pai_store_name)) {
+        if (this.stores.hasOwnProperty(pai_store_name)) {
             this.stores[pai_store_name].connect();
         }
     }
 
     async get_module(module_name, pai_store_name = null) {
-
-        //Search in basic repo
-
-        let basic_repo = JSON.parse(fs.readFileSync('./pai-store-basic-repo.json'));
-        let foundModule;
-        foundModule = basic_repo.filter((kb) => {
-            return kb.canonicalName === module_name;
-        });
-
-        if (foundModule.length > 1) {
-            return foundModule[0];
-        }
-
-// search in pai-store
-        if (pai_store_name && pai_bot_settings.has_param('pai-stores')) {
-            let found_pai_store = pai_bot_settings.get_param('pai-stores').filter((ps) => {
-                return ps.name === pai_store_name;
-            });
-
-            if (found_pai_store.length < 1)
-                return null;
-
-            foundModule = await axios.get(found_pai_store[0].url+'/knowledgebases', {
-                params: {
-                    filters: {canonicalName: module_name}
+        if (pai_store_name) {
+            return this.stores[pai_store_name].get_module(module_name);
+        } else {
+            let KB = null;
+            await Promise.all(this.stores.map(async (ps) => {
+                let found = await this.stores[ps].get_module(module_name);
+                if (found) {
+                    KB = found;
                 }
-            });
-
-            if (foundModule.data.records.length < 1)
-                return null;
-
-            return foundModule.data.records[0];
+            }));
+            return KB;
         }
-
-        return null;
 
     }
 

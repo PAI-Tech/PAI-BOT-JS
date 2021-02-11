@@ -279,16 +279,16 @@ module.exports = (module) => {
 
             let paiModule = cmd.params["module"].value;
 
-            let pai_stores = pai_store_manager.get_stores();
+            // let pai_stores = pai_store_manager.get_stores();
 
-            let knowledgeBase = null;
+            let knowledgeBase = await pai_store_manager.get_module(paiModule);
 
-            await Promise.all(pai_stores.map(async (ps) => {
-                let foundKb = await pai_store_manager.get_module(paiModule, ps.name);
-                if (foundKb) {
-                    knowledgeBase = foundKb;
-                }
-            }));
+            // await Promise.all(pai_stores.map(async (ps) => {
+            //     let foundKb = await pai_store_manager.get_module(paiModule, ps.name);
+            //     if (foundKb) {
+            //         knowledgeBase = foundKb;
+            //     }
+            // }));
 
 
             if (!knowledgeBase) {
