@@ -1,4 +1,4 @@
-const {PAILogger,PAIUtils} = require("@pai-tech/pai-code");
+const {PAILogger, PAIUtils} = require("@pai-tech/pai-code");
 //BOTS 2.0
 const os_utils = require("../pai-bot/src/utils/os-utils");
 const pai_bot_settings = require("../pai-bot/src/utils/pai-bot-settings").get_instance();
@@ -14,7 +14,6 @@ run_bot_script().then((success) => {
 }).catch(e => {
     console.log("Bot failed to configure " + e); //in case no PAI-Logger
 });
-
 
 
 function validatePort(val) {
@@ -74,7 +73,16 @@ async function ask_questions() {
                     return portIsValid;
                 },
                 when: (val) => {
-                    return val.connectors =="TCP" ;
+                    return val.connectors == "TCP";
+                }
+            },
+            {
+                type: "input",
+                name: "tcp-password",
+                message: "please specify password for the bot TCP connector",
+                default: '1234',
+                when: (val) => {
+                    return val.connectors == "TCP";
                 }
             },
             {
@@ -95,7 +103,7 @@ async function ask_questions() {
                     return portIsValid;
                 },
                 when: (val) => {
-                    return val.connectors =="HTTP" ;
+                    return val.connectors == "HTTP";
                 }
             },
             {
@@ -104,7 +112,7 @@ async function ask_questions() {
                 message: "Do you want to secure the bot HTTP interface with SSL (HTTPS)? ",
                 default: false,
                 when: (val) => {
-                    return val.connectors =="HTTP";
+                    return val.connectors == "HTTP";
                 }
             },
             {
@@ -115,7 +123,7 @@ async function ask_questions() {
                 rootPath: "/",
                 validate: (val) => {
                     let v = fs.existsSync(val) && fs.statSync(val).isFile();
-                    if(!v) {
+                    if (!v) {
                         PAILogger.error(`
                     file ${val} not found or not a file, please type again
                     `);
@@ -133,7 +141,7 @@ async function ask_questions() {
                 suggestOnly: false,
                 validate: (val) => {
                     let v = fs.existsSync(val) && fs.statSync(val).isFile();
-                    if(!v) {
+                    if (!v) {
                         PAILogger.error(`
                     file ${val} not found or not a file, please type again
                     `);
@@ -151,7 +159,7 @@ async function ask_questions() {
                 suggestOnly: false,
                 validate: (val) => {
                     let v = fs.existsSync(val) && fs.statSync(val).isFile();
-                    if(!v) {
+                    if (!v) {
                         PAILogger.error(`
                     file ${val} not found or not a file, please type again
                     `);
@@ -202,7 +210,7 @@ async function ask_questions() {
                     return portIsValid;
                 },
                 when: (val) => {
-                    return val["data-source"]  === "MONGO";
+                    return val["data-source"] === "MONGO";
                 }
             },
             {
@@ -210,7 +218,7 @@ async function ask_questions() {
                 name: "mongo-user-name",
                 message: "Mongo DB Username",
                 when: (val) => {
-                    return val["data-source"]  === "MONGO";
+                    return val["data-source"] === "MONGO";
                 }
 
             },
@@ -219,7 +227,7 @@ async function ask_questions() {
                 name: "mongo-pwd",
                 message: "Mongo DB password",
                 when: (val) => {
-                    return val["data-source"]  === "MONGO";
+                    return val["data-source"] === "MONGO";
                 }
             },
             {
@@ -227,7 +235,7 @@ async function ask_questions() {
                 name: "mongo-schema",
                 message: "Mongo Data Base schema name",
                 when: (val) => {
-                    return val["data-source"]  === "MONGO";
+                    return val["data-source"] === "MONGO";
                 }
             }
         ];
@@ -246,66 +254,64 @@ async function ask_questions() {
                 }
 
                 let pbs = {
-                    "pai-bot-name":answers["bot-name"],
-                    "pai-bot-id" : PAIUtils.pai_guid(),
-                    "connectors" : [],
+                    "pai-bot-name": answers["bot-name"],
+                    "pai-bot-id": PAIUtils.pai_guid(),
+                    "connectors": [],
                     "data-source": {
-                        "type":"PAI-DDB",
+                        "type": "PAI-DDB",
                         "db-data": {
-                            "db-host-name" : "",
+                            "db-host-name": "",
                             "db-user-name": "",
-                            "db-pwd" : "",
-                            "db-schema" : ""
+                            "db-pwd": "",
+                            "db-schema": ""
                         }
                     }
-                }
+                };
 
-                if(answers.hasOwnProperty("connectors")) {
-                    answers.connectors.forEach( connector => {
-                        if(connector === "HTTP") {
+                if (answers.hasOwnProperty("connectors")) {
+                    answers.connectors.forEach(connector => {
+                        if (connector === "HTTP") {
                             let con = {
-                                "type" : "HTTP",
-                                "port" : answers["http-port"]
-                            }
-                            if(answers.hasOwnProperty("ssl")) {
+                                "type": "HTTP",
+                                "port": answers["http-port"]
+                            };
+                            if (answers.hasOwnProperty("ssl")) {
                                 let ssl_con = {
-                                    "pk-file" : answers["ssl-pk-path"],
+                                    "pk-file": answers["ssl-pk-path"],
                                     "cert-file": answers["ssl-cert-path"],
                                     "chain-file": answers["ssl-chain-path"]
-                                }
+                                };
                                 con.ssl = ssl_con;
                             }
                             pbs["connectors"].push(con);
-                        }
-                        else if(connector === "FILES") {
+                        } else if (connector === "FILES") {
                             let con = {
-                                "name":"FILES",
+                                "name": "FILES",
                                 "queue-folder": os_utils.get_bot_queue_folder(),
                                 "incoming-file-name": "in.pai",
                                 "outgoing-file-name": "out.pai",
-                                "interval" : 500
-                            }
+                                "interval": 500
+                            };
                             pbs["connectors"].push(con);
-                        }
-                        else if(connector === "TCP") {
+                        } else if (connector === "TCP") {
                             let con = {
-                                "type" : "TCP",
-                                "port" : answers["tcp-port"]
-                            }
+                                "type": "TCP",
+                                "port": answers["tcp-port"],
+                                "password": answers["tcp-password"]
+                            };
                             pbs["connectors"].push(con);
                         }
-                    })
+                    });
                 }
-                if(answers["data-source"] === "MONGO") {
+                if (answers["data-source"] === "MONGO") {
                     pbs["data-source"].type = answers["data-source"];
                     pbs["data-source"]["db-data"] = {
-                        "db-host-name" : answers["mongo-url"],
+                        "db-host-name": answers["mongo-url"],
                         "db-user-name": answers["mongo-user-name"],
-                        "db-pwd" : answers["mongo-pwd"],
-                        "db-schema" : answers["mongo-schema"]
+                        "db-pwd": answers["mongo-pwd"],
+                        "db-schema": answers["mongo-schema"]
                     };
                 }
-
 
 
                 pai_bot_settings.set_all(pbs);
@@ -313,7 +319,7 @@ async function ask_questions() {
 
             }).catch(err => {
             PAILogger.error('error:' + err.message, err);
-            reject (false);
+            reject(false);
         });
     });
 
