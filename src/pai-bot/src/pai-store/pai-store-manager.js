@@ -3,7 +3,7 @@ const path = require('path');
 const pai_bot_settings = require("../utils/pai-bot-settings").get_instance();
 const axios = require('axios');
 const PAIStore = require('./pai-store');
-const basic_repo=require('./pai-store-basic-repo.json');
+const basic_repo = require('./pai-store-basic-repo.json');
 
 
 let pai_store_manager_instance = null;
@@ -87,12 +87,13 @@ class PAIStoreManager {
     }
 
     async get_module(module_name, pai_store_name = null) {
+        let KB = null;
         if (pai_store_name) {
             if (!this.stores.hasOwnProperty(pai_store_name))
                 throw 'pai-store not found!';
-            return await this.stores[pai_store_name].get_module(module_name);
+            KB = await this.stores[pai_store_name].get_module(module_name);
+            return KB;
         } else {
-            let KB = null;
             await Promise.all(this.stores.map(async (ps) => {
                 let found = await this.stores[ps].get_module(module_name);
                 if (found) {
