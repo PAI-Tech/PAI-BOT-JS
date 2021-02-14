@@ -114,6 +114,26 @@ class PAIStoreManager {
     }
 
 
+    async get_all_modules(pai_store_name = null) {
+        if (pai_store_name) {
+            let foundStore = this.stores.filter((store) => store["pai-store-name"] === pai_store_name);
+            if (foundStore.length < 1)
+                throw 'pai-store not found!';
+            return await foundStore[0].store.get_all_modules();
+        } else {
+            let modules = [];
+            await Promise.all(this.stores.map(async (ps) => {
+                let found = await ps.store.get_all_modules();
+                if (found) {
+                    modules.push(found);
+                }
+            }));
+            return modules;
+        }
+
+    }
+
+
 }
 
 

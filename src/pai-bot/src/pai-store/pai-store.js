@@ -49,6 +49,7 @@ class PAIStore {
             if (foundModule.length < 1) {
                 return null;
             }
+
             return foundModule[0];
         }
 

@@ -79,6 +79,15 @@ class PCM_PAI_STORE extends PAICodeModule {
             }
         }));
 
+        this.loadCommandWithSchema(new PAIModuleCommandSchema({
+            op: "get-all-pai-modules",
+            func: "get_all_modules",
+            params:{
+                "pai-store-name": new PAIModuleCommandParamSchema("pai-store-name", "PAI-STORE name- not required", false, "PAI-STORE name")
+            }
+
+        }));
+
 
     }
 
@@ -118,6 +127,11 @@ class PCM_PAI_STORE extends PAICodeModule {
 
     async get_module(cmd) {
         return await pai_store_manager.get_module(cmd.params["pai-module"].value, cmd.params["pai-store-name"] ? cmd.params["pai-store-name"].value : null);
+    };
+
+    async get_all_modules(cmd) {
+        return await pai_store_manager.get_all_modules(cmd.params["pai-store-name"] ? cmd.params["pai-store-name"].value : null);
+
     };
 
 
