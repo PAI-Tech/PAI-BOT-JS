@@ -69,15 +69,17 @@ class PCM_PAI_STORE extends PAICodeModule {
 
             }
         }));
+        this.loadCommandWithSchema(new PAIModuleCommandSchema({
+            op: "get-pai-module",
+            func: "get_module",
+            params: {
+                "pai-module": new PAIModuleCommandParamSchema("pai-module", "PAI-MODULE name", true, "PAI-MODULE name"),
+                "pai-store-name": new PAIModuleCommandParamSchema("pai-store-name", "PAI-STORE name", false, "PAI-STORE name")
 
-        // this.loadCommandWithSchema(new PAIModuleCommandSchema({
-        //     op: "learn",
-        //     func: "learn",
-        //     params: {
-        //         "module": new PAIModuleCommandParamSchema("module", "PAI Knowledge Base canonicalName to learn", true, "Module Canonical Name"),
-        //         "repo": new PAIModuleCommandParamSchema("repo", "Repo To Learn From", false, "Module Repo")
-        //     }
-        // }));
+            }
+        }));
+
+
     }
 
 
@@ -110,13 +112,12 @@ class PCM_PAI_STORE extends PAICodeModule {
         return 'store deleted!';
     };
 
-    get_stores(cmd) {
+    get_stores() {
         return pai_store_manager.get_stores();
     };
 
     async get_module(cmd) {
-        const {store_name, module_name} = cmd.params;
-        return await pai_store_manager.get_module(module_name, store_name);
+        return await pai_store_manager.get_module(cmd.params["pai-module"].value, cmd.params["pai-store-name"] ? cmd.params["pai-store-name"].value : null);
     };
 
 
