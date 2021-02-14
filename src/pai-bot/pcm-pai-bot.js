@@ -23,6 +23,7 @@ const {
 } = require("@pai-tech/pai-code");
 const npmLogin = require('npm-cli-login');
 const {exec} = require('child_process');
+const pai_store_manager = require('./src/pai-store/pai-store-manager').get_instance();
 
 //const pai_bot_entity = require("./src/data/entities/pai-bot");
 const PAI_OS = require('@pai-tech/pai-os').PAI_OS;
@@ -52,7 +53,7 @@ functions:
             new PAIModuleConfigParam("Modules list", "This list specify the modules that the Bot has learned", CONFIG_BOT_MODULES, "[]")
         ];
 
-        this.set_module_name("pai-bot")
+        this.set_module_name("pai-bot");
 
     }
 
@@ -66,6 +67,7 @@ functions:
         this.loadCommandWithSchema(new PAIModuleCommandSchema({
             op: "version", func: "version"
         }));
+
 
         this.loadCommandWithSchema(new PAIModuleCommandSchema({
             op: "install",
@@ -160,6 +162,8 @@ functions:
         }));
 
 
+
+
         await this.loadExistingModules();
 
 
@@ -175,7 +179,7 @@ functions:
     }
 
     get_module_name() {
-        return "pai-bot"
+        return "pai-bot";
     }
 
 
@@ -204,7 +208,7 @@ functions:
     }
 
     get_bot_folder() {
-        return os_utils.get_bot_folder()
+        return os_utils.get_bot_folder();
     }
 
     edit_env_file(cmd) {
@@ -258,5 +262,8 @@ const forgetExt = require("./src/module-ext/forget");
 learnExt(PCM_PAI_BOT);
 updatesExt(PCM_PAI_BOT);
 forgetExt(PCM_PAI_BOT);
+
+
+
 
 module.exports = PCM_PAI_BOT;

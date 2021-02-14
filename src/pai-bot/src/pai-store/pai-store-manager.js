@@ -68,7 +68,7 @@ class PAIStoreManager {
         if (pai_bot_settings.has_param('pai-stores')) {
             let pai_stores = pai_bot_settings.get_param('pai-stores');
             pai_stores = pai_stores.filter((pai_store) => {
-                return pai_store.name !== pai_store_name;
+                return pai_store["pai-store-name"] !== pai_store_name;
             });
             pai_bot_settings.set_param('pai-stores', pai_stores);
             this.load();
@@ -87,7 +87,7 @@ class PAIStoreManager {
     }
 
     connect(pai_store_name) {
-        let foundStore = this.stores.filter((store) => store.name === pai_store_name);
+        let foundStore = this.stores.filter((store) => store["pai-store-name"] === pai_store_name);
         if (foundStore.length > 0) {
             foundStore[0].store.connect();
         }
@@ -96,7 +96,7 @@ class PAIStoreManager {
     async get_module(module_name, pai_store_name = null) {
         let KB = null;
         if (pai_store_name) {
-            let foundStore = this.stores.filter((store) => store.name === pai_store_name);
+            let foundStore = this.stores.filter((store) => store["pai-store-name"] === pai_store_name);
             if (foundStore.length < 1)
                 throw 'pai-store not found!';
             KB = await foundStore[0].store.get_module(module_name);

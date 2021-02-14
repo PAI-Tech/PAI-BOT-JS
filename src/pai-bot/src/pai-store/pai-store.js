@@ -30,6 +30,8 @@ class PAIStore {
         //for local repos only!
         if (this.type === 'data') {
             this.modules = store_data["pai-code-modules"];
+        } else {
+            this.url = store_data["pai-store-url"];
         }
     }
 

@@ -299,13 +299,11 @@ module.exports = (module) => {
 
             PAILogger.info('FOUND KB!');
 
+            if (rejected)
+                return;
 
             if (cmd.context.sender && cmd.context.sender !== 'sender')
                 await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"Learning ${knowledgeBase.name}"`, cmd.context);
-
-
-            if (rejected)
-                return;
 
 
             if (knowledgeBase.repository && knowledgeBase.repository.length > 0) {

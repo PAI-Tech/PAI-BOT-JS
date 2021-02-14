@@ -16,6 +16,9 @@ const {
 } = require("@pai-tech/pai-code");
 
 
+const pai_store_manager = require('./pai-store-manager').get_instance();
+
+
 class PCM_PAI_STORE extends PAICodeModule {
     constructor() {
 
@@ -41,9 +44,30 @@ class PCM_PAI_STORE extends PAICodeModule {
             op: "version", func: "version"
         }));
 
+
         this.loadCommandWithSchema(new PAIModuleCommandSchema({
-            op: "get-stores",
-            func: "get_stores",
+            op: "get-pai-stores",
+            func: "get_stores"
+
+        }));
+
+        this.loadCommandWithSchema(new PAIModuleCommandSchema({
+            op: "add-pai-store",
+            func: "add_store",
+            params: {
+                "pai-store-name": new PAIModuleCommandParamSchema("pai-store-name", "PAI-STORE name", true, "PAI-STORE name"),
+                "pai-store-description": new PAIModuleCommandParamSchema("pai-store-description", "PAI-STORE description", true, "PAI-STORE description"),
+                "pai-store-url": new PAIModuleCommandParamSchema("pai-store-url", "PAI-STORE url", true, "PAI-STORE url")
+
+            }
+        }));
+        this.loadCommandWithSchema(new PAIModuleCommandSchema({
+            op: "delete-pai-store",
+            func: "del_store",
+            params: {
+                "pai-store-name": new PAIModuleCommandParamSchema("pai-store-name", "PAI-STORE name", true, "PAI-STORE name")
+
+            }
         }));
 
         // this.loadCommandWithSchema(new PAIModuleCommandSchema({
@@ -57,10 +81,8 @@ class PCM_PAI_STORE extends PAICodeModule {
     }
 
 
-
-
     get_module_name() {
-        return "pai-store"
+        return "pai-store";
     }
 
     version() {
@@ -70,13 +92,32 @@ class PCM_PAI_STORE extends PAICodeModule {
     /**
      *
      * @param {PAICodeCommand} cmd
-     * @return {Promise<void>}
+     * @return {string}
      */
-    async get_stores(cmd) {
 
-    }
+    add_store(cmd) {
+        pai_store_manager.add_store({
+            "pai-store-name": cmd.params["pai-store-name"].value,
+            "pai-store-description": cmd.params["pai-store-description"].value,
+            "pai-store-type": "url",
+            "pai-store-url": cmd.params["pai-store-url"] ? cmd.params["pai-store-url"].value : null
+        });
+        return 'store added!';
+    };
 
+    del_store(cmd) {
+        pai_store_manager.del_store(cmd.params["pai-store-name"].value);
+        return 'store deleted!';
+    };
 
+    get_stores(cmd) {
+        return pai_store_manager.get_stores();
+    };
+
+    async get_module(cmd) {
+        const {store_name, module_name} = cmd.params;
+        return await pai_store_manager.get_module(module_name, store_name);
+    };
 
 
 }
