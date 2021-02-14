@@ -42,7 +42,7 @@ async function main() {
 		await PAICode.on_ready();
 		await os_utils.check_bot_folders();
 		pai_bot_settings.load();
-		await BotBaseModules.load();
+		await BotBaseModules.load_config();
         PAILogger.info("Loading bot modules, may the force be with us...");
 		let modulesLoaded = await loadModules();
 		

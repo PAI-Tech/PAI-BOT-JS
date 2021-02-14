@@ -16,9 +16,12 @@ class PAIStoreManager {
     constructor() {
         let ps = new PAIStore();
         ps.load(basic_repo);
-        this.stores = {
-            "base-local-pai-store": ps
-        };
+        this.stores = [
+            {
+                name: "base-local-pai-store",
+                store: ps
+            }
+        ];
         this.load();
     }
 
@@ -40,7 +43,10 @@ class PAIStoreManager {
             pai_stores.forEach((ps) => {
                 let ps_instance = new PAIStore();
                 ps_instance.load(ps);
-                this.stores[ps["pai-store-name"]] = ps_instance;
+                this.stores.push({
+                    name: ps["pai-store-name"],
+                    store: ps_instance
+                });
             });
 
         }
@@ -81,21 +87,23 @@ class PAIStoreManager {
     }
 
     connect(pai_store_name) {
-        if (this.stores.hasOwnProperty(pai_store_name)) {
-            this.stores[pai_store_name].connect();
+        let foundStore = this.stores.filter((store) => store.name === pai_store_name);
+        if (foundStore.length > 0) {
+            foundStore[0].store.connect();
         }
     }
 
     async get_module(module_name, pai_store_name = null) {
         let KB = null;
         if (pai_store_name) {
-            if (!this.stores.hasOwnProperty(pai_store_name))
+            let foundStore = this.stores.filter((store) => store.name === pai_store_name);
+            if (foundStore.length < 1)
                 throw 'pai-store not found!';
-            KB = await this.stores[pai_store_name].get_module(module_name);
+            KB = await foundStore[0].store.get_module(module_name);
             return KB;
         } else {
             await Promise.all(this.stores.map(async (ps) => {
-                let found = await this.stores[ps].get_module(module_name);
+                let found = await ps.store.get_module(module_name);
                 if (found) {
                     KB = found;
                 }
