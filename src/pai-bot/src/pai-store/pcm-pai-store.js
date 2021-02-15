@@ -16,8 +16,33 @@ const {
 } = require("@pai-tech/pai-code");
 const CONFIG_BOT_MODULES = "bot_modules";
 
-
+const npm = require('npm');
 const pai_store_manager = require('./pai-store-manager').get_instance();
+
+async function removeBotModuleFromConfig(config, newModule) {
+
+    let newModuleObj = JSON.parse(newModule);
+
+    let modules = await getBotModules(config);
+    let index;
+    let found = false;
+    for (let i = 0; i < modules.length; i++) {
+        let module = JSON.parse(modules[i]);
+        if (module._id === newModuleObj._id) {
+            index = i;
+            found = true;
+        }
+    }
+
+
+    if (found) {
+        modules.splice(index, 1);
+        let success = await config.setConfigParam(CONFIG_BOT_MODULES, JSON.stringify(modules));
+        return success;
+    }
+    return true;
+
+}
 
 async function loadNpmModule(knowledgeBase) {
     if (knowledgeBase.repository && knowledgeBase.repository.length > 0) {
@@ -72,6 +97,32 @@ async function addBotModuleToConfig(config, newModule) {
     return success;
 }
 
+function npmUnInstall(packageName) {
+    return new Promise((resolve, reject) => {
+
+        npm.load({
+            progress: false,
+            save: true,
+        }, function (er) {
+            if (er) {
+                PAILogger.error("PAI-BOT (npmUninstall):" + er);
+                return reject(er);
+            }
+
+            npm.commands.uninstall([packageName], function (er, data) {
+                if (er) {
+                    PAILogger.error("PAI-BOT (npmUninstall):" + er);
+                    return reject(er);
+                }
+                resolve(data);
+                // command succeeded, and data might have some info
+            });
+
+        });
+
+    });
+}
+
 class PCM_PAI_STORE extends PAICodeModule {
     constructor() {
 
@@ -100,7 +151,16 @@ class PCM_PAI_STORE extends PAICodeModule {
         this.loadCommandWithSchema(new PAIModuleCommandSchema({
             op: "learn",
             func: "learn",
-            params:{
+            params: {
+                "module": new PAIModuleCommandParamSchema("module", "PAI Knowledge Base canonicalName to learn", true, "Module Canonical Name")
+
+            }
+
+        }));
+        this.loadCommandWithSchema(new PAIModuleCommandSchema({
+            op: "forget",
+            func: "forget",
+            params: {
                 "module": new PAIModuleCommandParamSchema("module", "PAI Knowledge Base canonicalName to learn", true, "Module Canonical Name")
 
             }
@@ -220,13 +280,6 @@ class PCM_PAI_STORE extends PAICodeModule {
 
 
         if (knowledgeBase.repository && knowledgeBase.repository.length > 0) {
-            /*
-             * await npmInstall(knowledgeBase.repository).catch(err => {
-             *     PAILogger.error("could not install npm package: " + knowledgeBase.repository, err);
-             *     reject(new Error("could not install npm package: " + knowledgeBase.repository));
-             *     rejected = true;
-             * });
-             */
 
 
             let installCommand = "npm i " + knowledgeBase.repository;
@@ -237,27 +290,47 @@ class PCM_PAI_STORE extends PAICodeModule {
         }
 
 
-        /*
-         * if(cmd.context.sender)
-         *     await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"installed (I think)..."`,cmd.context);
-         */
-
         PAILogger.info('LOADING KB TO BOT!');
         await loadNpmModule(knowledgeBase).catch(err => {
             PAILogger.error("could not load npm package " + err.message);
 
         });
 
-        /*
-         * if(cmd.context.sender)
-         *     await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"loaded..."`,cmd.context);
-         */
-
 
         await addBotModuleToConfig(this.config, JSON.stringify(knowledgeBase)); // TODO: change config to data
 
         return ('I know ' + knowledgeBase.name + '!');
     }
+
+    async forget(cmd) {
+
+        if (!cmd.params["module"] || !cmd.params["module"].value)
+            throw(new Error("module not specified"));
+
+        if (cmd.context.sender)
+            await PAICode.executeString(`pai-net send-message to:"${cmd.context.sender}" content:"forgetting..."`, cmd.context);
+
+        let paiModule = cmd.params["module"].value;
+
+        let knowledgeBase = await pai_store_manager.get_module(paiModule);
+
+        if (!knowledgeBase) {
+            PAILogger.error("could not find kb");
+            throw(new Error("could not find kb"));
+        }
+
+
+        if (knowledgeBase.repository && knowledgeBase.repository.length > 0)
+            await npmUnInstall(knowledgeBase.repository).catch(err => {
+                PAILogger.error("could not uninstall npm package: " + knowledgeBase.repository, err);
+                throw(new Error("could not uninstall npm package: " + knowledgeBase.repository));
+            });
+
+
+        await removeBotModuleFromConfig(this.config, JSON.stringify(knowledgeBase)); // TODO: change config to data
+
+        return ('I Forgot ' + knowledgeBase.name + '! Please Restart Bot');
+    };
 
 
 }

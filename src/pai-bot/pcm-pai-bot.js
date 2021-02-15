@@ -69,16 +69,6 @@ functions:
         }));
 
 
-        this.loadCommandWithSchema(new PAIModuleCommandSchema({
-            op: "install",
-            func: "install",
-            params: {
-                "module": new PAIModuleCommandParamSchema("module", "PAI Knowledge Base canonicalName to learn", true, "Module Canonical Name"),
-                "from-text": new PAIModuleCommandParamSchema("from-text", "Text To Learn From", false, "Text Repo"),
-                "from-file": new PAIModuleCommandParamSchema("from-file", "File To Learn From", false, "File Repo"),
-                "from-url": new PAIModuleCommandParamSchema("from-url", "Url To Learn From", false, "Url Repo")
-            }
-        }));
 
         this.loadCommandWithSchema(new PAIModuleCommandSchema({
             op: "learn",
@@ -99,13 +89,6 @@ functions:
         }));
 
 
-        this.loadCommandWithSchema(new PAIModuleCommandSchema({
-            op: "uninstall",
-            func: "uninstall",
-            params: {
-                "module": new PAIModuleCommandParamSchema("module", "PAI Knowledge Base canonicalName to forget", true, "Module Canonical Name")
-            }
-        }));
 
         this.loadCommandWithSchema(new PAIModuleCommandSchema({
             op: "forget",
