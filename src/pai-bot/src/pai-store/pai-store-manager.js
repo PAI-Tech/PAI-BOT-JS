@@ -116,7 +116,7 @@ class PAIStoreManager {
 
     async get_all_modules(pai_store_name = null) {
         if (pai_store_name) {
-            let foundStore = this.stores.filter((store) => store["pai-store-name"] === pai_store_name);
+            let foundStore = this.stores.filter((store) => store["name"] === pai_store_name);
             if (foundStore.length < 1)
                 throw 'pai-store not found!';
             return await foundStore[0].store.get_all_modules();

@@ -73,7 +73,7 @@ async function ask_questions() {
                     return portIsValid;
                 },
                 when: (val) => {
-                    return val.connectors == "TCP";
+                    return val.connectors.includes("TCP");
                 }
             },
             {
@@ -82,7 +82,7 @@ async function ask_questions() {
                 message: "please specify password for the bot TCP connector",
                 default: '1234',
                 when: (val) => {
-                    return val.connectors == "TCP";
+                    return val.connectors.includes("TCP");
                 }
             },
             {
@@ -103,7 +103,7 @@ async function ask_questions() {
                     return portIsValid;
                 },
                 when: (val) => {
-                    return val.connectors == "HTTP";
+                    return val.connectors.includes("HTTP");
                 }
             },
             {
@@ -112,7 +112,7 @@ async function ask_questions() {
                 message: "Do you want to secure the bot HTTP interface with SSL (HTTPS)? ",
                 default: false,
                 when: (val) => {
-                    return val.connectors == "HTTP";
+                    return val.connectors.includes("HTTP");
                 }
             },
             {
