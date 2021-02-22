@@ -3,7 +3,10 @@ PAI-BOT II
 
 
 
-
+1.8.5
+----------
+- tcp connector
+- pai-store manager
 
 1.8.0
 ----------
