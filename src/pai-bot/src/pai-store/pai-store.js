@@ -53,12 +53,7 @@ class PAIStore {
             return foundModule[0];
         }
 
-        foundModule = await axios.get(this.url + '/knowledgebases', {
-            params: {
-                filters: {canonicalName: module_name}
-            }
-        });
-
+        foundModule = await axios.get(this.url + `/knowledgebases?filters={canonicalName:${module_name}`);
         if (foundModule.data.records.length < 1)
             return null;
 
@@ -69,12 +64,8 @@ class PAIStore {
         if (this.type === 'data')
             return this.modules;
 
-        let allModules = await axios.get(this.url + '/knowledgebases', {
-                params: {
-                    filters: {}
-                }
-            }
-        );
+        let allModules = await axios.get(this.url + '/knowledgebases?filters={}');
+
 
         if (allModules.data.records.length < 1)
             return null;

@@ -26,6 +26,7 @@ class PAIBotSettings {
      */
     constructor() {
         this.module_data = {};
+        this.load();
     }
 
     /**
@@ -44,14 +45,11 @@ class PAIBotSettings {
      * @throws Exception
      */
     load() {
-        if(fs.existsSync(PAI_BOT_SETTINGS_FILE))
-        {
+        if (fs.existsSync(PAI_BOT_SETTINGS_FILE)) {
             let file_data = fs.readFileSync(PAI_BOT_SETTINGS_FILE);
             this.module_data = JSON.parse(file_data);
-        }
-        else
-        {
-            pai_logger.info("bot settings file not found")
+        } else {
+            pai_logger.info("bot settings file not found");
         }
     }
 
@@ -60,9 +58,8 @@ class PAIBotSettings {
      */
     async save() {
         try {
-            fs.writeFileSync(PAI_BOT_SETTINGS_FILE,JSON.stringify(this.module_data));
-        } catch (pex)
-        {
+            fs.writeFileSync(PAI_BOT_SETTINGS_FILE, JSON.stringify(this.module_data));
+        } catch (pex) {
             pai_logger.error("unable to save bot settings file because " + pex + " !!!!");
         }
     }
@@ -72,9 +69,9 @@ class PAIBotSettings {
         return this.module_data;
     }
 
-    set_all(data) {
+    async set_all(data) {
         this.module_data = data;
-        this.save();
+        await this.save();
     }
 
     get_param(param_name) {
@@ -93,10 +90,10 @@ class PAIBotSettings {
     }
 
 
-    set_param(param_name, param_value) {
+    async set_param(param_name, param_value) {
 
         this.module_data[param_name] = param_value;
-        this.save();
+        await this.save();
     }
 
 }

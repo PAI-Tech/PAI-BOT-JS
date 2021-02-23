@@ -26,7 +26,7 @@ const {
 
 //BOTS 2.0
 const os_utils = require("../pai-bot/src/utils/os-utils");
-const pai_bot_settings = require("../pai-bot/src/utils/pai-bot-settings").get_instance();
+require("../pai-bot/src/utils/pai-bot-settings").get_instance();
 
 
 const BotBaseModules = require("../pai-bot/src/modules/bot-base-modules");
@@ -41,7 +41,6 @@ async function main() {
 	try {
 		await PAICode.on_ready();
 		await os_utils.check_bot_folders();
-		pai_bot_settings.load();
 		await BotBaseModules.load_config();
         PAILogger.info("Loading bot modules, may the force be with us...");
 		let modulesLoaded = await loadModules();

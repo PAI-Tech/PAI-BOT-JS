@@ -23,8 +23,6 @@ const {
 } = require("@pai-tech/pai-code");
 const npmLogin = require('npm-cli-login');
 const {exec} = require('child_process');
-const pai_store_manager = require('./src/pai-store/pai-store-manager').get_instance();
-
 //const pai_bot_entity = require("./src/data/entities/pai-bot");
 const PAI_OS = require('@pai-tech/pai-os').PAI_OS;
 

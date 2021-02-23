@@ -7,8 +7,9 @@ const path = require('path');
 const fs = require('fs');
 const os_utils = require('./utils/os-utils');
 const pai_bot_settings = require("./utils/pai-bot-settings").get_instance();
+require('./../src/pai-store/pai-store-manager').get_instance()
 const pai_bot_base_modules = require("./modules/bot-base-modules");
-const {PAIFileConnector, PAIHTTPConnector,PAITcpConnector} = require("@pai-tech/pai-connectors");
+const {PAIFileConnector, PAIHTTPConnector, PAITcpConnector} = require("@pai-tech/pai-connectors");
 let pai_bot_instance = null;
 
 
