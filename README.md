@@ -16,8 +16,17 @@ How to run a pai-bot using this project?
 
  1. Download the project 
  2. Run `npm install` to install node modules.
- 3. For the first time only run `npm run config` to configure your pai-bot and connect it to a pai-net (distributed network)
- 4. Run `npm run bot` to run your pai-bot
+ 3. Run `npm run config` to configure your pai-bot
+ 4. If you want to connect your bot to a pai-net run `npm run pai-net' (distributed network)
+ 5. Run `npm run bot` to run your pai-bot
+
+
+This version of the pai-bot-js is the source code of the project, use this project only if you want to change/contribute the source code.0
+
+If you dont want to deal with the source code it is recommended to use the pai-bot project (this project is wrapping this source code):
+[https://github.com/PAI-Tech/PAI-BOT](https://github.com/PAI-Tech/PAI-BOT)
+
+
 
 
 ## For more information
