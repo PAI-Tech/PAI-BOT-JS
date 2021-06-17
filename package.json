@@ -1,10 +1,9 @@
 {
   "name": "@pai-tech/pai-bot-dev",
   "version": "1.8.7",
-  "description": "PAI BOT (Node JS) =================",
+  "description": "--==| PAI BOT JS (Node JS) Version |==--",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node PAI.js",
     "pai-net": "node src/scripts/config-pai-net.js",
     "pai-code": "node src/scripts/pai-code-run.js",
@@ -23,7 +22,6 @@
   },
   "homepage": "https://github.com/PAI-Tech/PAI-BOT-JS#readme",
   "dependencies": {
-    "@pai-tech/kb-manager": "^1.0.8",
     "@pai-tech/pai-code": "^1.3.4",
     "@pai-tech/pai-connectors": "^1.5.1",
     "@pai-tech/pai-net": "^1.1.9",
@@ -38,7 +36,7 @@
     "jsonschema": "^1.4.0",
     "mongoose": "^5.11.15",
     "npm": "^6.14.11",
-    "npm-cli-login": "^0.1.1",
+    "npm-cli-login": "^0.0.10",
     "shelljs": "^0.8.4"
   },
   "PAI": {

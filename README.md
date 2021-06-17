@@ -27,6 +27,10 @@ How to run a pai-bot using this project?
 [Email](mailto:community@pai-tech.org).
 
 
+## Contribute
+
+Join PAI Developers Community and contribute the the open source project.
+[Email](mailto:community@pai-tech.org).
 
 ## License
 
