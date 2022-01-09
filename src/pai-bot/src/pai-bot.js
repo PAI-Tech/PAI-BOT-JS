@@ -94,7 +94,7 @@ class PAIBot {
                 if (packageData.PAI && packageData.PAI.hasOwnProperty("includeFiles")) {
                     const additionalFiles = packageData.PAI.includeFiles;
 
-                    PAILogger.info("Additional files to load: " + JSON.stringify(additionalFiles));
+                    //PAILogger.info("Additional files to load: " + JSON.stringify(additionalFiles));
 
                     for (let i = 0; i < additionalFiles.length; i++) {
                         require(appRootPath + "/" + additionalFiles[i]);
