@@ -1,0 +1,31 @@
+{
+  "title": "PAI-Bot-JS-Module Template",
+  "source": {
+    "include": ["package.json", "README.md","PAI.js","src/","LICENSE"],
+    "exclude": ["src/pai-module/public/","src/pai-module/packages"],
+    "includePattern": ".js$",
+    "excludePattern": "(node_modules/|docs)"
+  },
+
+  "plugins": ["plugins/markdown"],
+
+  "opts": {
+    "encoding": "utf8",
+    "readme": "./README.md",
+    "destination": "docs/",
+    "recurse": true,
+    "recurseDepth": 10,
+    "verbose": true,
+    "templates": {
+      "default": {
+        "outputSourceFiles": false
+      },
+      "cleverLinks": false,
+      "monospaceLinks": false
+    },
+    "tags": {
+      "allowUnknownTags": true,
+      "dictionaries": ["jsdoc","closure"]
+    }
+  }
+}
